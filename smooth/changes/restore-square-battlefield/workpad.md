@@ -5,7 +5,7 @@
 - [x] 正方形坐标变换与瞄准
 - [x] 正方形回放容器
 - [x] 太阳视觉重做
-- [ ] 构建、重启、推送
+- [x] 构建、重启、推送
 
 ## 验收标准
 
@@ -26,3 +26,9 @@
 ## 疑问
 
 - 无阻塞项。
+
+## 结果
+
+- Web 34 个测试、typecheck、lint 和 production build 通过。
+- Smooth 产物、全仓 lint 和 typecheck 通过。
+- 本地生产 Web 3003 与 API 8000 正常；页面和指定 replay compact 均返回 HTTP 200。
