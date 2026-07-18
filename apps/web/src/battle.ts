@@ -45,6 +45,10 @@ export function formatPlanetLabel(id: number, ships: number, showId = true): str
   return showId ? `${id} · ${currentShips}` : String(currentShips);
 }
 
+export function fleetDirection(angle: number): { x: number; y: number } {
+  return { x: Math.cos(angle), y: Math.sin(angle) };
+}
+
 export function selectPlanet(
   draft: CommandDraft,
   planets: PlanetView[],

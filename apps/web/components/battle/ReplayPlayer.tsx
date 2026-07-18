@@ -219,6 +219,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
         {frame ? (
           <BattleStage
             planets={frame.planets}
+            fleets={frame.fleets}
             player={0}
             selectedPlanetId={null}
             angle={0}

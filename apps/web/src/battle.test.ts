@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  fleetDirection,
   formatPlanetLabel,
   initialDraft,
   queueLaunch,
@@ -37,5 +38,13 @@ describe("planet labels", () => {
   it("can hide internal ids while preserving the rounded-down ship count", () => {
     expect(formatPlanetLabel(7, 4.9, false)).toBe("4");
     expect(formatPlanetLabel(7, 4.9)).toBe("7 · 4");
+  });
+});
+
+describe("fleet trajectories", () => {
+  it("derives the authoritative travel direction from the fleet angle", () => {
+    expect(fleetDirection(0)).toEqual({ x: 1, y: 0 });
+    expect(fleetDirection(Math.PI / 2).x).toBeCloseTo(0);
+    expect(fleetDirection(Math.PI / 2).y).toBeCloseTo(1);
   });
 });

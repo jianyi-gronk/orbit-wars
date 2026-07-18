@@ -2,10 +2,18 @@
 
 import type { Application } from "pixi.js";
 import { useEffect, useRef } from "react";
-import { formatPlanetLabel, type PlanetView } from "../../src/battle";
+import {
+  fleetDirection,
+  formatPlanetLabel,
+  type FleetView,
+  type PlanetView,
+} from "../../src/battle";
+
+const EMPTY_FLEETS: FleetView[] = [];
 
 type BattleStageProps = {
   planets: PlanetView[];
+  fleets?: FleetView[];
   player: 0 | 1;
   selectedPlanetId: number | null;
   angle: number;
@@ -17,6 +25,7 @@ type BattleStageProps = {
 
 type PixiRuntime = typeof import("pixi.js");
 type StageState = Pick<BattleStageProps, "planets" | "player" | "selectedPlanetId" | "angle"> & {
+  fleets: FleetView[];
   showPlanetIds: boolean;
 };
 
@@ -74,6 +83,56 @@ function drawStage(
     }
     app.stage.addChild(label);
   }
+
+  for (const fleet of state.fleets) {
+    const x = fleet.x * scaleX;
+    const y = fleet.y * scaleY;
+    const direction = fleetDirection(fleet.angle);
+    const perpendicular = { x: -direction.y, y: direction.x };
+    const color = fleet.owner === 0 ? 0x67d8ff : 0xff6b57;
+
+    const trail = new Graphics();
+    trail
+      .moveTo(x - direction.x * 28, y - direction.y * 28)
+      .lineTo(x - direction.x * 5, y - direction.y * 5)
+      .stroke({ color, alpha: 0.18, width: 2 });
+    trail
+      .moveTo(x - direction.x * 16, y - direction.y * 16)
+      .lineTo(x - direction.x * 4, y - direction.y * 4)
+      .stroke({ color, alpha: 0.62, width: 2 });
+    app.stage.addChild(trail);
+
+    const vessel = new Graphics();
+    vessel
+      .moveTo(x + direction.x * 8, y + direction.y * 8)
+      .lineTo(
+        x - direction.x * 5 + perpendicular.x * 4.5,
+        y - direction.y * 5 + perpendicular.y * 4.5,
+      )
+      .lineTo(
+        x - direction.x * 3 - perpendicular.x * 4.5,
+        y - direction.y * 3 - perpendicular.y * 4.5,
+      )
+      .closePath()
+      .fill({ color, alpha: 0.95 })
+      .stroke({ color: 0xf2f5f3, alpha: 0.78, width: 1 });
+    app.stage.addChild(vessel);
+
+    const strength = new Text({
+      text: String(Math.floor(fleet.ships)),
+      style: {
+        fill: color,
+        fontFamily: "monospace",
+        fontSize: 10,
+        fontWeight: "700",
+        stroke: { color: 0x071015, width: 3 },
+      },
+    });
+    strength.anchor.set(0.5);
+    strength.position.set(x + perpendicular.x * 11, y + perpendicular.y * 11);
+    app.stage.addChild(strength);
+  }
+
   const selected = state.planets.find((planet) => planet.id === state.selectedPlanetId);
   if (selected) {
     const trajectory = new Graphics();
@@ -89,6 +148,7 @@ function drawStage(
 export function BattleStage(props: BattleStageProps) {
   const {
     planets,
+    fleets = EMPTY_FLEETS,
     player,
     selectedPlanetId,
     angle,
@@ -102,6 +162,7 @@ export function BattleStage(props: BattleStageProps) {
   const runtimeRef = useRef<PixiRuntime | null>(null);
   const stateRef = useRef<StageState>({
     planets,
+    fleets,
     player,
     selectedPlanetId,
     angle,
@@ -110,9 +171,9 @@ export function BattleStage(props: BattleStageProps) {
   const onSelectRef = useRef(onSelect);
 
   useEffect(() => {
-    stateRef.current = { planets, player, selectedPlanetId, angle, showPlanetIds };
+    stateRef.current = { planets, fleets, player, selectedPlanetId, angle, showPlanetIds };
     onSelectRef.current = onSelect;
-  }, [angle, onSelect, planets, player, selectedPlanetId, showPlanetIds]);
+  }, [angle, fleets, onSelect, planets, player, selectedPlanetId, showPlanetIds]);
 
   useEffect(() => {
     let disposed = false;
@@ -151,7 +212,7 @@ export function BattleStage(props: BattleStageProps) {
         onSelectRef.current(id),
       );
     }
-  }, [angle, planets, player, selectedPlanetId, showPlanetIds]);
+  }, [angle, fleets, planets, player, selectedPlanetId, showPlanetIds]);
 
   function aimFromPointer(event: React.PointerEvent<HTMLDivElement>) {
     if (selectedPlanetId === null) return;

@@ -9,6 +9,7 @@ import {
   selectPlanet,
   setAngle,
   setShips,
+  type FleetView,
   type PlanetView,
 } from "../../src/battle";
 import { idempotencyKey } from "../../src/api";
@@ -22,6 +23,7 @@ type Observation = {
   player: 0 | 1;
   deadlineAt: string;
   planets: PlanetView[];
+  fleets: FleetView[];
 };
 
 export function LiveBattle({ locale, matchId }: { locale: Locale; matchId: string }) {
@@ -34,6 +36,7 @@ export function LiveBattle({ locale, matchId }: { locale: Locale; matchId: strin
   );
   const [lowPerformance, setLowPerformance] = useState(false);
   const planets = useMemo(() => observation?.planets ?? [], [observation?.planets]);
+  const fleets = useMemo(() => observation?.fleets ?? [], [observation?.fleets]);
 
   useEffect(() => {
     const ticket = sessionStorage.getItem(`orbit.match-ticket.${matchId}`);
@@ -79,7 +82,12 @@ export function LiveBattle({ locale, matchId }: { locale: Locale; matchId: strin
       if (message.type === "match.frame" && message.payload?.planets) {
         setObservation((current) =>
           current
-            ? { ...current, planets: message.payload!.planets, step: message.payload!.step }
+            ? {
+                ...current,
+                planets: message.payload!.planets,
+                fleets: message.payload!.fleets ?? [],
+                step: message.payload!.step,
+              }
             : null,
         );
         setDraft(initialDraft);
@@ -160,6 +168,7 @@ export function LiveBattle({ locale, matchId }: { locale: Locale; matchId: strin
         <div className="stage-wrap">
           <BattleStage
             planets={planets}
+            fleets={fleets}
             player={observation?.player ?? 0}
             selectedPlanetId={draft.selectedPlanetId}
             angle={draft.angle}
