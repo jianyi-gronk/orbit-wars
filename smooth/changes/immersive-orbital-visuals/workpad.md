@@ -29,6 +29,7 @@
 - `tree.js` 按上下文理解为 Three.js。
 - 采用动态加载 Three.js 的独立增强画布；DOM 与 CSS 降级层继续承担内容和基本视觉。
 - 画布状态由现有 `activeScene` 单向驱动，同一 renderer 复用四幕对象。
+- 高频指针位置通过 ref 传入增强画布，避免触发首页 React 重渲染。
 - 每个内聚批次独立 commit，本轮全部完成后统一 push。
 
 ## 疑问

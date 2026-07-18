@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 
 import { adjacentSceneIndex, clampSceneIndex, sceneState } from "../../src/home-motion";
 import { localPath, type Locale } from "../../src/i18n";
+import { OrbitalWorld, type OrbitalPointer } from "./OrbitalWorld";
 
 const sceneCount = 4;
 
@@ -16,6 +17,7 @@ type HomeExperienceProps = {
 export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProps) {
   const zh = locale === "zh";
   const containerRef = useRef<HTMLDivElement>(null);
+  const pointerRef = useRef<OrbitalPointer>({ x: 0, y: 0 });
   const [activeScene, setActiveScene] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -98,6 +100,7 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
     const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    pointerRef.current = { x, y };
     event.currentTarget.style.setProperty("--pointer-x", x.toFixed(3));
     event.currentTarget.style.setProperty("--pointer-y", y.toFixed(3));
   };
@@ -116,6 +119,11 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
       style={{ "--pointer-x": 0, "--pointer-y": 0 } as CSSProperties}
     >
       <div className="home-starfield" aria-hidden="true" />
+      <OrbitalWorld
+        activeScene={activeScene}
+        pointerRef={pointerRef}
+        reducedMotion={reducedMotion}
+      />
       <aside className="scene-rail" aria-label={zh ? "首页场景" : "Home scenes"}>
         <span className="scene-rail__count">
           {String(activeScene + 1).padStart(2, "0")} / 0{sceneCount}

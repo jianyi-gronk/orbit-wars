@@ -15,12 +15,14 @@
     "next": "16.2.10",
     "pixi.js": "8.13.2",
     "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "react-dom": "19.2.7",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@types/node": "26.1.1",
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
+    "@types/three": "^0.185.1",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.10",
     "typescript": "6.0.3",

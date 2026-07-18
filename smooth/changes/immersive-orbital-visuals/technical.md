@@ -31,11 +31,11 @@ HomeExperience
 type OrbitalWorldProps = {
   activeScene: number;
   reducedMotion: boolean;
-  pointer: { x: number; y: number };
+  pointerRef: { current: { x: number; y: number } };
 };
 ```
 
-场景索引沿用首页现有的 `0..3`。指针值为 `-1..1` 的归一化坐标，不直接传 DOM 事件，避免渲染组件依赖页面结构。
+场景索引沿用首页现有的 `0..3`。指针值为 `-1..1` 的归一化坐标，通过 ref 读取而不直接传 DOM 事件，既避免渲染组件依赖页面结构，也避免指针移动触发整页 React 重渲染。
 
 ### 层级契约
 
@@ -146,4 +146,3 @@ type OrbitalWorldProps = {
 - reduced-motion 只在状态/尺寸变化时渲染，不运行持续循环。
 - WebGL 失败不影响现有 CSS 降级和全部操作。
 - web test、lint、typecheck、build 通过。
-
