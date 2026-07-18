@@ -12,29 +12,12 @@ import {
   type ReplayRecord,
 } from "../../src/replay";
 import { errorMessage, localPath, messages, type Locale } from "../../src/i18n";
+import {
+  buildAgentAnalysisBrief,
+  publicReplayDataUrl,
+  type CompactReplay,
+} from "../../src/public-replay";
 import { BattleStage } from "./BattleStage";
-
-type ReplayEvent = { step: number; type: string; slot?: number | null; [key: string]: unknown };
-type CompactReplay = {
-  publicId: string;
-  matchPublicId: string | null;
-  mapId: string | null;
-  mode: string | null;
-  frameCount: number;
-  result: { winnerSlot?: number | null; reason?: string; finalStep?: number } | null;
-  participants: Array<{
-    slot: number;
-    fleetName?: string;
-    fleetPublicId?: string;
-    controllerType?: string;
-    strategyVersionId?: string | null;
-    submittedBy?: string | null;
-  }>;
-  ratingChanges: Array<{ fleetPublicId?: string; delta?: number }>;
-  events: ReplayEvent[];
-  facts: string[] | string;
-  deepLinks: { artifact: string; segmentTemplate: string };
-};
 
 function eventName(locale: Locale, type: string): string {
   const labels: Record<string, [string, string]> = {
@@ -70,6 +53,10 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
   const [error, setError] = useState("");
   const [errorDetail, setErrorDetail] = useState("");
   const [loadAttempt, setLoadAttempt] = useState(0);
+  const [copyState, setCopyState] = useState<{
+    target: "analysis" | "replay" | "data";
+    status: "success" | "error";
+  } | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -131,6 +118,12 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
     return () => window.clearInterval(timer);
   }, [frames.length, playing, speed]);
 
+  useEffect(() => {
+    if (!copyState) return;
+    const timer = window.setTimeout(() => setCopyState(null), 2200);
+    return () => window.clearTimeout(timer);
+  }, [copyState]);
+
   const frame = frames[Math.min(stepIndex, Math.max(0, frames.length - 1))];
   const events = useMemo(() => compact?.events ?? [], [compact?.events]);
   const currentEvent = useMemo(
@@ -165,6 +158,35 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
     setPlaying(false);
     setLoadingSegments(0);
     setLoadAttempt((value) => value + 1);
+  }
+
+  async function copyPublicReplay(target: "analysis" | "replay" | "data") {
+    if (!compact) return;
+    const replayUrl = window.location.href;
+    const dataUrl = publicReplayDataUrl(compact.publicId, window.location.origin);
+    const text =
+      target === "analysis"
+        ? buildAgentAnalysisBrief({ locale, compact, replayUrl, dataUrl })
+        : target === "replay"
+          ? replayUrl
+          : dataUrl;
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("clipboard unavailable");
+      await navigator.clipboard.writeText(text);
+      setCopyState({ target, status: "success" });
+    } catch {
+      setCopyState({ target, status: "error" });
+    }
+  }
+
+  function copyLabel(target: "analysis" | "replay" | "data"): string {
+    if (copyState?.target !== target) {
+      if (target === "analysis") return zh ? "交给 Agent 分析" : "Hand to Agent";
+      if (target === "replay") return zh ? "复制回放链接" : "Copy replay link";
+      return zh ? "复制 Agent 数据链接" : "Copy Agent data link";
+    }
+    if (copyState.status === "error") return zh ? "复制失败，请重试" : "Copy failed — retry";
+    return zh ? "已复制" : "Copied";
   }
 
   if (error)
@@ -362,6 +384,43 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
             </a>
           )}
         </aside>
+        <section className="replay-handoff" aria-labelledby="replay-handoff-title">
+          <div className="replay-handoff__copy">
+            <span>POST-MATCH / AGENT UPLINK</span>
+            <h2 id="replay-handoff-title">
+              {zh ? "把这场对局变成下一版策略。" : "TURN THIS MATCH INTO THE NEXT VERSION."}
+            </h2>
+            <p>
+              {zh
+                ? "复制公开 compact 数据、事实与关键事件，让 Agent 分析转折并提出可验证的改动。交接包不包含任何密钥。"
+                : "Copy public compact data, facts, and key events so your Agent can find turning points and propose testable changes. No key is included."}
+            </p>
+          </div>
+          <div className="replay-handoff__actions" aria-live="polite">
+            <button
+              className="replay-handoff__primary"
+              disabled={!compact}
+              onClick={() => void copyPublicReplay("analysis")}
+              type="button"
+            >
+              {copyLabel("analysis")} <span aria-hidden="true">↗</span>
+            </button>
+            <button
+              disabled={!compact}
+              onClick={() => void copyPublicReplay("replay")}
+              type="button"
+            >
+              {copyLabel("replay")}
+            </button>
+            <button
+              disabled={!compact}
+              onClick={() => void copyPublicReplay("data")}
+              type="button"
+            >
+              {copyLabel("data")}
+            </button>
+          </div>
+        </section>
       </section>
     </main>
   );

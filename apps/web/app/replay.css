@@ -611,6 +611,84 @@
   color: #070a0c;
 }
 
+.replay-handoff {
+  display: grid;
+  margin-top: 0.8rem;
+  border: 1px solid rgb(255 202 99 / 28%);
+  background:
+    linear-gradient(110deg, rgb(255 202 99 / 7%), transparent 44%), rgb(6 11 14 / 94%);
+  grid-template-columns: minmax(0, 1.5fr) minmax(22rem, 0.8fr);
+}
+
+.replay-handoff__copy {
+  min-width: 0;
+  padding: clamp(1.2rem, 2.5vw, 2rem);
+}
+
+.replay-handoff__copy > span {
+  color: var(--replay-gold);
+  font: 600 0.54rem/1 var(--ow-font-mono);
+  letter-spacing: 0.14em;
+}
+
+.replay-handoff__copy h2 {
+  margin: 0.55rem 0;
+  font: 750 clamp(1.25rem, 2.3vw, 2.1rem)/1.05 var(--ow-font-display);
+  letter-spacing: -0.025em;
+}
+
+.replay-handoff__copy p {
+  max-width: 58rem;
+  margin: 0;
+  color: #87999f;
+  font: 0.65rem/1.65 var(--ow-font-mono);
+}
+
+.replay-handoff__actions {
+  display: grid;
+  padding: 0.8rem;
+  border-left: 1px solid rgb(255 202 99 / 18%);
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  align-content: center;
+}
+
+.replay-handoff__actions button {
+  min-height: 3rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgb(131 158 168 / 30%);
+  background: rgb(255 255 255 / 2%);
+  color: #d7dfdc;
+  font: 650 0.56rem/1.25 var(--ow-font-mono);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.replay-handoff__actions button:hover:not(:disabled) {
+  border-color: var(--replay-gold);
+  background: rgb(255 202 99 / 9%);
+  color: #fff1c4;
+}
+
+.replay-handoff__actions button:disabled {
+  cursor: wait;
+  opacity: 0.45;
+}
+
+.replay-handoff__actions .replay-handoff__primary {
+  grid-column: 1 / -1;
+  min-height: 3.8rem;
+  border-color: var(--replay-gold);
+  background: var(--replay-gold);
+  color: #080b0d;
+  font-size: 0.64rem;
+}
+
+.replay-handoff__actions .replay-handoff__primary:hover:not(:disabled) {
+  background: #ffe19a;
+  color: #080b0d;
+}
+
 .replay-error-panel {
   width: min(100%, 46rem);
   margin: clamp(3rem, 12vh, 9rem) auto;
@@ -678,6 +756,15 @@
     grid-column: 1 / -1;
     min-height: 2.8rem;
     border-top: 1px solid rgb(131 158 168 / 20%);
+    border-left: 0;
+  }
+
+  .replay-handoff {
+    grid-template-columns: 1fr;
+  }
+
+  .replay-handoff__actions {
+    border-top: 1px solid rgb(255 202 99 / 18%);
     border-left: 0;
   }
 }
@@ -798,6 +885,14 @@
   }
 
   .replay-artifact-link {
+    grid-column: auto;
+  }
+
+  .replay-handoff__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .replay-handoff__actions .replay-handoff__primary {
     grid-column: auto;
   }
 }
