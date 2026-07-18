@@ -43,6 +43,13 @@ export type PublicMatchSummary = {
   };
   createdAt: string;
   featured: boolean;
+  intensity: {
+    score: number;
+    band: "routine" | "contested" | "volatile";
+    signals: string[];
+    featured: boolean;
+  };
+  highlights: PublicReplayEvent[];
   participants: Array<{
     slot: number;
     fleetPublicId: string;
@@ -53,6 +60,30 @@ export type PublicMatchSummary = {
     ratingChange: { delta?: number } | null;
   }>;
 };
+
+export function replayEventName(locale: Locale, type: string): string {
+  const labels: Record<string, [string, string]> = {
+    home_planet_lost: ["母星失守", "Home planet lost"],
+    largest_launch: ["最大出击", "Largest launch"],
+    match_finished: ["比赛结束", "Match finished"],
+    planet_captured: ["星球易手", "Planet captured"],
+    player_eliminated: ["舰队淘汰", "Fleet eliminated"],
+    production_lead_changed: ["产能领先变化", "Production lead changed"],
+    ship_lead_changed: ["兵力领先变化", "Ship lead changed"],
+  };
+  return labels[type]?.[locale === "zh" ? 0 : 1] ?? type.replaceAll("_", " ");
+}
+
+export function replayReasonName(locale: Locale, reason?: string): string {
+  const labels: Record<string, [string, string]> = {
+    elimination: ["歼灭对手", "Elimination"],
+    timeout: ["时间结束", "Time limit"],
+    forfeit: ["对手弃权", "Forfeit"],
+    draw: ["平局", "Draw"],
+  };
+  if (!reason) return locale === "zh" ? "结果已确认" : "Result verified";
+  return labels[reason]?.[locale === "zh" ? 0 : 1] ?? reason.replaceAll("_", " ");
+}
 
 export function publicReplayDataUrl(publicId: string, origin: string): string {
   return apiUrl(`/api/public/v1/replays/${publicId}/compact`, origin);

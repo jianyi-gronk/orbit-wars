@@ -62,7 +62,7 @@ export default async function LocalizedPage({
   searchParams,
 }: {
   params: Promise<{ locale: string; slug?: string[] }>;
-  searchParams: Promise<{ control?: string; period?: string }>;
+  searchParams: Promise<{ control?: string; period?: string; sort?: string }>;
 }) {
   const { locale: rawLocale, slug = [] } = await params;
   if (!isLocale(rawLocale)) notFound();
@@ -130,10 +130,15 @@ export default async function LocalizedPage({
     const query = await searchParams;
     const period = ["today", "week", "all"].includes(query.period ?? "") ? query.period! : "all";
     const control = ["human", "agent"].includes(query.control ?? "") ? query.control! : "all";
+    const sort = ["score", "win_rate", "wins"].includes(query.sort ?? "")
+      ? query.sort!
+      : period === "all"
+        ? "score"
+        : "win_rate";
     return (
       <main className="product-page">
         <SiteHeader locale={locale} />
-        <LeaderboardView control={control} locale={locale} period={period} />
+        <LeaderboardView control={control} locale={locale} period={period} sort={sort} />
       </main>
     );
   }

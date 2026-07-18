@@ -20,7 +20,11 @@ import {
   type Locale,
 } from "../../src/i18n";
 import { competitiveRankLabel, competitiveRankPoints } from "../../src/rating";
-import type { PublicMatchSummary } from "../../src/public-replay";
+import {
+  replayEventName,
+  replayReasonName,
+  type PublicMatchSummary,
+} from "../../src/public-replay";
 import { formatRatingDelta } from "../../src/replay";
 import { ModeTag } from "./ModeTag";
 
@@ -33,17 +37,26 @@ type LeaderboardEntry = {
   competitiveRank: CompetitiveRank;
   displayScore: number;
   controlTags: Array<"human" | "agent">;
-  record: { matches: number; wins: number; losses: number };
+  record: {
+    matches: number;
+    wins: number;
+    losses: number;
+    draws: number;
+    winRate: number;
+    adjustedWinRate: number;
+  };
 };
 
 export function LeaderboardView({
   locale,
   period,
   control,
+  sort,
 }: {
   locale: Locale;
   period: string;
   control: string;
+  sort: string;
 }) {
   const zh = locale === "zh";
   const [entries, setEntries] = useState<LeaderboardEntry[] | null>(null);
@@ -52,7 +65,7 @@ export function LeaderboardView({
     const controller = new AbortController();
     const controlQuery = control === "all" ? "" : `&controller_type=${control}`;
     void apiFetch<{ entries: LeaderboardEntry[] }>(
-      `/api/public/v1/leaderboard?period=${period}${controlQuery}`,
+      `/api/public/v1/leaderboard?period=${period}&sort=${sort}${controlQuery}`,
       { signal: controller.signal },
     )
       .then((value) => setEntries(value.entries))
@@ -61,10 +74,10 @@ export function LeaderboardView({
         setError(errorMessage(locale, reason instanceof ApiError ? reason.code : undefined));
       });
     return () => controller.abort();
-  }, [control, locale, period]);
+  }, [control, locale, period, sort]);
 
-  function filterLink(nextPeriod: string, nextControl: string) {
-    return `${localPath(locale, "/leaderboard")}?period=${nextPeriod}&control=${nextControl}`;
+  function filterLink(nextPeriod: string, nextControl: string, nextSort: string) {
+    return `${localPath(locale, "/leaderboard")}?period=${nextPeriod}&control=${nextControl}&sort=${nextSort}`;
   }
   return (
     <div className="page-shell">
@@ -81,7 +94,7 @@ export function LeaderboardView({
           <Link
             className="button button--small"
             data-active={period === value}
-            href={filterLink(value, control)}
+            href={filterLink(value, control, value === "all" ? "score" : "win_rate")}
             key={value}
           >
             {value === "today"
@@ -102,7 +115,7 @@ export function LeaderboardView({
           <Link
             className="button button--small"
             data-active={control === value}
-            href={filterLink(period, value)}
+            href={filterLink(period, value, sort)}
             key={value}
           >
             {value === "all"
@@ -110,6 +123,27 @@ export function LeaderboardView({
                 ? "全部控制"
                 : "All control"
               : `${value.toUpperCase()} ${zh ? "标识" : "tag"}`}
+          </Link>
+        ))}
+        <span>/</span>
+        {["score", "win_rate", "wins"].map((value) => (
+          <Link
+            className="button button--small"
+            data-active={sort === value}
+            href={filterLink(period, control, value)}
+            key={value}
+          >
+            {value === "score"
+              ? zh
+                ? "总积分"
+                : "Score"
+              : value === "win_rate"
+                ? zh
+                  ? "胜率"
+                  : "Win rate"
+                : zh
+                  ? "胜场"
+                  : "Wins"}
           </Link>
         ))}
       </div>
@@ -121,6 +155,11 @@ export function LeaderboardView({
           : zh
             ? "当前版本只开放 Agent 自主比赛；所有正式结果进入同一舰队榜单。"
             : "This release exposes Agent-controlled matches only; every ranked result enters one fleet leaderboard."}
+        {sort === "win_rate"
+          ? zh
+            ? " 胜率排序使用 Beta(1,1) 样本保护，页面仍展示真实胜率。"
+            : " Win-rate ordering uses Beta(1,1) sample protection while the table shows raw win rate."
+          : ""}
       </p>
       <div className="panel">
         {error && <p role="alert">{error}</p>}
@@ -135,6 +174,7 @@ export function LeaderboardView({
                 <th>{zh ? "段位" : "DIVISION"}</th>
                 <th>CONTROL TAGS</th>
                 <th>{zh ? "战绩" : "RECORD"}</th>
+                <th>{zh ? "胜率" : "WIN RATE"}</th>
                 <th>{zh ? "总积分" : "TOTAL SCORE"}</th>
               </tr>
             </thead>
@@ -162,8 +202,9 @@ export function LeaderboardView({
                     ))}
                   </td>
                   <td>
-                    {entry.record.wins}–{entry.record.losses}
+                    {entry.record.wins}–{entry.record.losses}–{entry.record.draws}
                   </td>
+                  <td>{Math.round(entry.record.winRate * 100)}%</td>
                   <td className="mono">{formatNumber(locale, entry.displayScore)}</td>
                 </tr>
               ))}
@@ -394,16 +435,21 @@ export function HistoryView({ locale }: { locale: Locale }) {
         {matches?.map((match) => {
           const winner = match.participants.find((item) => item.slot === match.result?.winnerSlot);
           return (
-            <article className="panel" key={match.publicId}>
-              <div className="status-row">
+            <article className="panel history-card" key={match.publicId}>
+              <header className="history-card__header">
                 <div>
                   <p className="eyebrow">
-                    EPISODE / {match.publicId} · {match.mode.toUpperCase()}
+                    RANKED ENCOUNTER / {formatDate(locale, match.createdAt)}
                   </p>
-                  <h2>{match.participants.map((item) => item.fleetName).join(" / ")}</h2>
-                  <p>
-                    {zh ? "胜方" : "Winner"}: {winner?.fleetName ?? (zh ? "平局" : "Draw")} ·{" "}
-                    {match.result?.reason ?? "—"}
+                  <h2>{replayReasonName(locale, match.result?.reason)}</h2>
+                  <p className="history-card__result">
+                    {winner
+                      ? zh
+                        ? `${winner.fleetName} 获胜`
+                        : `${winner.fleetName} wins`
+                      : zh
+                        ? "双方战平"
+                        : "Draw"}
                   </p>
                 </div>
                 <Link
@@ -412,39 +458,87 @@ export function HistoryView({ locale }: { locale: Locale }) {
                 >
                   {zh ? "永久回放 →" : "Permanent replay →"}
                 </Link>
-              </div>
-              <div className="history-artifact-meta">
-                <span>
-                  <small>{zh ? "地图" : "MAP"}</small>
-                  <strong>{match.mapId}</strong>
-                </span>
-                <span>
-                  <small>{zh ? "回放工件" : "REPLAY ARTIFACT"}</small>
-                  <strong>
-                    V{match.replayArtifact.schemaVersion} · {match.replayArtifact.frameCount}{" "}
-                    {zh ? "帧" : "FRAMES"} ·{" "}
-                    {formatArtifactSize(locale, match.replayArtifact.sizeBytes)}
-                  </strong>
-                </span>
-                <span>
-                  <small>{zh ? "已保存" : "SAVED"}</small>
-                  <strong>{formatDate(locale, match.replayArtifact.savedAt)}</strong>
-                </span>
-              </div>
-              <div className="history-participants">
+                <div className="history-intensity" data-band={match.intensity.band}>
+                  <span>{zh ? "战况强度" : "BATTLE HEAT"}</span>
+                  <strong>{match.intensity.score}</strong>
+                  <small>/ 100 · {match.intensity.band.toUpperCase()}</small>
+                </div>
+              </header>
+              <div className="history-versus">
                 {match.participants.map((item) => (
-                  <span key={item.slot}>
-                    <ModeTag tone={item.controllerType}>
-                      {item.controllerType.toUpperCase()}
-                    </ModeTag>{" "}
-                    {item.strategyVersionId ?? "manual"}{" "}
-                    {item.submittedBy ? `· ${item.submittedBy}` : ""}{" "}
-                    {typeof item.ratingChange?.delta === "number"
-                      ? `· ${formatRatingDelta(item.ratingChange.delta)}`
-                      : ""}{" "}
-                  </span>
+                  <section
+                    className="history-contender"
+                    data-winner={item.slot === match.result?.winnerSlot || undefined}
+                    key={item.slot}
+                  >
+                    <span>
+                      {String(item.slot + 1).padStart(2, "0")} /{" "}
+                      {item.slot === match.result?.winnerSlot
+                        ? zh
+                          ? "胜方"
+                          : "WINNER"
+                        : zh
+                          ? "对手"
+                          : "RIVAL"}
+                    </span>
+                    <strong>{item.fleetName}</strong>
+                    <small>
+                      <ModeTag tone={item.controllerType}>
+                        {item.controllerType.toUpperCase()}
+                      </ModeTag>
+                      {typeof item.ratingChange?.delta === "number"
+                        ? ` ${formatRatingDelta(item.ratingChange.delta)}`
+                        : " —"}
+                    </small>
+                  </section>
                 ))}
               </div>
+              {!!match.highlights.length && (
+                <section className="history-highlights" aria-label={zh ? "对局高光" : "Highlights"}>
+                  <span>{zh ? "高光跳转" : "HIGHLIGHT JUMPS"}</span>
+                  <div>
+                    {match.highlights.map((event) => (
+                      <Link
+                        href={`${localPath(locale, `/replay/${match.replayPublicId}`)}?step=${event.step}`}
+                        key={`${event.step}-${event.type}`}
+                      >
+                        <small>STEP {String(event.step).padStart(3, "0")}</small>
+                        <strong>{replayEventName(locale, event.type)}</strong>
+                        <i aria-hidden="true">↗</i>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
+              <details className="history-details">
+                <summary>{zh ? "查看权威记录详情" : "Authoritative record details"}</summary>
+                <div className="history-artifact-meta">
+                  <span>
+                    <small>{zh ? "地图" : "MAP"}</small>
+                    <strong>{match.mapId}</strong>
+                  </span>
+                  <span>
+                    <small>{zh ? "回放工件" : "REPLAY ARTIFACT"}</small>
+                    <strong>
+                      V{match.replayArtifact.schemaVersion} · {match.replayArtifact.frameCount}{" "}
+                      {zh ? "帧" : "FRAMES"} ·{" "}
+                      {formatArtifactSize(locale, match.replayArtifact.sizeBytes)}
+                    </strong>
+                  </span>
+                  <span>
+                    <small>{zh ? "已保存" : "SAVED"}</small>
+                    <strong>{formatDate(locale, match.replayArtifact.savedAt)}</strong>
+                  </span>
+                </div>
+                <p className="history-participants">
+                  {match.participants
+                    .map(
+                      (item) =>
+                        `${item.strategyVersionId ?? "manual"}${item.submittedBy ? ` · ${item.submittedBy}` : ""}`,
+                    )
+                    .join(" / ")}
+                </p>
+              </details>
             </article>
           );
         })}

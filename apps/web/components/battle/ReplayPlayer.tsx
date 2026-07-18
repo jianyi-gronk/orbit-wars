@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { ApiError, apiFetchWithRetry } from "../../src/api";
 import {
@@ -15,22 +16,10 @@ import { errorMessage, localPath, messages, type Locale } from "../../src/i18n";
 import {
   buildAgentAnalysisBrief,
   publicReplayDataUrl,
+  replayEventName,
   type CompactReplay,
 } from "../../src/public-replay";
 import { BattleStage } from "./BattleStage";
-
-function eventName(locale: Locale, type: string): string {
-  const labels: Record<string, [string, string]> = {
-    home_planet_lost: ["母星失守", "Home planet lost"],
-    largest_launch: ["最大出击", "Largest launch"],
-    match_finished: ["比赛结束", "Match finished"],
-    planet_captured: ["星球易手", "Planet captured"],
-    player_eliminated: ["舰队淘汰", "Fleet eliminated"],
-    production_lead_changed: ["产能领先变化", "Production lead changed"],
-    ship_lead_changed: ["兵力领先变化", "Ship lead changed"],
-  };
-  return labels[type]?.[locale === "zh" ? 0 : 1] ?? type.replaceAll("_", " ");
-}
 
 function eventPosition(step: number, frameCount: number | undefined): number {
   return Math.max(0, Math.min(100, frameCount ? (step / Math.max(1, frameCount - 1)) * 100 : 0));
@@ -77,6 +66,9 @@ async function writeClipboard(text: string): Promise<void> {
 
 export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; locale?: Locale }) {
   const zh = locale === "zh";
+  const searchParams = useSearchParams();
+  const requestedStep = Math.max(0, Number.parseInt(searchParams.get("step") ?? "0", 10) || 0);
+  const initialSeekApplied = useRef(false);
   const [frames, setFrames] = useState<ReplayFrame[]>([]);
   const [compact, setCompact] = useState<CompactReplay | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
@@ -95,6 +87,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
     const controller = new AbortController();
     async function load() {
       let stage = "COMPACT";
+      initialSeekApplied.current = false;
       try {
         const summary = await apiFetchWithRetry<CompactReplay>(
           `/api/public/v1/replays/${publicId}/compact`,
@@ -116,7 +109,18 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
           loaded.push(...reconstructSegment(records));
           loaded.sort((a, b) => a.step - b.step);
           setFrames([...loaded]);
+          if (!initialSeekApplied.current) {
+            const found = loaded.findIndex((item) => item.step >= requestedStep);
+            if (found >= 0) {
+              setStepIndex(found);
+              initialSeekApplied.current = true;
+            }
+          }
           setLoadingSegments((value) => Math.max(0, value - 1));
+        }
+        if (!initialSeekApplied.current && loaded.length) {
+          setStepIndex(loaded.length - 1);
+          initialSeekApplied.current = true;
         }
       } catch (reason) {
         if (reason instanceof Error && reason.name === "AbortError") return;
@@ -140,7 +144,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
     }
     void load();
     return () => controller.abort();
-  }, [loadAttempt, locale, publicId]);
+  }, [loadAttempt, locale, publicId, requestedStep]);
 
   useEffect(() => {
     if (!playing || frames.length < 2) return;
@@ -300,7 +304,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
         {currentEvent && (
           <div className="replay-callout">
             <span>{zh ? "最近战场事件" : "LATEST FIELD EVENT"}</span>
-            <strong>{eventName(locale, currentEvent.type)}</strong>
+            <strong>{replayEventName(locale, currentEvent.type)}</strong>
             <small>
               STEP {currentEvent.step} · SLOT {currentEvent.slot ?? "—"}
             </small>
@@ -374,7 +378,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
           <div className="replay-event-track" aria-label={zh ? "关键事件" : "Key events"}>
             {events.map((event, index) => {
               const position = eventPosition(event.step, compact?.frameCount);
-              const label = `${event.step} / ${eventName(locale, event.type)}`;
+              const label = `${event.step} / ${replayEventName(locale, event.type)}`;
               return (
                 <button
                   aria-label={label}
@@ -444,11 +448,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
             >
               {copyLabel("replay")}
             </button>
-            <button
-              disabled={!compact}
-              onClick={() => void copyPublicReplay("data")}
-              type="button"
-            >
+            <button disabled={!compact} onClick={() => void copyPublicReplay("data")} type="button">
               {copyLabel("data")}
             </button>
           </div>
