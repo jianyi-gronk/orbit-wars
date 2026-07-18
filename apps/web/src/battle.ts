@@ -30,6 +30,11 @@ export const initialDraft: CommandDraft = {
   error: null,
 };
 
+export function formatPlanetLabel(id: number, ships: number, showId = true): string {
+  const currentShips = Math.floor(ships);
+  return showId ? `${id} · ${currentShips}` : String(currentShips);
+}
+
 export function selectPlanet(
   draft: CommandDraft,
   planets: PlanetView[],

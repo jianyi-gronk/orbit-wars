@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  formatPlanetLabel,
   initialDraft,
   queueLaunch,
   selectPlanet,
@@ -29,5 +30,12 @@ describe("human tactical command draft", () => {
     expect(draft.angle).toBeCloseTo(Math.PI * 1.5);
     expect(draft.pending).toHaveLength(1);
     expect(draft.error).toContain("库存");
+  });
+});
+
+describe("planet labels", () => {
+  it("can hide internal ids while preserving the rounded-down ship count", () => {
+    expect(formatPlanetLabel(7, 4.9, false)).toBe("4");
+    expect(formatPlanetLabel(7, 4.9)).toBe("7 · 4");
   });
 });

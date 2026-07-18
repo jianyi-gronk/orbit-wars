@@ -223,6 +223,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
             selectedPlanetId={null}
             angle={0}
             lowPerformance={false}
+            showPlanetIds={false}
             onSelect={() => undefined}
             onAim={() => undefined}
           />

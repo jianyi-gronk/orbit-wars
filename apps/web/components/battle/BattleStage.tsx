@@ -2,7 +2,7 @@
 
 import type { Application } from "pixi.js";
 import { useEffect, useRef } from "react";
-import type { PlanetView } from "../../src/battle";
+import { formatPlanetLabel, type PlanetView } from "../../src/battle";
 
 type BattleStageProps = {
   planets: PlanetView[];
@@ -10,12 +10,15 @@ type BattleStageProps = {
   selectedPlanetId: number | null;
   angle: number;
   lowPerformance: boolean;
+  showPlanetIds?: boolean;
   onSelect: (planetId: number) => void;
   onAim: (angle: number) => void;
 };
 
 type PixiRuntime = typeof import("pixi.js");
-type StageState = Pick<BattleStageProps, "planets" | "player" | "selectedPlanetId" | "angle">;
+type StageState = Pick<BattleStageProps, "planets" | "player" | "selectedPlanetId" | "angle"> & {
+  showPlanetIds: boolean;
+};
 
 function drawStage(
   app: Application,
@@ -40,9 +43,10 @@ function drawStage(
   for (const planet of state.planets) {
     const x = planet.x * scaleX;
     const y = planet.y * scaleY;
+    const radius = Math.max(8, planet.radius * Math.min(scaleX, scaleY));
     const body = new Graphics();
     const color = planet.owner === 0 ? 0x67d8ff : planet.owner === 1 ? 0xff6b57 : 0x89949a;
-    body.circle(x, y, Math.max(8, planet.radius * Math.min(scaleX, scaleY)));
+    body.circle(x, y, radius);
     body.fill({ color, alpha: planet.owner === state.player ? 0.86 : 0.5 });
     body.stroke({
       color: state.selectedPlanetId === planet.id ? 0xffd76a : color,
@@ -54,10 +58,20 @@ function drawStage(
     body.on("pointertap", () => select(planet.id));
     app.stage.addChild(body);
     const label = new Text({
-      text: `${planet.id} · ${Math.floor(planet.ships)}`,
-      style: { fill: 0xf2f5f3, fontFamily: "monospace", fontSize: 11 },
+      text: formatPlanetLabel(planet.id, planet.ships, state.showPlanetIds),
+      style: {
+        fill: 0xf2f5f3,
+        fontFamily: "monospace",
+        fontSize: Math.max(9, Math.min(12, radius * 0.72)),
+        fontWeight: "600",
+      },
     });
-    label.position.set(x + 12, y - 7);
+    if (state.showPlanetIds) {
+      label.position.set(x + radius + 4, y - label.height / 2);
+    } else {
+      label.anchor.set(0.5);
+      label.position.set(x, y);
+    }
     app.stage.addChild(label);
   }
   const selected = state.planets.find((planet) => planet.id === state.selectedPlanetId);
@@ -73,17 +87,32 @@ function drawStage(
 }
 
 export function BattleStage(props: BattleStageProps) {
-  const { planets, player, selectedPlanetId, angle, lowPerformance, onSelect, onAim } = props;
+  const {
+    planets,
+    player,
+    selectedPlanetId,
+    angle,
+    lowPerformance,
+    showPlanetIds = true,
+    onSelect,
+    onAim,
+  } = props;
   const host = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
   const runtimeRef = useRef<PixiRuntime | null>(null);
-  const stateRef = useRef<StageState>({ planets, player, selectedPlanetId, angle });
+  const stateRef = useRef<StageState>({
+    planets,
+    player,
+    selectedPlanetId,
+    angle,
+    showPlanetIds,
+  });
   const onSelectRef = useRef(onSelect);
 
   useEffect(() => {
-    stateRef.current = { planets, player, selectedPlanetId, angle };
+    stateRef.current = { planets, player, selectedPlanetId, angle, showPlanetIds };
     onSelectRef.current = onSelect;
-  }, [angle, onSelect, planets, player, selectedPlanetId]);
+  }, [angle, onSelect, planets, player, selectedPlanetId, showPlanetIds]);
 
   useEffect(() => {
     let disposed = false;
@@ -122,7 +151,7 @@ export function BattleStage(props: BattleStageProps) {
         onSelectRef.current(id),
       );
     }
-  }, [angle, planets, player, selectedPlanetId]);
+  }, [angle, planets, player, selectedPlanetId, showPlanetIds]);
 
   function aimFromPointer(event: React.PointerEvent<HTMLDivElement>) {
     if (selectedPlanetId === null) return;
