@@ -154,6 +154,7 @@ def test_filters_are_labels_over_one_rating_table(public_client) -> None:
         rating_count = session.scalar(select(func.count()).select_from(Rating))
 
     assert all_entries.status_code == 200
+    assert all_entries.json()["sort"] == "score"
     assert [item["displayScore"] for item in all_entries.json()["entries"]] == [2000, 1300]
     assert all_entries.json()["entries"][0]["competitiveRank"] == {
         "tier": "master",
@@ -168,6 +169,17 @@ def test_filters_are_labels_over_one_rating_table(public_client) -> None:
     assert agent_entries.json()["entries"][0]["fleetPublicId"] == own.public_id
     assert human_entries.json()["entries"][0]["fleetPublicId"] != own.public_id
     assert rating_count == 2
+
+    today_entries = get(client, "/api/public/v1/leaderboard?period=today")
+    assert today_entries.json()["sort"] == "win_rate"
+    assert today_entries.json()["entries"][0]["record"] == {
+        "matches": 1,
+        "wins": 1,
+        "losses": 0,
+        "draws": 0,
+        "winRate": 1.0,
+        "adjustedWinRate": 2 / 3,
+    }
 
 
 def test_anonymous_profile_preserves_match_version_and_hides_private_storage(public_client) -> None:
@@ -213,3 +225,39 @@ def test_public_match_history_contains_real_participants_and_replay(public_clien
         "sizeBytes": 100,
         "savedAt": match["replayArtifact"]["savedAt"],
     }
+    assert match["intensity"] == {
+        "score": 16,
+        "band": "routine",
+        "signals": ["rating_swing"],
+        "featured": False,
+    }
+    assert match["featured"] is False
+    assert match["highlights"] == []
+
+
+def test_featured_match_requires_intensity_threshold(public_client) -> None:
+    client, factory = public_client
+    with factory() as session:
+        _seed(session)
+        replay = session.scalar(select(ReplayArtifact))
+        assert replay is not None
+        replay.frame_count = 168
+        replay.analysis_payload = {
+            "events": [
+                {"type": "planet_captured", "step": 20},
+                {"type": "planet_captured", "step": 35},
+                {"type": "ship_lead_changed", "step": 50},
+                {"type": "production_lead_changed", "step": 72},
+                {"type": "largest_launch", "step": 91},
+                {"type": "home_planet_lost", "step": 140},
+            ]
+        }
+        session.commit()
+
+    response = get(client, "/api/public/v1/matches?period=all&featured=true")
+    match = response.json()["matches"][0]
+
+    assert response.status_code == 200
+    assert match["featured"] is True
+    assert match["intensity"]["score"] >= 60
+    assert len(match["highlights"]) == 3

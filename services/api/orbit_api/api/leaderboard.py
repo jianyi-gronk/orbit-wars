@@ -22,6 +22,11 @@ from orbit_api.db.models import (
     StrategyVersion,
 )
 from orbit_api.db.session import database_session
+from orbit_api.domain.competition import (
+    battle_intensity,
+    competition_record,
+    select_highlights,
+)
 from orbit_api.domain.ratings import (
     DEFAULT_MU,
     DEFAULT_SIGMA,
@@ -33,6 +38,7 @@ from orbit_api.domain.ratings import (
 router = APIRouter(tags=["public competition"])
 SessionDependency = Annotated[Session, Depends(database_session)]
 Period = Literal["today", "week", "all"]
+LeaderboardSort = Literal["score", "win_rate", "wins"]
 
 
 def _cutoff(period: Period) -> datetime | None:
@@ -69,13 +75,11 @@ def _participant_rows(
     return list(session.execute(statement).tuples())
 
 
-def _record(rows: list[tuple[MatchParticipant, Match]]) -> dict[str, int]:
-    wins = sum(
-        1
+def _record(rows: list[tuple[MatchParticipant, Match]]) -> dict[str, int | float]:
+    return competition_record(
+        (participant.slot, match.result if isinstance(match.result, dict) else None)
         for participant, match in rows
-        if isinstance(match.result, dict) and match.result.get("winnerSlot") == participant.slot
     )
-    return {"matches": len(rows), "wins": wins, "losses": len(rows) - wins}
 
 
 def _control_tags(session: Session, fleet: Fleet) -> list[str]:
@@ -92,7 +96,9 @@ def leaderboard(
     session: SessionDependency,
     period: Annotated[Period, Query()] = "all",
     controller_type: Annotated[ControllerType | None, Query()] = None,
+    sort: Annotated[LeaderboardSort | None, Query()] = None,
 ) -> dict[str, Any]:
+    resolved_sort: LeaderboardSort = sort or ("score" if period == "all" else "win_rate")
     rated = list(
         session.execute(
             select(Fleet, Rating)
@@ -107,7 +113,6 @@ def leaderboard(
             continue
         entries.append(
             {
-                "rank": len(entries) + 1,
                 "fleetPublicId": fleet.public_id,
                 "name": fleet.name,
                 "commanderCode": fleet.commander_code,
@@ -120,9 +125,36 @@ def leaderboard(
                 "record": _record(rows),
             }
         )
+    if resolved_sort == "win_rate":
+        entries.sort(
+            key=lambda entry: (
+                -entry["record"]["adjustedWinRate"],
+                -entry["record"]["wins"],
+                -entry["record"]["matches"],
+                -entry["displayScore"],
+                entry["name"].casefold(),
+            )
+        )
+    elif resolved_sort == "wins":
+        entries.sort(
+            key=lambda entry: (
+                -entry["record"]["wins"],
+                -entry["record"]["adjustedWinRate"],
+                -entry["record"]["matches"],
+                -entry["displayScore"],
+                entry["name"].casefold(),
+            )
+        )
+    else:
+        entries.sort(
+            key=lambda entry: (-entry["displayScore"], entry["name"].casefold())
+        )
+    for rank, entry in enumerate(entries, start=1):
+        entry["rank"] = rank
     return {
         "period": period,
         "controllerType": controller_type.value if controller_type else None,
+        "sort": resolved_sort,
         "entries": entries,
     }
 
@@ -145,6 +177,33 @@ def _public_match(session: Session, match: Match, replay: ReplayArtifact) -> dic
         .where(MatchParticipant.match_id == match.id)
         .order_by(MatchParticipant.slot)
     ).all()
+    participants = [
+        {
+            "slot": participant.slot,
+            "fleetPublicId": fleet.public_id,
+            "fleetName": fleet.name,
+            "commanderCode": fleet.commander_code,
+            "controllerType": participant.controller_type,
+            "strategyVersionId": version.public_id if version else None,
+            "candidateContentHash": participant.candidate_content_hash,
+            "strategySource": (
+                version.source
+                if version
+                else "simulation-candidate"
+                if participant.candidate_content_hash
+                else "human"
+            ),
+            "submittedBy": version.submitted_by if version else participant.candidate_submitted_by,
+            "ratingChange": _rating_change(session, match, fleet),
+        }
+        for participant, fleet, version in rows
+    ]
+    analysis = replay.analysis_payload if isinstance(replay.analysis_payload, dict) else None
+    intensity = battle_intensity(
+        analysis,
+        replay.frame_count,
+        [participant["ratingChange"] for participant in participants],
+    )
     return {
         "publicId": match.public_id,
         "mode": match.mode,
@@ -160,32 +219,10 @@ def _public_match(session: Session, match: Match, replay: ReplayArtifact) -> dic
         },
         "createdAt": match.created_at,
         "finishedAt": match.finished_at,
-        "featured": bool(
-            isinstance(replay.analysis_payload, dict) and replay.analysis_payload.get("events")
-        ),
-        "participants": [
-            {
-                "slot": participant.slot,
-                "fleetPublicId": fleet.public_id,
-                "fleetName": fleet.name,
-                "commanderCode": fleet.commander_code,
-                "controllerType": participant.controller_type,
-                "strategyVersionId": version.public_id if version else None,
-                "candidateContentHash": participant.candidate_content_hash,
-                "strategySource": (
-                    version.source
-                    if version
-                    else "simulation-candidate"
-                    if participant.candidate_content_hash
-                    else "human"
-                ),
-                "submittedBy": (
-                    version.submitted_by if version else participant.candidate_submitted_by
-                ),
-                "ratingChange": _rating_change(session, match, fleet),
-            }
-            for participant, fleet, version in rows
-        ],
+        "featured": intensity["featured"],
+        "intensity": intensity,
+        "highlights": select_highlights(analysis),
+        "participants": participants,
     }
 
 
