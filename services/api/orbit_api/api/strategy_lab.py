@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
-from orbit_api.api.agent import strategy_store
+from orbit_api.api.agent import SlidingWindowLimiter, strategy_store
 from orbit_api.db.models import StrategyDraft, StrategyVersion, User
 from orbit_api.db.session import database_session
 from orbit_api.domain.ai_assist import (
@@ -99,6 +99,17 @@ router = APIRouter(tags=["strategy lab"])
 SessionDependency = Annotated[Session, Depends(database_session)]
 PrincipalDependency = Annotated[Principal, Depends(current_principal)]
 StoreDependency = Annotated[StrategyPackageStore, Depends(strategy_store)]
+_simulation_limiter = SlidingWindowLimiter(limit=10, window_seconds=60)
+
+
+def _limit_simulation(request: Request, fleet_id: int, actor: str) -> None:
+    limiter = getattr(request.app.state, "simulation_rate_limiter", _simulation_limiter)
+    if not limiter.allow(f"fleet:{fleet_id}") or not limiter.allow(f"actor:{actor}"):
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            detail={"code": "simulation.rate_limited"},
+            headers={"Retry-After": "60"},
+        )
 
 
 def _version_response(version: StrategyVersion) -> dict[str, Any]:
@@ -254,6 +265,7 @@ def simulate_draft(
 ) -> dict[str, Any]:
     try:
         workspace = get_workspace(session, principal, fleet_id)
+        _limit_simulation(request, workspace.fleet.id, principal.subject)
         if workspace.draft.revision != payload.revision:
             raise StrategyDraftConflictError("the strategy draft changed")
         package = build_source_package(workspace.draft.source_code)

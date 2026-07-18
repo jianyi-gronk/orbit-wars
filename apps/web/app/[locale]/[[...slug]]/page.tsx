@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { StartFlow } from "../../start/StartFlow";
 import { CommandCenter } from "../../command/CommandCenter";
 import { ArenaForm } from "../../arena/ArenaForm";
+import { StrategyLab } from "../../strategy-lab/StrategyLab";
 import { LiveBattle } from "../../../components/battle/LiveBattle";
 import { ReplayPlayer } from "../../../components/battle/ReplayPlayer";
 import { HomeExperience } from "../../../components/product/HomeExperience";
@@ -33,6 +34,7 @@ export async function generateMetadata({
     history: ["公开对局历史", "Public Match History"],
     leaderboard: ["统一排行榜", "Unified Leaderboard"],
     start: ["创建舰队", "Create Fleet"],
+    "strategy-lab": ["策略实验室", "Strategy Lab"],
   };
   const title = titles[route]?.[zh ? 0 : 1] ?? (zh ? "轨道战略竞技场" : "Orbital Strategy Arena");
   const suffix = route ? `/${route}` : "";
@@ -96,6 +98,15 @@ export default async function LocalizedPage({
       <main className="product-page">
         <SiteHeader locale={locale} />
         <CommandCenter locale={locale} />
+      </main>
+    );
+  if (route === "strategy-lab")
+    return (
+      <main className="product-page">
+        <SiteHeader locale={locale} />
+        <div className="page-shell">
+          <StrategyLab locale={locale} />
+        </div>
       </main>
     );
   if (route === "arena") {

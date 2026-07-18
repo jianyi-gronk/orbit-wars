@@ -401,8 +401,14 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
             </p>
           </div>
           <div className="replay-handoff__actions" aria-live="polite">
-            <button
+            <Link
               className="replay-handoff__primary"
+              href={localPath(locale, `/strategy-lab?fromReplay=${publicId}`)}
+            >
+              {zh ? "在平台内优化策略" : "Improve in Strategy Lab"}{" "}
+              <span aria-hidden="true">↗</span>
+            </Link>
+            <button
               disabled={!compact}
               onClick={() => void copyPublicReplay("analysis")}
               type="button"

@@ -22,6 +22,7 @@ from orbit_api.db.models import (
     MatchMode,
     MatchParticipant,
     MatchStatus,
+    ReplayArtifact,
     StrategyStatus,
     StrategyVersion,
     User,
@@ -260,6 +261,7 @@ def get_simulation(session: Session, fleet: Fleet, public_id: str) -> Match:
 
 
 def simulation_response(session: Session, match: Match) -> dict[str, Any]:
+    replay = session.get(ReplayArtifact, match.replay_id) if match.replay_id else None
     participants = session.execute(
         select(MatchParticipant, Fleet, StrategyVersion)
         .join(Fleet, Fleet.id == MatchParticipant.fleet_id)
@@ -277,6 +279,7 @@ def simulation_response(session: Session, match: Match) -> dict[str, Any]:
         "result": match.result,
         "createdAt": match.created_at,
         "finishedAt": match.finished_at,
+        "replayPublicId": replay.public_id if replay else None,
         "participants": [
             {
                 "slot": participant.slot,

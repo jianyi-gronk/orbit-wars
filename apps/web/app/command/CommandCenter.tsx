@@ -291,6 +291,11 @@ export function CommandCenter({ locale = "zh" }: { locale?: Locale }) {
             </strong>
           </div>
           <h2 id="strategy-versions">{zh ? "策略版本" : "Strategy versions"}</h2>
+          <p>
+            <Link className="text-command" href={localPath(locale, "/strategy-lab")}>
+              {zh ? "打开站内策略实验室" : "Open the in-platform Strategy Lab"} <span>→</span>
+            </Link>
+          </p>
           <div className="status-list">
             {profile.versions.map((version) => (
               <div className="status-row" key={version.publicId}>

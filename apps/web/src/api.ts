@@ -153,6 +153,61 @@ export type AgentKey = {
   revokedAt: string | null;
 };
 
+export type StrategyDraft = {
+  revision: number;
+  mode: "guided" | "code";
+  sourceCode: string;
+  parameters: {
+    launchRatio?: number;
+    minimumShips?: number;
+    targetPreference?: "nearest" | "weakest";
+  };
+  baseStrategyVersionId: string | null;
+  lastValidation: Record<string, unknown> | null;
+  validatedContentHash: string | null;
+  updatedAt: string;
+};
+
+export type StrategyLabWorkspace = {
+  fleet: {
+    publicId: string;
+    name: string;
+    currentStrategyVersionId: string | null;
+  };
+  draft: StrategyDraft;
+  versions: Array<StrategyVersion & { validation?: Record<string, unknown> | null }>;
+  editableTemplates: Array<{
+    id: string;
+    name: string;
+    editable: boolean;
+    source: string;
+  }>;
+  aiCredits: {
+    remaining: number;
+    granted: number;
+    standardCost: number;
+    deepCost: number;
+  };
+};
+
+export type LabSimulation = {
+  publicId: string;
+  status: string;
+  result: Record<string, unknown> | null;
+  replayPublicId: string | null;
+};
+
+export type AiAssist = {
+  requestId: string;
+  summary: string;
+  reasoning: string;
+  proposedSource: string;
+  diff: string;
+  tests: string[];
+  cost: number;
+  remaining: number;
+};
+
 export type PublicMatch = {
   publicId: string;
   mode: "training" | "ranked";

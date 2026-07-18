@@ -344,8 +344,8 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
               <h2>{zh ? `${fleet.name} 已就位` : `${fleet.name} is ready`}</h2>
               <p className="page-lede">
                 {zh
-                  ? `公开编号 ${fleet.publicId}。不需要重复创建，下一步直接匹配对手；训练赛默认不影响排名。`
-                  : `Public ID ${fleet.publicId}. No need to create another fleet—match a rival now. Training does not affect rating.`}
+                  ? `公开编号 ${fleet.publicId}。初始策略已经 ready，不需要 Agent Key；你可以直接训练，或先在平台内优化。`
+                  : `Public ID ${fleet.publicId}. The starter is already ready—no Agent Key required. Train now or improve it in-platform.`}
               </p>
               <div className="toolbar">
                 <Link
@@ -354,8 +354,11 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
                 >
                   {zh ? "立即匹配并开战 →" : "Match and battle now →"}
                 </Link>
+                <Link className="button" href={localPath(locale, "/strategy-lab")}>
+                  {zh ? "在平台内优化策略" : "Improve strategy in-platform"}
+                </Link>
                 <Link className="button" href={localPath(locale, "/command")}>
-                  {zh ? "查看指挥中心" : "View command center"}
+                  {zh ? "连接外部 Agent" : "Connect external Agent"}
                 </Link>
               </div>
             </section>

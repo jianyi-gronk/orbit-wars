@@ -110,6 +110,24 @@ describe("release performance and accessibility budgets", () => {
     );
   });
 
+  it("keeps the in-platform strategy path private, bilingual, and explicitly consented", () => {
+    const lab = readFileSync("app/strategy-lab/StrategyLab.tsx", "utf8");
+    const mission = readFileSync("src/mission.ts", "utf8");
+    const start = readFileSync("app/start/StartFlow.tsx", "utf8");
+
+    expect(mission).toContain('"needs-strategy": { path: "/strategy-lab"');
+    expect(mission).not.toContain('"needs-agent":');
+    expect(start).toContain("不需要 Agent Key");
+    expect(start).toContain("no Agent Key required");
+    expect(lab).toContain("草稿默认私有");
+    expect(lab).toContain("Drafts stay private");
+    expect(lab).toContain("我同意将当前草稿发送给 DeepSeek");
+    expect(lab).toContain("I agree to send this draft to DeepSeek");
+    expect(lab).toContain("Apply to draft (not publish)");
+    expect(lab).not.toContain("localStorage");
+    expect(lab).not.toContain("sessionStorage");
+  });
+
   it("keeps the central sun visually aligned with the simple Kaggle reference", () => {
     const stage = readFileSync("components/battle/BattleStage.tsx", "utf8");
     const css = readFileSync("app/replay.css", "utf8");
