@@ -9,8 +9,15 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
 from orbit_api.api.agent import strategy_store
-from orbit_api.db.models import StrategyDraft, StrategyVersion
+from orbit_api.db.models import StrategyDraft, StrategyVersion, User
 from orbit_api.db.session import database_session
+from orbit_api.domain.ai_assist import (
+    AiAssistError,
+    AiAssistKind,
+    AiProvider,
+    DeepSeekProvider,
+    run_ai_assist,
+)
 from orbit_api.domain.fleets import FleetError
 from orbit_api.domain.simulations import (
     CandidateStrategy,
@@ -78,6 +85,14 @@ class LabPublishRequest(APIModel):
     revision: int = Field(ge=1)
     notes: str = Field(default="", max_length=1000)
     make_current: bool = True
+
+
+class AiAssistRequestBody(APIModel):
+    revision: int = Field(ge=1)
+    kind: AiAssistKind
+    deep: bool = False
+    consent: bool = False
+    goal: str = Field(default="", max_length=2000)
 
 
 router = APIRouter(tags=["strategy lab"])
@@ -339,3 +354,51 @@ def publish_draft(
         raise _lab_error(error) from error
     except (StrategyValidationUnavailable, StrategyPackageStoreError) as error:
         raise HTTPException(503, detail={"code": "strategy_lab.validation_unavailable"}) from error
+
+
+@router.post("/api/v1/fleets/{fleet_id}/strategy-lab/ai-assists", status_code=201)
+def create_ai_assist(
+    fleet_id: str,
+    payload: AiAssistRequestBody,
+    request: Request,
+    session: SessionDependency,
+    principal: PrincipalDependency,
+) -> dict[str, Any]:
+    try:
+        workspace = get_workspace(session, principal, fleet_id)
+        if workspace.draft.revision != payload.revision:
+            raise StrategyDraftConflictError("the strategy draft changed")
+        user = session.get(User, workspace.fleet.owner_user_id)
+        if user is None:
+            raise StrategyLabError("the fleet owner is unavailable")
+        provider: AiProvider = getattr(request.app.state, "ai_provider", None)
+        if provider is None:
+            provider = DeepSeekProvider.from_environment()
+        result = run_ai_assist(
+            session,
+            user=user,
+            fleet_id=workspace.fleet.id,
+            draft=workspace.draft,
+            provider=provider,
+            kind=payload.kind,
+            deep=payload.deep,
+            goal=payload.goal,
+            consent=payload.consent,
+        )
+        return {
+            "requestId": result.request_id,
+            "summary": result.summary,
+            "reasoning": result.reasoning,
+            "proposedSource": result.proposed_source,
+            "diff": result.diff,
+            "tests": list(result.tests),
+            "cost": result.cost,
+            "remaining": result.remaining,
+        }
+    except (FleetError, StrategyLabError) as error:
+        raise _lab_error(error) from error
+    except AiAssistError as error:
+        response_status = 429 if error.code in {"ai.quota_exhausted", "ai.rate_limited"} else 503
+        if error.code == "ai.consent_required":
+            response_status = 422
+        raise HTTPException(response_status, detail={"code": error.code}) from error
