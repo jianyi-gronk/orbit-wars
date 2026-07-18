@@ -1,10 +1,12 @@
 import type { PlanetView } from "./battle";
 
 export type ReplayFrame = { step: number; planets: PlanetView[]; stateHash: string };
-export type ReplayRecord = {
-  type: "checkpoint" | "delta";
-  frame: { step: number; stateHash?: string; planets?: number[][] };
-};
+export type ReplayRecord =
+  | {
+      type: "checkpoint" | "delta";
+      frame: { step: number; stateHash?: string; planets?: number[][] };
+    }
+  | { type: "result"; result?: Record<string, unknown> };
 
 function planets(rows: number[][]): PlanetView[] {
   return rows.map((row) => ({
@@ -29,13 +31,13 @@ export function reconstructSegment(records: ReplayRecord[]): ReplayFrame[] {
         stateHash: record.frame.stateHash ?? "",
         planets: planets(record.frame.planets),
       };
-    } else if (current) {
+    } else if (record.type === "delta" && current) {
       current = {
         step: record.frame.step,
         stateHash: record.frame.stateHash ?? current.stateHash,
         planets: record.frame.planets ? planets(record.frame.planets) : current.planets,
       };
-    }
+    } else continue;
     if (current) frames.push(current);
   }
   return frames;

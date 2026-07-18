@@ -68,11 +68,13 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
   const [speed, setSpeed] = useState(1);
   const [loadingSegments, setLoadingSegments] = useState(0);
   const [error, setError] = useState("");
+  const [errorDetail, setErrorDetail] = useState("");
   const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
     async function load() {
+      let stage = "COMPACT";
       try {
         const summary = await apiFetchWithRetry<CompactReplay>(
           `/api/public/v1/replays/${publicId}/compact`,
@@ -86,6 +88,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
         setLoadingSegments(checkpoints.length);
         const loaded: ReplayFrame[] = [];
         for (const checkpoint of checkpoints) {
+          stage = `SEGMENT ${checkpoint}`;
           const records = await apiFetchWithRetry<ReplayRecord[]>(
             `/api/public/v1/replays/${publicId}/segments/${checkpoint}`,
             { signal: controller.signal },
@@ -97,7 +100,18 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
         }
       } catch (reason) {
         if (reason instanceof Error && reason.name === "AbortError") return;
+        const code =
+          reason instanceof ApiError
+            ? reason.code
+            : reason instanceof Error
+              ? reason.name
+              : "unknown";
+        const description = reason instanceof Error ? reason.message : String(reason);
         setError(errorMessage(locale, reason instanceof ApiError ? reason.code : undefined));
+        setErrorDetail(`${stage} / ${code} / ${description}`);
+        if (process.env.NODE_ENV !== "production") {
+          console.warn("Replay load failed", { publicId, stage, reason });
+        }
       }
     }
     void load();
@@ -140,6 +154,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
 
   function retryLoad() {
     setError("");
+    setErrorDetail("");
     setCompact(null);
     setFrames([]);
     setStepIndex(0);
@@ -155,6 +170,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
           <span>REPLAY LINK / OFFLINE</span>
           <h1>{zh ? "无法加载该对局" : "Replay unavailable"}</h1>
           <p role="alert">{error}</p>
+          <small>{errorDetail}</small>
           <div className="replay-error-actions">
             <button className="replay-back-button" onClick={retryLoad}>
               ↻ {zh ? "重新读取回放" : "Retry replay"}

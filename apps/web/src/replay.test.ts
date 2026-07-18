@@ -20,6 +20,19 @@ describe("replay checkpoint seek", () => {
     expect(checkpointForStep(39)).toBe(20);
     expect(checkpointForStep(40)).toBe(40);
   });
+
+  it("ignores the terminal result record after the final frame", () => {
+    const frames = reconstructSegment([
+      {
+        type: "checkpoint",
+        frame: { step: 160, stateHash: "a", planets: [[0, 0, 1, 2, 3, 10, 1]] },
+      },
+      { type: "delta", frame: { step: 161, stateHash: "b" } },
+      { type: "result", result: { winnerSlot: 0, reason: "elimination" } },
+    ]);
+
+    expect(frames.map((frame) => frame.step)).toEqual([160, 161]);
+  });
 });
 
 describe("replay presentation", () => {
