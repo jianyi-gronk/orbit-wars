@@ -1,0 +1,12 @@
+-e ./packages/platform-runtime-py
+-e ./packages/contracts
+-e ./services/api
+-e ./services/match-worker
+-e ./services/agent-sandbox
+-e ./packages/orbit-engine-py
+mypy==2.3.0
+httpx==0.28.1
+# Pytest 8.4+ imports macOS libedit during capture bootstrap; the supported
+# local Python 3.11 distribution can crash in that extension before collection.
+pytest==7.4.4
+ruff==0.15.22

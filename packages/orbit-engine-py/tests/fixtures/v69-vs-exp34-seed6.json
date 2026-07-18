@@ -1,0 +1,1371 @@
+{
+  "actions": [
+    [[], []],
+    [[], []],
+    [[[8, -2.2547922134399414, 12]], [[11, 0.8716307151509701, 12]]],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[[8, -1.609554648399353, 12]], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[[16, 2.892604351043701, 25]], [[19, -0.17812503429786075, 24]]],
+    [[], []],
+    [[], [[11, 1.5462178414089451, 24]]],
+    [[], []],
+    [
+      [
+        [8, -1.7395178079605103, 14],
+        [16, 0.39038363099098206, 12]
+      ],
+      []
+    ],
+    [[], [[19, 3.0928449315201085, 16]]],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[[12, 1.1576253175735474, 27]], [[15, -1.9839674948735995, 24]]],
+    [[], []],
+    [[], []],
+    [[], []],
+    [
+      [
+        [16, 2.3471577167510986, 30],
+        [18, 2.794502019882202, 25],
+        [12, 2.0481886863708496, 20]
+      ],
+      [[13, 2.705334531103639, 24]]
+    ],
+    [[], [[15, 1.1832311627623235, 27]]],
+    [[[14, -1.7791153192520142, 8]], []],
+    [
+      [
+        [16, -2.412309408187866, 9],
+        [14, -1.7825547456741333, 5]
+      ],
+      []
+    ],
+    [
+      [
+        [12, -1.9671303033828735, 20],
+        [14, -1.7377203702926636, 5]
+      ],
+      [
+        [15, -1.2316197909887925, 15],
+        [19, -0.9069400919418413, 31]
+      ]
+    ],
+    [
+      [
+        [12, -0.12209149450063705, 5],
+        [14, -1.692887783050537, 5]
+      ],
+      []
+    ],
+    [
+      [
+        [1, -0.6531044244766235, 8],
+        [12, -0.07725682854652405, 5],
+        [14, -1.6480538845062256, 5]
+      ],
+      []
+    ],
+    [
+      [
+        [12, -0.0324234813451767, 5],
+        [14, -1.6032191514968872, 5]
+      ],
+      []
+    ],
+    [
+      [
+        [1, -0.7350385189056396, 8],
+        [12, 0.012408844195306301, 5],
+        [14, -1.5583878755569458, 5]
+      ],
+      []
+    ],
+    [
+      [
+        [12, 0.05724376067519188, 5],
+        [14, -1.513553261756897, 5],
+        [1, -0.8707090616226196, 4]
+      ],
+      [[13, -2.8935339888456193, 46]]
+    ],
+    [
+      [
+        [12, 0.10207730531692505, 5],
+        [14, -1.4687186479568481, 5],
+        [1, -0.9409562349319458, 4]
+      ],
+      []
+    ],
+    [
+      [
+        [12, 0.24068641662597656, 14],
+        [14, -1.423885703086853, 5],
+        [1, -1.0235003232955933, 4]
+      ],
+      []
+    ],
+    [
+      [
+        [12, 0.19174301624298096, 5],
+        [14, -1.3790532350540161, 5]
+      ],
+      []
+    ],
+    [
+      [
+        [14, -1.2458289861679077, 13],
+        [1, -1.1036717891693115, 8]
+      ],
+      []
+    ],
+    [
+      [
+        [16, -1.9197802543640137, 77],
+        [14, -1.2009955644607544, 13],
+        [12, 0.34922268986701965, 10],
+        [3, 0.3306557834148407, 7]
+      ],
+      [[2, 2.7297034190824583, 37]]
+    ],
+    [
+      [
+        [1, -1.3445899486541748, 8],
+        [12, 0.3262452483177185, 5],
+        [14, -1.244551658630371, 5]
+      ],
+      [
+        [17, 2.5532191528881683, 46],
+        [0, 2.2027488756832874, 15],
+        [15, 1.8533620937129114, 27]
+      ]
+    ],
+    [
+      [
+        [18, -0.16954047977924347, 119],
+        [16, -1.8855464458465576, 11],
+        [12, -2.5112698078155518, 5]
+      ],
+      [[15, 1.8546275119557505, 22]]
+    ],
+    [
+      [[14, -1.0318251848220825, 22]],
+      [
+        [19, 1.1945435481884186, 46],
+        [13, 2.5917612315358514, 29]
+      ]
+    ],
+    [
+      [
+        [3, -0.06447018682956696, 16],
+        [16, -1.880244493484497, 16]
+      ],
+      []
+    ],
+    [[], [[15, 1.8474479837382605, 25]]],
+    [[], []],
+    [
+      [
+        [18, -0.33337658643722534, 55],
+        [5, -0.676945686340332, 50],
+        [14, -0.8264303803443909, 36],
+        [1, -1.8950616121292114, 24],
+        [16, -1.6053059101104736, 9]
+      ],
+      []
+    ],
+    [
+      [
+        [3, -0.3967144787311554, 21],
+        [14, -0.9307184219360352, 5]
+      ],
+      [
+        [17, 2.88947041859348, 22],
+        [11, 2.2027488756832874, 26]
+      ]
+    ],
+    [
+      [
+        [15, -0.10783272981643677, 52],
+        [12, 0.8613508939743042, 69],
+        [14, -0.8858833312988281, 5]
+      ],
+      [[2, 2.471485722770928, 35]]
+    ],
+    [[], [[6, 2.814886138604178, 36]]],
+    [[[16, -1.6794955730438232, 33]], []],
+    [[], []],
+    [
+      [[7, -0.1976199895143509, 46]],
+      [
+        [13, 1.1199646564340209, 59],
+        [17, 3.1360546801107088, 15]
+      ]
+    ],
+    [
+      [
+        [12, 1.064240574836731, 41],
+        [16, -1.4724981784820557, 20]
+      ],
+      []
+    ],
+    [[[19, 0.11634144932031631, 18]], [[2, 2.445045579619752, 25]]],
+    [[[16, -1.201804518699646, 9]], []],
+    [[[18, -1.3845173120498657, 76]], []],
+    [[[12, 1.248661756515503, 46]], [[13, 2.1680431281253516, 28]]],
+    [[], []],
+    [
+      [
+        [14, 1.136214017868042, 129],
+        [5, 0.14698314666748047, 90],
+        [1, -0.41299882531166077, 52]
+      ],
+      []
+    ],
+    [[[15, 1.177610993385315, 60]], []],
+    [[], []],
+    [
+      [[16, -1.1414978504180908, 33]],
+      [
+        [6, 2.7851587519312373, 62],
+        [13, -2.7947540337629038, 24]
+      ]
+    ],
+    [[[19, 2.0713512897491455, 27]], []],
+    [[], []],
+    [[], []],
+    [
+      [
+        [15, -1.077021837234497, 82],
+        [12, 1.6832791566848755, 107],
+        [1, -0.49649789929389954, 247]
+      ],
+      [[2, 2.2968596930119665, 44]]
+    ],
+    [[], [[13, -3.1061633944760705, 11]]],
+    [[[0, -2.482783794403076, 26]], []],
+    [[[15, -1.3589309453964233, 42]], [[13, -3.0164963902879873, 23]]],
+    [
+      [
+        [19, -0.7912214994430542, 21],
+        [15, -0.6145936846733093, 252],
+        [5, 0.14698314666748047, 55]
+      ],
+      []
+    ],
+    [[], []],
+    [[], []],
+    [[[14, 0.4119221270084381, 70]], []],
+    [[[16, -0.6364595293998718, 44]], [[6, 2.757181785033263, 63]]],
+    [[[18, 0.9417750835418701, 127]], [[2, 1.9430596899480397, 25]]],
+    [[[12, -0.9366716146469116, 36]], []],
+    [[], []],
+    [
+      [
+        [13, -1.3454582691192627, 205],
+        [0, -3.0741138458251953, 40]
+      ],
+      []
+    ],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [[], []],
+    [
+      [
+        [13, 1.092115879058838, 70],
+        [5, -0.8254372477531433, 70]
+      ],
+      []
+    ],
+    [[], []],
+    [[], []],
+    [[[19, -0.10141750425100327, 192]], []],
+    [[], []],
+    [[], []]
+  ],
+  "case_id": "v69-vs-exp34-seed6",
+  "expected_end_step": 103,
+  "expected_rewards": [1, -1],
+  "float_abs_tolerance": 1e-9,
+  "frames": [
+    {
+      "done": false,
+      "fleet_count": 0,
+      "fleets_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "planet_count": 20,
+      "planets_sha256": "49cae2e00655ac3f4228ce9d87bff87e9c53f1bac6773cd823014eed53c5e659",
+      "rewards": [0, 0],
+      "state_hash": "3dac40cc12a388e93039097aef258b03d13d7599a077607871e4a814f0377811",
+      "step": 0
+    },
+    {
+      "done": false,
+      "fleet_count": 0,
+      "fleets_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "planet_count": 20,
+      "planets_sha256": "7c26d98ffda4f9b2a723f87f399307d94f712c4b7f39e3c6aef91a8a088100a2",
+      "rewards": [0, 0],
+      "state_hash": "9b2f6386bfb41b5204b56f6c6dea54bcd489d8207043dec15583eac62857c4c0",
+      "step": 1
+    },
+    {
+      "done": false,
+      "fleet_count": 0,
+      "fleets_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "planet_count": 20,
+      "planets_sha256": "0cc1b888d0e5ed865819e2af1c3b90caa5f1375be3abf148521b3d7167771ec5",
+      "rewards": [0, 0],
+      "state_hash": "da418dee4ab0be194367de12b0e44c3cd7f76168c765a4160f8d15ec76aaf1c6",
+      "step": 2
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "4a70471efbfa26c7c14b1db79c90d85d2020d1f98a10b13b4636259a8af3bd43",
+      "planet_count": 20,
+      "planets_sha256": "08940b8f59ffde6310511620a9e349fbac67f4940e2755f7c4bfeecc69ae5e34",
+      "rewards": [0, 0],
+      "state_hash": "e5d12963edcafe4da7d0bcc20bf3198b3e0e5cfa67a49de884af3e331195d4ff",
+      "step": 3
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "2053634ac5eadd9b032bfac35725c83863494bc3d3cd3ebbb372136cc5a68da3",
+      "planet_count": 20,
+      "planets_sha256": "2f391897d9135916d50838a300b69a1d11b10d4d996df6bb616b1300d2efa8db",
+      "rewards": [0, 0],
+      "state_hash": "fe1a091b8c27990383959fd998ed5d542121b36d97fadb570f2c08664d974659",
+      "step": 4
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "56de8a25d86fa514b3de57f75f9528daaad68135d8368529c60b0b2ec6134fe9",
+      "planet_count": 20,
+      "planets_sha256": "378fbb9ec387d524e7381fbf9cf0d961201277698dec0dc6d02354eb78230393",
+      "rewards": [0, 0],
+      "state_hash": "658e04693c940c04d49552219ac7c0b2c0f557ea1175e070759fd96f65ab20ac",
+      "step": 5
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "15d1b90972cc9e3d6dda04b85186d34f43aed77865456e0dd4656503e5df70d2",
+      "planet_count": 20,
+      "planets_sha256": "b29098849f6548b9957b44e3a63427b89dc627feef8e2e6997e81c0b22209b27",
+      "rewards": [0, 0],
+      "state_hash": "3eaccfd40ec6bef498683690dae0364c4e055b57c92956a0d05d50cf8c58f3de",
+      "step": 6
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "d798015b5347a0cae87b631dc3115171c163f715e7cb6f8df4e77af970142a85",
+      "planet_count": 20,
+      "planets_sha256": "bfdfd45f09f62546aabd861f83ad50308475c51c39567cb29ef3341c7e6bafdb",
+      "rewards": [0, 0],
+      "state_hash": "5d38abc67970cd7f96748faec606f9cffb09597bdaf22a54a35dfe14460a269e",
+      "step": 7
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "9153025e0d5a2828ee1ea2b6e503500163b5e376651dfe12e392325b55fbf5d2",
+      "planet_count": 20,
+      "planets_sha256": "888a2235eb1e59959242cc3da3055567d09d8bf04edefce49363bc28391d1580",
+      "rewards": [0, 0],
+      "state_hash": "ae4fa4b10baa6c7f82c411a30e22ef89c6b98257f4e692f41a575449d7d3aae5",
+      "step": 8
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "df07dec6cc625a3b3a47f3fddd20e6ba53dbe579bcf7281ec7e2d37ed4ed9442",
+      "planet_count": 20,
+      "planets_sha256": "fc9b04bda41fffb67cd34e5f47eda2a6e8e4db9c2c78a07b9c0a0d90a1071421",
+      "rewards": [0, 0],
+      "state_hash": "5a6418292744bace976cdd4055dbc17f81280321db1e79255ab416afe13725df",
+      "step": 9
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "6dc158e77bc0deea554d699e0187afebdba1fd425fdabd2b6f0ffbec18676501",
+      "planet_count": 20,
+      "planets_sha256": "3d2752ed6134b4cd4fedd7f2f59d8fac76f4cf904dbf10a990d8faee3bfdb100",
+      "rewards": [0, 0],
+      "state_hash": "a43d7f2542d2dcb59f3ca90ed228869a97312e5718024cfffe61f6631a64c943",
+      "step": 10
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "3066b5c76e12c11a5099f1a089a3ca44b645d91f3cf83611d96b8d87b23fdae2",
+      "planet_count": 20,
+      "planets_sha256": "208df56df84638d7a75a420385f5f8187b77c1dabba99010426f8f8c6defafce",
+      "rewards": [0, 0],
+      "state_hash": "40d03ed4696848b4244ded93d0f780bfb5109fa680e9a9dfb45908e923dc8e02",
+      "step": 11
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "f7e9b088e79ad360593a86f1d7e03e834d5790e7541e47b2140069a09c7184a8",
+      "planet_count": 20,
+      "planets_sha256": "4b90ed64fc4c003c54ab445a717e047e8690b4b5635fea4b2aa8880e0eec6f80",
+      "rewards": [0, 0],
+      "state_hash": "c4334cbdc2e9c5c3503efb6dd43ac9532c5a0d98e56c16a384b63f596f1535cc",
+      "step": 12
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "9aaab60679844d0a003b8a6a2c36306200daa2d0d3c34811b4ab8ad5c405b06f",
+      "planet_count": 20,
+      "planets_sha256": "b786dc2e238f44d66a4df2208139c6e1412af44b9fa0d9fc3564c1a5cec757b6",
+      "rewards": [0, 0],
+      "state_hash": "329a2567d6021e31b1b69ea2997bada7c5d3ba74ee367750524e49ec49058882",
+      "step": 13
+    },
+    {
+      "done": false,
+      "fleet_count": 2,
+      "fleets_sha256": "c7b02f53d6c34ab7f25214dbcd785c04662c32ba1e705e1ed5f0cea0608951c2",
+      "planet_count": 20,
+      "planets_sha256": "58bc21ef8432405a36e075a6433bcd5c9c5211a584f704b9500352378d66afde",
+      "rewards": [0, 0],
+      "state_hash": "6fe1776658a5d067d1419add0f2a85f789c7e8d477f6e509110d972f343cb299",
+      "step": 14
+    },
+    {
+      "done": false,
+      "fleet_count": 3,
+      "fleets_sha256": "04095309d0329a46e6fab767fbd039237ad8179b2460cdf2bc7079f93e241880",
+      "planet_count": 20,
+      "planets_sha256": "89e24b70c2ba66278281ddb75ab6037776fdf6f621afc01f04d8f6380b7ea94f",
+      "rewards": [0, 0],
+      "state_hash": "e438e6a643dc4947bdaf3ed4aca7fd50fdeddf29cca5e41227f9377c4ee5ee32",
+      "step": 15
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "f38a076d2f0e01b726b815616d037462e40802d3dde6e15da9f4813f052d857e",
+      "planet_count": 20,
+      "planets_sha256": "38c30acb853271a7c4fd6ff23268abe384e753d43ffacb5f1acfe23900a5d3c2",
+      "rewards": [0, 0],
+      "state_hash": "a11bc6accd2d4fd96f2610cfdcdc64ec6f5b3e5eebb547fe296b3e392c5200f5",
+      "step": 16
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "7a7dbd3731596bfb6cbc8eba5eaeef069254dde8f63086c771cb1cfb7e5a62b1",
+      "planet_count": 20,
+      "planets_sha256": "692cb94e59a4863305f705f6bdd6427270fa0e54e1a0785f4499808eb3f634de",
+      "rewards": [0, 0],
+      "state_hash": "6e068208c30a63387105a964ad04a4cab0cfbb1781123fa9b650e033f335b0d9",
+      "step": 17
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "d802104e166b2282201a32c80ebfaeca1a21cbd736a2895d1c8365f884f70ee8",
+      "planet_count": 20,
+      "planets_sha256": "af78cee6055f767bb011f7760f23bbdea074491c3c3cb0ed84cbabac64f10744",
+      "rewards": [0, 0],
+      "state_hash": "89f7cc08398f1945bd6117e2b0f453426ad8da7a9819a0bd9626a34cbb4c1050",
+      "step": 18
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "ec24323229578aa8ad38b9c0f9cbeb0c30671b7a5aa48150731e30c046cfab3c",
+      "planet_count": 20,
+      "planets_sha256": "6caafc2bba5630eb336399591c2ad29ef0d12e1c32af70ac63124d18326ddd03",
+      "rewards": [0, 0],
+      "state_hash": "5bfe2a6b574f144416049654d578780e5aaf5fd7c136fe3fec2083a1608ad20d",
+      "step": 19
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "0a76acf8689207c960d48302f55fa85f474a9c31b1a9cf0d3538ccaecfc70d6f",
+      "planet_count": 20,
+      "planets_sha256": "349998cc518ff70dd1db74def03218b48e89c51b4fd761b51557f2c5532cdcea",
+      "rewards": [0, 0],
+      "state_hash": "2df252d5682063a09dd8af3b9d295be9779b988de1cae96772549d0597ab99d2",
+      "step": 20
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "85ef0c1b5ac8f8aca8b7e91fe75e202419c4f874478de4ae0f7c50f02ad0124e",
+      "planet_count": 20,
+      "planets_sha256": "6aff4c2a82a24232983b03bcf20091ca78ad5d61f447c0fb249b6ed243e224c5",
+      "rewards": [0, 0],
+      "state_hash": "9aa1958162d0c8e6d1a896b8c1b8002a2b1f2de07bd9296c833c0c52ae874801",
+      "step": 21
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "5ce6db30ba5e68b7db5996856e2ab58931aeb6280dc6a3d6dc0009c738a53383",
+      "planet_count": 20,
+      "planets_sha256": "8931defd1bd24ffc6943c1544334333afe19e3ee9adf3ad1540d746ffcb47912",
+      "rewards": [0, 0],
+      "state_hash": "639417149796608ba5eb848ed3c9caf8b3ee08658f4b25e2389e3fa2d522814f",
+      "step": 22
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "3e74819cacfa243cbfaa86eca069895ef864c4035399cb3d804a39b7bebacce5",
+      "planet_count": 20,
+      "planets_sha256": "55476f3cc0722a1f5373c49d30b896ae6042b28d03ac3eeaf55ed2435d1b6701",
+      "rewards": [0, 0],
+      "state_hash": "7b552b334035b15875187e041f16a7eab0cdb647cfa668ed5371ed84c6dd0d17",
+      "step": 23
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "36d4bfa6f030f7ae921762c6d62907d6d945b4546185aee65ea887d809440739",
+      "planet_count": 20,
+      "planets_sha256": "48b1f5c7ba94a596340afcd29096595b312920bf1ba4e00f175757967868e39c",
+      "rewards": [0, 0],
+      "state_hash": "112e3c568d4795d385439fa2dacab898e245580916eb51bed48fdf6422d7c854",
+      "step": 24
+    },
+    {
+      "done": false,
+      "fleet_count": 3,
+      "fleets_sha256": "8b46cca810cadb9e9f72a0cb8c17ab3697d893e00438ac4a2fdb79c43cd27645",
+      "planet_count": 20,
+      "planets_sha256": "065198e823068605ccbd0970cc6f76fc8b577bc188b7dac8122bccda3f20a69c",
+      "rewards": [0, 0],
+      "state_hash": "3b0caabcee7fc19808e605a5734712b6bdad38fbb318c455218a4c284f30b006",
+      "step": 25
+    },
+    {
+      "done": false,
+      "fleet_count": 3,
+      "fleets_sha256": "ddbba9e6e5e298982c35a6a6de1b54408b63c35c5f2474a77ccca5bc36308d50",
+      "planet_count": 20,
+      "planets_sha256": "7b99c79b6305dcb48b51552dc884d554506de5c38b46b57194f2eb5aeb7c32c7",
+      "rewards": [0, 0],
+      "state_hash": "b10f15f95befa8fb765b98ab0245fca596bcaecd2e6146cc4b5379359ff0d862",
+      "step": 26
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "6e4f275435e2ac9ed95c9ca655177a5399b404e171bd60c06906fe6ba6c1c519",
+      "planet_count": 20,
+      "planets_sha256": "5224d7d7aa2dc85a059d036ea8950090fc23f43a96cb1b1e0591519805952ed7",
+      "rewards": [0, 0],
+      "state_hash": "c09667dddec40d9f287f02a6e8d5e9c1c4445666e31eb612c2355f2da13ddaa0",
+      "step": 27
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "87addc4ec28c2eb0b301ed9ba77b5b843b377a2a39ba6c4cb03554ec84bf2cd0",
+      "planet_count": 20,
+      "planets_sha256": "70d9a15e1f13ae6e0c0eb3abd9565654014054c40195b7da97ae642b6b14c411",
+      "rewards": [0, 0],
+      "state_hash": "4835015d650baad8efe99e7a08d6739a451fbbc850b4d228793956f4674782f2",
+      "step": 28
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "9365f9b0755dc8b7cde016b7df4c7a183ee58ebabdeb57db7f1d26991899d9c8",
+      "planet_count": 20,
+      "planets_sha256": "6497b1eae0806110b3e435e33243bdd645b76b435886f4b7031c587aa30257d0",
+      "rewards": [0, 0],
+      "state_hash": "78352810b49e267afa217b97c656cf2d25e72344349e11c83b091c18dc3ffafa",
+      "step": 29
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "e90c0e48abc8010c829038f1aeea7fcc81651ec24c9334847e4efa29c5100417",
+      "planet_count": 20,
+      "planets_sha256": "79cf2c90fd188de1f4b1888bac493c2bbcd94a9d46c63be42b6e83c1a5bf5073",
+      "rewards": [0, 0],
+      "state_hash": "7ff24f123f9838a27b6a68d72c010dbebd1949fb5bc4345b49140dd3bdaac570",
+      "step": 30
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "9957d88df0b1e31dcbb1da71a1dd700aeba676499cdc6518f9497021ccdced7e",
+      "planet_count": 20,
+      "planets_sha256": "bd15f8e63cb70717c724f08823d017f14f20566a4daeb3c9e3d854ed88f832f8",
+      "rewards": [0, 0],
+      "state_hash": "e57417251e43f4e6c08e8a1aed92899c8894d6942187997cc2e79c879747bee5",
+      "step": 31
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "7097442140924efb2685092ac01fb95c27a73071f1e0ff955ce7f17dbae8df42",
+      "planet_count": 20,
+      "planets_sha256": "ffb08edbc290b7fae4a0bb690823597050345beffa88f1b0551c18163a6453d1",
+      "rewards": [0, 0],
+      "state_hash": "170baf7e43710827f3a66332ee52778c31c8a1db34a7b0ca1874b9f53eb3b5ec",
+      "step": 32
+    },
+    {
+      "done": false,
+      "fleet_count": 3,
+      "fleets_sha256": "52a0e010f2fbdef6fad066790d3deafaecaa59cefc917f09da37f77a1ec5dc60",
+      "planet_count": 20,
+      "planets_sha256": "5cbd5b284e403ec8030c86bb65bd3f94a52993315b75e15e33b0b2cc1adc9510",
+      "rewards": [0, 0],
+      "state_hash": "ae0b6bf4f75086ecc1a13caaecd9f45a06c8a92b4c3a433e555744718586c9c8",
+      "step": 33
+    },
+    {
+      "done": false,
+      "fleet_count": 3,
+      "fleets_sha256": "30696471b45172d352255f980ee2c3681740fb0485d4b8c39b76d389ccedd364",
+      "planet_count": 20,
+      "planets_sha256": "07fc7cb1b1c5d6a634279696b3a8d8647fb0018241586fd6cbb76682335428c5",
+      "rewards": [0, 0],
+      "state_hash": "8d9e15aeb5a88f78465d3934862132c8d040de35b9c3ac68863e1a850b0fe533",
+      "step": 34
+    },
+    {
+      "done": false,
+      "fleet_count": 5,
+      "fleets_sha256": "f387d9bae50204ee5a7a5890f9b6ea5ba67c510c9460344317abe09059abae4d",
+      "planet_count": 20,
+      "planets_sha256": "88d3ebdd1b41784424cf8f0ceed415910d1092cbf096da81cbfe88bc2df548c1",
+      "rewards": [0, 0],
+      "state_hash": "365de131192a8b13cbda013760dadd5850dc632a91b9bd6d62ff9a243867c5a1",
+      "step": 35
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "db51aab35144d2c8f989a63e570051f0b064ed5433dd433c289aefb049e107e3",
+      "planet_count": 20,
+      "planets_sha256": "80c71f9443f5124b342737783d7767c122151f2dee47ae3d2fae6874544dcd3c",
+      "rewards": [0, 0],
+      "state_hash": "fbed843f1345220bf9df69fac35847ee30cda3ec4de1b1fc9aaeec5a1e81a149",
+      "step": 36
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "87660cfb56f2eed1d37050db4a05df8ac25a130aded22601c6357e18f3c9575e",
+      "planet_count": 20,
+      "planets_sha256": "7fecf98ee1a74224385aea84b8643a04395b9f01ef5593340ccd918cea8038cf",
+      "rewards": [0, 0],
+      "state_hash": "039c1269bc6576e058eb2e9a74490bdbbf64e8e87511f5edf6d9ab3007ed92d6",
+      "step": 37
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "c0b799cb9c7739e98298a45ac329327ec128dd5528c4a7488c91c1ddaed5f18f",
+      "planet_count": 20,
+      "planets_sha256": "fc35c511d883c41035b9fc4589c3ad8d9d19069a479ffe8ee0f4d03deefc89a8",
+      "rewards": [0, 0],
+      "state_hash": "81d496201d4b819aa091e299f0f8462ba66d5596c2cf83faba39346144bfc73d",
+      "step": 38
+    },
+    {
+      "done": false,
+      "fleet_count": 6,
+      "fleets_sha256": "bed12a9135bbbbc2d7be368c9053163956314f200cbe5a74631d9a7c419bb977",
+      "planet_count": 20,
+      "planets_sha256": "87d92c184886b5b787885fb82a5eafa29e256cfaef8fb1ff77ea7fc27f5e2b49",
+      "rewards": [0, 0],
+      "state_hash": "34b14b48729976639edb2ea984d6d82ef2c6233c0fd079653021a7ff4ae8de36",
+      "step": 39
+    },
+    {
+      "done": false,
+      "fleet_count": 7,
+      "fleets_sha256": "3bea3c0fce87e77d2319973f639d4f3a87418e8654a76981f7525139d0b6aa29",
+      "planet_count": 20,
+      "planets_sha256": "7a08137796f492839ba82bcf711b4abe2d7583403b9b6d4034037d36934fa545",
+      "rewards": [0, 0],
+      "state_hash": "05f41a21b201aefdcdb5d1d118eea60023f44fc806870d1662397e824d2ec728",
+      "step": 40
+    },
+    {
+      "done": false,
+      "fleet_count": 8,
+      "fleets_sha256": "854c8d838f0cc339e4467542f3d2af61b793afb7de87e7692e6473f0cca4c094",
+      "planet_count": 20,
+      "planets_sha256": "aede875d289b0e1c65d4f61efc6ad3ac6915c6a10f6deaea571fd43b6816e2ae",
+      "rewards": [0, 0],
+      "state_hash": "d78c7501027239a5a33a5a3cecc6c1cd7c45b071e7b992859348988f918ed4bf",
+      "step": 41
+    },
+    {
+      "done": false,
+      "fleet_count": 10,
+      "fleets_sha256": "97a281466b3f4d784a45b9351153e41f05bfa0589f4cea14127bde17bf22fa66",
+      "planet_count": 20,
+      "planets_sha256": "f24ebcf1e188ffcc09110c16172163c011bdf00bbf265bb9695e3e9949960d45",
+      "rewards": [0, 0],
+      "state_hash": "bd6ae05cb269ccf94bcb8e6ab507e07bb5ea6a4c75df0d1ad8d397e005eec852",
+      "step": 42
+    },
+    {
+      "done": false,
+      "fleet_count": 12,
+      "fleets_sha256": "6a786a40cec4b1d57466c3e919bb6d2fb11d18f80afec9e27621391561b671bb",
+      "planet_count": 20,
+      "planets_sha256": "e3a73f5a42f6fd2ce1a8701c0780a20802678712c8cc0055efce323e9684c106",
+      "rewards": [0, 0],
+      "state_hash": "53b92816a0b2bc63e518d58924e83799481608d2e78c23f875e41a47a3f80e12",
+      "step": 43
+    },
+    {
+      "done": false,
+      "fleet_count": 13,
+      "fleets_sha256": "f0f8ad17ca680d731dd24b911942eaff5aec6b76dd180bd6df2a4e96de086f0c",
+      "planet_count": 20,
+      "planets_sha256": "d412553cefa805d59c936e413b8ef98735465d45d707fc53f5731402dbefa1b1",
+      "rewards": [0, 0],
+      "state_hash": "371e3a829f409e3def0400c9a60287495bc344960cda2f125141a5d15d4c9700",
+      "step": 44
+    },
+    {
+      "done": false,
+      "fleet_count": 15,
+      "fleets_sha256": "e9d1801a705efdc3ab7d4d686b7bc367a663dfa7d379ea0393483f47d61eb666",
+      "planet_count": 20,
+      "planets_sha256": "eff133a81c25750e1f9e09310deec64d7d976373d8184cc7a653260c4fd72435",
+      "rewards": [0, 0],
+      "state_hash": "2b6aac17a2f61b460602aaf92a5aecb065cd89a949643c174fa899e11794a636",
+      "step": 45
+    },
+    {
+      "done": false,
+      "fleet_count": 16,
+      "fleets_sha256": "08b8830c97c1f7cb0c1d8925dd52d4c58aaa878c7ca1af7d12f1f962c8376b39",
+      "planet_count": 20,
+      "planets_sha256": "4066037bba3b4c3ee214a97b91f910115a4a38edf925b41047df5c4addbd6916",
+      "rewards": [0, 0],
+      "state_hash": "a42defc6c127a843c9bcbdd64287b1dc22564158e1baa1cd461f510f42706698",
+      "step": 46
+    },
+    {
+      "done": false,
+      "fleet_count": 17,
+      "fleets_sha256": "2ac2d03c590c2fb8aac53a74c44cbda35bf64ce688701631b0291b8e3c4c4494",
+      "planet_count": 20,
+      "planets_sha256": "1c50a0ca118541e7e8e232271df3ad9f0a984539550ff5ef80e5b4c3f8e66707",
+      "rewards": [0, 0],
+      "state_hash": "2a6ec501fe177898bbb2a4567178ee1a17d1779081aaa461dc740acc753ed6d6",
+      "step": 47
+    },
+    {
+      "done": false,
+      "fleet_count": 18,
+      "fleets_sha256": "4ffae78c9cd94569929a98a8ea4817b862736457a03d0487aac4504e9ab28d99",
+      "planet_count": 20,
+      "planets_sha256": "f19bf42819b4304eec283ca5f1af8c4a68151ae17d962136a9b2bb71b5faf730",
+      "rewards": [0, 0],
+      "state_hash": "efc1ca820f20958a515424597b235835cc7650f5805fbdf158688b144d0108a0",
+      "step": 48
+    },
+    {
+      "done": false,
+      "fleet_count": 17,
+      "fleets_sha256": "7dfcf23d2d260df434138671884782f9d9a9030918d51cbbc5cd3cb988d872fc",
+      "planet_count": 20,
+      "planets_sha256": "9b9e21b22e6d032d971ccbb4acbb0c6e86a2aaea1cf9c87e3b74554b308c009d",
+      "rewards": [0, 0],
+      "state_hash": "6d0b77e9831d2109dd95f3f19d124c490386720aaad8947567bb1a551df9ef93",
+      "step": 49
+    },
+    {
+      "done": false,
+      "fleet_count": 16,
+      "fleets_sha256": "3dc62e4e2560bd7c4378323433c953d0bea418b2d422959d5e90e99136685bc2",
+      "planet_count": 24,
+      "planets_sha256": "888db0deea0e88ab95a2c456eeecc4a37cd57cd41a81fcd55fedde900a591a74",
+      "rewards": [0, 0],
+      "state_hash": "d57185f8aa2bb46aa5b464462aeff96567bf4b7d61e56055d43e57e3840a07e4",
+      "step": 50
+    },
+    {
+      "done": false,
+      "fleet_count": 15,
+      "fleets_sha256": "bacb288b7d7a38bb4bf19ed732f35cec7e81474e5d962398d27f18fe0f5c9fd8",
+      "planet_count": 24,
+      "planets_sha256": "66dea1701abe99a7feab36619c740611e3987e89267eecc2c41ea039c5ae7ccd",
+      "rewards": [0, 0],
+      "state_hash": "9aa533ede09e9614ee0fffa2ee9f2e551d97a4a749f828966c0f65c21908431d",
+      "step": 51
+    },
+    {
+      "done": false,
+      "fleet_count": 12,
+      "fleets_sha256": "ad020d74c72997a4cd102fdee700a420b53631391d739c9716ef4b8bcc662b84",
+      "planet_count": 24,
+      "planets_sha256": "fa5890e2c83e40326503b126e4ff0ff9c2c46bfc2eb8946352b4eef454a61d1e",
+      "rewards": [0, 0],
+      "state_hash": "c4da7be80e6cccc4e17e139c6eb3113f312a10550a580c34267636a1327447af",
+      "step": 52
+    },
+    {
+      "done": false,
+      "fleet_count": 16,
+      "fleets_sha256": "006e443c23170ca708243068123a58a9627052a1e2b01f8e2a64f6711093fa2f",
+      "planet_count": 24,
+      "planets_sha256": "f14352953269be170835f3de9b4696b327e7606780019b4b7f00ff6826331845",
+      "rewards": [0, 0],
+      "state_hash": "8b7999c4e2cbb21c677eb3d68abc4238998e21d8955b8db81d34923a1b47c75b",
+      "step": 53
+    },
+    {
+      "done": false,
+      "fleet_count": 17,
+      "fleets_sha256": "9be790af5a913b9b118b301fb621e210a7bd7455a336065fe683139c4a1fdb76",
+      "planet_count": 24,
+      "planets_sha256": "1ba5b51b7aafae92eafded2930cdd923d13723650496a411df8dedf205779886",
+      "rewards": [0, 0],
+      "state_hash": "c505fe53100ce7b6ca6e00aa8df2941705b2954ad30b8d8d0626c3c73388b700",
+      "step": 54
+    },
+    {
+      "done": false,
+      "fleet_count": 17,
+      "fleets_sha256": "979fbbb5742326150c46f67d95993c59937ea5ab7f9b01dc8aae7f2f81484ae4",
+      "planet_count": 24,
+      "planets_sha256": "ebfbf4a35e62aa3f22482f6501b5e7d93ca717471bec814df0959e5b17fa3622",
+      "rewards": [0, 0],
+      "state_hash": "c0188b31993dd2fd67c3989d95c044145a64610f439577aaed14b1abecfc78d5",
+      "step": 55
+    },
+    {
+      "done": false,
+      "fleet_count": 18,
+      "fleets_sha256": "3bd2c85342b9849dc04d2f4e5d612c994a8fb7bab20cdacf7605acf0170bf3be",
+      "planet_count": 24,
+      "planets_sha256": "11c5985097be9d5ad3a8d3123f760bb11fdb4101bdd7742f0fed8265b9525ab8",
+      "rewards": [0, 0],
+      "state_hash": "61e72b588c8d320e333f291bc66b8ce0fc4a675f565f5d37af5b3fc99140bd9f",
+      "step": 56
+    },
+    {
+      "done": false,
+      "fleet_count": 17,
+      "fleets_sha256": "2080fc0a3a07e14229a09c6cb077122fb71fdac234500b9cebe8faea80d90991",
+      "planet_count": 24,
+      "planets_sha256": "aba19560f097f341feb88b6b77c8e7768eca18618fd8cbd8305fd6ee2561995a",
+      "rewards": [0, 0],
+      "state_hash": "b419d2ac78e185038c424c76a817f356a12d2154167e1c53a246bf7e5ebc8a04",
+      "step": 57
+    },
+    {
+      "done": false,
+      "fleet_count": 16,
+      "fleets_sha256": "0f3fbf08881a8b50b90f845b77d6aa8b51dcf3f21907363a18f9c351727f3049",
+      "planet_count": 24,
+      "planets_sha256": "91e2aa3c4ad7bfacb02149ea349369bead0f73fe3f72f41b5a663f38623125bc",
+      "rewards": [0, 0],
+      "state_hash": "b7a6ed5223ced25776861d591b7cb6c6d96ea0e43f730eb1e6e4b9a48fb0401d",
+      "step": 58
+    },
+    {
+      "done": false,
+      "fleet_count": 14,
+      "fleets_sha256": "a2e6c0f97a8af3d26e95d0ce12b88a477bc9ca5a369cd92d77c2e451e6f0670c",
+      "planet_count": 24,
+      "planets_sha256": "9c1248fc81743962c884f07d9e5135a7acbb0d7901c8b991cea13fc93248bc68",
+      "rewards": [0, 0],
+      "state_hash": "e6dba72127ecb5a7a6f7c279eab40320f0a66da4a1253e1f7a662b2c6191b5b7",
+      "step": 59
+    },
+    {
+      "done": false,
+      "fleet_count": 17,
+      "fleets_sha256": "440669ecf8190da1b773c7c12b76b095e590f5050b36e5c640a402155a61822a",
+      "planet_count": 24,
+      "planets_sha256": "3c35631316dc73753fa1ab2415bf3482fa346913112fd1cbb2927b7d80197564",
+      "rewards": [0, 0],
+      "state_hash": "fc3f99384efc0d6b1723c641bd72701914bda4c86be58eaec1f8480115148c7d",
+      "step": 60
+    },
+    {
+      "done": false,
+      "fleet_count": 17,
+      "fleets_sha256": "cfc1f155287342d3c0abd7c7cdde025de3242f5662dc424670bb25d67822cdab",
+      "planet_count": 24,
+      "planets_sha256": "712de9b4117dd8048d6465cd7db6a34ad929715a5ca2f05d81c0f154c246d4ae",
+      "rewards": [0, 0],
+      "state_hash": "0b4676936b96fbf154ec90ae78531fee26e3fe621dfe67da5149de2fef8b3747",
+      "step": 61
+    },
+    {
+      "done": false,
+      "fleet_count": 19,
+      "fleets_sha256": "4a13efffbc1d9c2298305d844a86865d728692cfbd7daf5f63e8a2601802f3e2",
+      "planet_count": 24,
+      "planets_sha256": "c6c35d78ec72302f56356c8ccaa74df1cc0c93b5c37c54da57f2d1eedc088403",
+      "rewards": [0, 0],
+      "state_hash": "8be32e1bfc4c419a610b675eb96c23cbb3f50b75ad1063193a5d237b36530c82",
+      "step": 62
+    },
+    {
+      "done": false,
+      "fleet_count": 19,
+      "fleets_sha256": "02bf7c26ae5c61d9711954f7706eaf306ecaf178dc16757bf0c5b61cfa5325f3",
+      "planet_count": 24,
+      "planets_sha256": "7ba2e48279ce7c2c5afa0f76fb2fc4bd361a3e1a7cb3a28936d17d8b24be1b9f",
+      "rewards": [0, 0],
+      "state_hash": "c39d339eb993847ed1c72df7b2f01f1ed89c51b4d17b4063456dbddd54d6fd23",
+      "step": 63
+    },
+    {
+      "done": false,
+      "fleet_count": 19,
+      "fleets_sha256": "bce7cada3274d2aae20076948e68f754c7808cd326871cfe3102127184a198b1",
+      "planet_count": 24,
+      "planets_sha256": "c9cab2f3e0df11d2542044c99b0183cb7eaf49ba4543fd628aadb38f8dec5281",
+      "rewards": [0, 0],
+      "state_hash": "2210e06c8911abd9c88c737b1073c298792eaf594c00227daffc6f874a5abe88",
+      "step": 64
+    },
+    {
+      "done": false,
+      "fleet_count": 16,
+      "fleets_sha256": "016f5766c79755af6f78ed1f9df1fe7f0bb882fb8376922dec2440380656d1b2",
+      "planet_count": 24,
+      "planets_sha256": "09506e9e8372113d35150a501dc5e557a59152fca8768061ccd31520c1e716d3",
+      "rewards": [0, 0],
+      "state_hash": "e25be8b933c0df87d67a655793b6556b08f7ac51914991d0cfa54e7844d8b604",
+      "step": 65
+    },
+    {
+      "done": false,
+      "fleet_count": 17,
+      "fleets_sha256": "d011f3ae28efaba020b10ec28284d5a7e4fbc6e55e19e55d953d7067aca7bba0",
+      "planet_count": 24,
+      "planets_sha256": "1eb9e2b1ddc42532e11d45d4ba80883833ff4d7f21eacbd768a942c03ce00ce0",
+      "rewards": [0, 0],
+      "state_hash": "d09faf888d72cab2c6c09d0a5731b926a2ba546a76cb40464a9a3a29dc1fc74d",
+      "step": 66
+    },
+    {
+      "done": false,
+      "fleet_count": 14,
+      "fleets_sha256": "857a0539ef6d6e8ca0d0100e3fb1037b074f188e3a52c97ca9b08fd3e08042bd",
+      "planet_count": 24,
+      "planets_sha256": "30ad115fdc0401edfe10b1f7cc046174d1ae50a7aea95d4b9125490a1addd09f",
+      "rewards": [0, 0],
+      "state_hash": "008869f16d73f6eb73cccedfdd4935c336fe4ba2f1c5528fb3c7dba5af373106",
+      "step": 67
+    },
+    {
+      "done": false,
+      "fleet_count": 15,
+      "fleets_sha256": "850778ed852a1b702378b793f31c4b22f9479219ce25ccf37f9c9e85b7be508e",
+      "planet_count": 24,
+      "planets_sha256": "c6673c501425170c144b47763d0d48bb858339269c91b1226cf62e231ec05fe1",
+      "rewards": [0, 0],
+      "state_hash": "bbdc4e8e493c995f99dae97dea94778997ca65504c3454b293f55a14bf3ecdaa",
+      "step": 68
+    },
+    {
+      "done": false,
+      "fleet_count": 11,
+      "fleets_sha256": "638b5b1b833c96f5b4a3753e6a3a2fa9d2b1d935c97c344296abb218510a6a2a",
+      "planet_count": 24,
+      "planets_sha256": "2dc604644e40262090464da625c2fcf535c03887b8a57e724af2316708b90256",
+      "rewards": [0, 0],
+      "state_hash": "5993608f95ab900497666ebaaeb3d8c3b6dea113682ce6f4fb10ba2e475e0c7f",
+      "step": 69
+    },
+    {
+      "done": false,
+      "fleet_count": 10,
+      "fleets_sha256": "daa147eba25f4e866ae8550009f420d6d9ce0e4335a7116b0dbdb919019f6b8c",
+      "planet_count": 24,
+      "planets_sha256": "5c48678ff9b5b9db2e2cf34594dfdd6797d3b08992ab05e6987d6691ee991837",
+      "rewards": [0, 0],
+      "state_hash": "8ca8a71761f241fb5cae6ecac97a43e73e25fbf320a4608bbf84cb612219fb61",
+      "step": 70
+    },
+    {
+      "done": false,
+      "fleet_count": 11,
+      "fleets_sha256": "0483046e29eb21c4c466e78691be2fff16a1d724454e8f487c7cbd05c4e6d958",
+      "planet_count": 24,
+      "planets_sha256": "5daf6d9d8fbe701344e21f85279374ef70debbef8451818e062b6f33e238e987",
+      "rewards": [0, 0],
+      "state_hash": "57c7e9881d3d37c25048faa8b6b9e91e48186bc336eaa34fa1c4766e5b3289c1",
+      "step": 71
+    },
+    {
+      "done": false,
+      "fleet_count": 11,
+      "fleets_sha256": "97ff081fd3d958d542302fa85af04dedb2c025eb780fbbb6043d4ba03d2caab5",
+      "planet_count": 24,
+      "planets_sha256": "50e680ed5c11ea124d397758b269af6bff7b1589f82a604995dbcfe67b8c024c",
+      "rewards": [0, 0],
+      "state_hash": "549e2ac28cf7647ecde0423d1f5159a13720136a176c25e971479c64e2ca9bad",
+      "step": 72
+    },
+    {
+      "done": false,
+      "fleet_count": 13,
+      "fleets_sha256": "07ff3eb182a421218d1eceb11dce671f9487dab95445972ae292793fe74c78a7",
+      "planet_count": 24,
+      "planets_sha256": "179c56a1aea40fa339d075a60ea9974ab3c9409ceff5787daa00e4ef29254225",
+      "rewards": [0, 0],
+      "state_hash": "1ceed236a20653afa806524b32b53513c898099ecf028bf1f9612c8f30716a6b",
+      "step": 73
+    },
+    {
+      "done": false,
+      "fleet_count": 12,
+      "fleets_sha256": "56d3365cb1c0a2baef980b9ab6933a93cba97570e260b65158b448db55e261ec",
+      "planet_count": 24,
+      "planets_sha256": "73ac8535ce7687d9bfd27e17693a29938e1c82207b28cd8d0e5c637933ec77bd",
+      "rewards": [0, 0],
+      "state_hash": "68b5019d0163b50b578f61233d01559abba1fece743f58be3cd9c61e590a4ed7",
+      "step": 74
+    },
+    {
+      "done": false,
+      "fleet_count": 11,
+      "fleets_sha256": "94ec62f8585ff19e764ccb7246265b4ad8b43eeb33dde4680def62c841a8a713",
+      "planet_count": 24,
+      "planets_sha256": "10fb738af00fb778533a17a2feef21c0c982e6afc5da378545b0b7a6a1f3f9e6",
+      "rewards": [0, 0],
+      "state_hash": "85ab341f1e8509469a4fed2966bc6b56e00d0237d2b26958ad2b0b5261f84f73",
+      "step": 75
+    },
+    {
+      "done": false,
+      "fleet_count": 12,
+      "fleets_sha256": "fe5d5094af0096686fea7f267a7a8e106bb85dcf0a218462fcc919ed6500808c",
+      "planet_count": 24,
+      "planets_sha256": "7c85bef50eda71ebf7b82e83a7a655ce67991c85b903be5f55305ff5950d8abd",
+      "rewards": [0, 0],
+      "state_hash": "2684704a84e6407c90ef106d274ae360a949af3f0806bcfe6816bacf49b3cb00",
+      "step": 76
+    },
+    {
+      "done": false,
+      "fleet_count": 13,
+      "fleets_sha256": "a5b61d8f9c4e0475332911294ff21679d9a2f8f9f3ff3c1bbe0df5648d5a357f",
+      "planet_count": 24,
+      "planets_sha256": "5b97e5764ee36dbc5ed5ed836e43ec4b33d13ed8e81e2b2d5e1ccd35a87e8e13",
+      "rewards": [0, 0],
+      "state_hash": "3cfa3eacb25ed1a19173640a2d6f249bb71da49baed9f46db68887e0e04f6ca0",
+      "step": 77
+    },
+    {
+      "done": false,
+      "fleet_count": 11,
+      "fleets_sha256": "e435a0a8f796f51c1c9eb06f12524fec9d84ad76d4c2121543b6cc614c2cb295",
+      "planet_count": 24,
+      "planets_sha256": "14f2ca889fa547853c263cdc564080f8f87919f2a5a2b83b8c480bd571563b72",
+      "rewards": [0, 0],
+      "state_hash": "db8ef189c212d8bc4bcac121e2f52b0583266a734277dff5e139056845680c9c",
+      "step": 78
+    },
+    {
+      "done": false,
+      "fleet_count": 6,
+      "fleets_sha256": "1daf193314bce9a80dd8c2d7b10c0584ff6932cf260a6aff179579baf856667b",
+      "planet_count": 24,
+      "planets_sha256": "1be81c7accd71f1b4dad8230103bb37a03cc07a05e727b3b77a1a2bd1d4a9860",
+      "rewards": [0, 0],
+      "state_hash": "a971bc005231b03999f7dd950baa35885eb95c84b01410ca530a589b96a2ec1a",
+      "step": 79
+    },
+    {
+      "done": false,
+      "fleet_count": 7,
+      "fleets_sha256": "b5676f93ff3c98717fc17815ad34b1f7713071882282fa4d2aac1f68a653554c",
+      "planet_count": 24,
+      "planets_sha256": "a0d80fe688712763966a4f60ac7a5fa69b3eef5d2fbd384ab0db45a8f46f0ae1",
+      "rewards": [0, 0],
+      "state_hash": "d529cdce3793bddc16216bbedd7caaf0552fd2d2b023357587cf9a3f771c2dd9",
+      "step": 80
+    },
+    {
+      "done": false,
+      "fleet_count": 7,
+      "fleets_sha256": "f82fb463d395c5daf180f35d1cf3b36177c012071c1b75d6d8cf97c2487cc5f3",
+      "planet_count": 24,
+      "planets_sha256": "c8d6acd86fb74933c14289e66af7dd8109c97841bfaadc17aa2c55b8e58f36c2",
+      "rewards": [0, 0],
+      "state_hash": "3c87f226b17221cce7b4fc54e4c4451e0a4b5773df2a503487e31bf14cf5990f",
+      "step": 81
+    },
+    {
+      "done": false,
+      "fleet_count": 8,
+      "fleets_sha256": "54bed5dff802a1d7ddd2675fd5f3c67ecfb036e6411871b9d4cc579fe45ebd45",
+      "planet_count": 20,
+      "planets_sha256": "c019804f80fdb47de9f280c897f9233973e83f0308383b360f47c4a1a7b2ab25",
+      "rewards": [0, 0],
+      "state_hash": "b6ccac00ff4a9bd9196a9d1aff16d8016ec56e00c8f42af371197b9e7923c98f",
+      "step": 82
+    },
+    {
+      "done": false,
+      "fleet_count": 8,
+      "fleets_sha256": "f6566d16178d5b3dd05ad3b14340151ed6c2141f63120d8c2799574cc51a3068",
+      "planet_count": 20,
+      "planets_sha256": "57806e3efe1470eeff500942c78b37c35aeabc8d4d9262c2e7f61f87cf8eea12",
+      "rewards": [0, 0],
+      "state_hash": "6635cc8cd1c0be2779d5104c0bb451457ed3d6794f2b48e01334d8e5b463a422",
+      "step": 83
+    },
+    {
+      "done": false,
+      "fleet_count": 11,
+      "fleets_sha256": "97915572b65316fab0f7b95ef76b10e189434c2a15fdf1242c79bfbcb6540c87",
+      "planet_count": 20,
+      "planets_sha256": "276993eb7f9878ec74d2de72bc4bbd551344c267ae9f369ff0ebf1038df0687e",
+      "rewards": [0, 0],
+      "state_hash": "f32e96a953a6657afb4de19fea8a4cc68a0dfe40ab5dd318edd385c61da3e6b1",
+      "step": 84
+    },
+    {
+      "done": false,
+      "fleet_count": 9,
+      "fleets_sha256": "42cd19327a7cf7a6964036c1f86bd4ec4e584a8b59fe60f4c25edf889535c8e3",
+      "planet_count": 20,
+      "planets_sha256": "ec4fddd658b9f045af5436fdd02b44d42aac29151e0ddda7297fee855ad0757f",
+      "rewards": [0, 0],
+      "state_hash": "04a80efb860ae4fd4949bbdda7558c5f7d5adc1da9ab1db1e260fff40f2f6bb3",
+      "step": 85
+    },
+    {
+      "done": false,
+      "fleet_count": 9,
+      "fleets_sha256": "55ba0e4e086a2e0239293e7bf57422d92c83ea5bb326b4b77485077a872c0ab7",
+      "planet_count": 20,
+      "planets_sha256": "c9b478a1739d3ff3f7cde3c4f9442c1b144267a3df89040fe121e3feb1aa0ec0",
+      "rewards": [0, 0],
+      "state_hash": "b0d44ab463f89419ef3e142d6e49e79b1abfc826c897158206c9c6efd4787b49",
+      "step": 86
+    },
+    {
+      "done": false,
+      "fleet_count": 8,
+      "fleets_sha256": "1fd574efa040c827cd7e1fc1b6f7555102cfba4bec51b2295c323dd129d224a9",
+      "planet_count": 20,
+      "planets_sha256": "46f93518bd5f636dd5b922bc298296dc752eec7ac3ee8654c74f2c0a7437636d",
+      "rewards": [0, 0],
+      "state_hash": "458166c9521b73d2d55c55c3ee47bfbe958595b9abb118e1355b1639245857f5",
+      "step": 87
+    },
+    {
+      "done": false,
+      "fleet_count": 7,
+      "fleets_sha256": "9352653d90c218c31aa62588fb096fd5066769813542cfdcb1a76813c5098e66",
+      "planet_count": 20,
+      "planets_sha256": "2d25f5940ccc50873b78f9ef2f87cae328ae7bdc411aca5b83cca6e93cab4639",
+      "rewards": [0, 0],
+      "state_hash": "1318bef74e0fdf5c930e4c0db29e0a89f96278bc9a004241f2a98b4fd634faea",
+      "step": 88
+    },
+    {
+      "done": false,
+      "fleet_count": 8,
+      "fleets_sha256": "bd3bf6923f3532bda001f90db25dd67d741099de57238122e9db7484d620369a",
+      "planet_count": 20,
+      "planets_sha256": "8c0a787937c606316aec7d7206038c32f173217e47d7f7d00a42c96cb14ad6fc",
+      "rewards": [0, 0],
+      "state_hash": "0689462afc7a973e99df454f5938847a7661870efc21c4bf6a31bf5144487955",
+      "step": 89
+    },
+    {
+      "done": false,
+      "fleet_count": 7,
+      "fleets_sha256": "55bdb7efd69963e0c82e25aa8c0740fbaf98ba29ae3bdf92b8cd6d9a2ac2f616",
+      "planet_count": 20,
+      "planets_sha256": "7717e2f534b02b99e32dd24bc1110efab52cfb60612e3df07d55d0ae528edf5e",
+      "rewards": [0, 0],
+      "state_hash": "5fb9bb7855f53241482e237a4e415febbc3df8029f86b0a28d6def07abbd6ea2",
+      "step": 90
+    },
+    {
+      "done": false,
+      "fleet_count": 5,
+      "fleets_sha256": "b4928c7b7e20ccd6e01af4884937e4c22fa7eb1fa1a42f253b41c86f8b0c238b",
+      "planet_count": 20,
+      "planets_sha256": "b294ca93442cc802bba17e1871feef2ce74babcd2acdaa73083f83c8543cde0a",
+      "rewards": [0, 0],
+      "state_hash": "bf1e04cbce227730ebe467112abf7b6935400113b5561bd92778ec2d205c9053",
+      "step": 91
+    },
+    {
+      "done": false,
+      "fleet_count": 6,
+      "fleets_sha256": "f9535931799a2c592e099dc02a2678378b6a33c9efa4f092d614207d460bd6d8",
+      "planet_count": 20,
+      "planets_sha256": "1f048232decf8a91c6e107459d3d4678246aa8c08a5f3ef659d0eab5710d8100",
+      "rewards": [0, 0],
+      "state_hash": "c4946409636dd106337d88925f9ae4b0fac6b91ca17978546a8f1c510be16a88",
+      "step": 92
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "4719d3d0fec475e21705122e3c711e72dd460769b8feda3ac99566cd386f74b4",
+      "planet_count": 20,
+      "planets_sha256": "9de1c7d294b74666a87f601b74df0d68f803203ce345e5f815fa751a0c755e46",
+      "rewards": [0, 0],
+      "state_hash": "8f7855faa3d5b6c492dbc287d4b84ada26d348ded4fb05770a56b63b8b8c47cb",
+      "step": 93
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "f2785a9fc0a4c165fb06558005bdd8b4799c47a301263f3fb0d96fb2a5051ffc",
+      "planet_count": 20,
+      "planets_sha256": "de15be3427c00f7821c0c226a289339de9f7722afe32b308c781c642c42298a8",
+      "rewards": [0, 0],
+      "state_hash": "03bcb37655f522decb677a7186195fe1dc065e538b3fc6c26e92b416dfa2aed2",
+      "step": 94
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "cfc93f1e74ea0f961cc3c87b29fc1fab630a773963ea8bce9ad52088e98a5623",
+      "planet_count": 20,
+      "planets_sha256": "df9fae4472a71b162d486dbbe418419d48ad39cafbd3897d4c41747a46d4cf35",
+      "rewards": [0, 0],
+      "state_hash": "62178f04a336afc3c6d87c43edba3d8e27364827baae747b3a9020e6e227786c",
+      "step": 95
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "0c587eb9c1d351f756d2d3e9caafab5e361b3a0cf24bbd96bd51d81907bd6683",
+      "planet_count": 20,
+      "planets_sha256": "00984921c740fd596708918a0e8843efb0ff322f9c6d344c0051188c2786f657",
+      "rewards": [0, 0],
+      "state_hash": "d2c127ee38cbcfafb2d93031c40d611f36b3ed3fc848e759e08a4133458583c6",
+      "step": 96
+    },
+    {
+      "done": false,
+      "fleet_count": 1,
+      "fleets_sha256": "ba8b889628b5a7b69f36289d14dc7ec12bd9a1bddee7e1244cb845a8f70bc535",
+      "planet_count": 20,
+      "planets_sha256": "761416de24a20816ba42ac0a429a9506525e3a8dc1c20edee021dbaa8d60b9e8",
+      "rewards": [0, 0],
+      "state_hash": "9b76b2b655cbe96970be55b57f4d40eb2ab577b2a76b1be9d452738ce6c45b6e",
+      "step": 97
+    },
+    {
+      "done": false,
+      "fleet_count": 3,
+      "fleets_sha256": "fdbe4363cd0afea0ec14f435a8a0e715234fcec4676311b824bc6f26a38581c1",
+      "planet_count": 20,
+      "planets_sha256": "f2c5337b83e15c52f9b29a18b72fb6ee7cd1d8114c092e25ecdb5a2fc7507aa4",
+      "rewards": [0, 0],
+      "state_hash": "162d25c54fa466c8ddf8ee17374e40c101a19feee5df256e20ce8654a83054da",
+      "step": 98
+    },
+    {
+      "done": false,
+      "fleet_count": 3,
+      "fleets_sha256": "4f4ea4c47362136e1230d381dd4379b9eac093e01832fcde9c2e46f90f26da50",
+      "planet_count": 20,
+      "planets_sha256": "a60aa87423017132228eee1f6825b790c2fb9dd2972150f435e1a8f283119aeb",
+      "rewards": [0, 0],
+      "state_hash": "fae40baa961650b43e9cb728d816721992bf69d4cc38489344f6195af0e79d97",
+      "step": 99
+    },
+    {
+      "done": false,
+      "fleet_count": 3,
+      "fleets_sha256": "ae55de41bfb9dd9895448cd6f19e95c5f4e503a05d6fecf88b5525e19c4e5da5",
+      "planet_count": 20,
+      "planets_sha256": "d29d4175857b1d3ea4f54832f6c0f1d0c2fa165e9ceda6ff2309c086c96d39b3",
+      "rewards": [0, 0],
+      "state_hash": "dc60765afd773cfbdc3289c3fef8bfa11daf01122656a849e3c3dfb9a74d9193",
+      "step": 100
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "0ccbe32a99558180ab45c3c6d1186202b600582f3fa36ca5e2711556c03c6261",
+      "planet_count": 20,
+      "planets_sha256": "47846c6dc52087c3168ff52cb63bb9c0a39ad0608fc2a8873021cd94991a9c2e",
+      "rewards": [0, 0],
+      "state_hash": "7beee15e4f5910ef9df835b012541c292dbb8d02c0ba25290af384c3c5a82378",
+      "step": 101
+    },
+    {
+      "done": false,
+      "fleet_count": 4,
+      "fleets_sha256": "92bdcfbab07d73afc8dde08114beae72f3f1c127d3681dd055b369410583c9e4",
+      "planet_count": 20,
+      "planets_sha256": "0ef0bb240eff836bcb18c61d27990eaaaa762eef6433d010a3a89fde990c78c6",
+      "rewards": [0, 0],
+      "state_hash": "7537a4c9bced8252856b5177a17ef0037a1c5cb161a2ed207fbe7d70d4a9a4cb",
+      "step": 102
+    },
+    {
+      "done": true,
+      "fleet_count": 2,
+      "fleets_sha256": "51978c4e125c0dfac28df043478f573db6e24676cdcec266ab78f73d08deda13",
+      "planet_count": 20,
+      "planets_sha256": "55667f9a702b601f8d8c12dc9700f435e5845f348ba593805e4f43b57ca1bfe9",
+      "rewards": [1, -1],
+      "state_hash": "52d327ac7c74d7a44fc786c75816f6c20493ad2d29b08b61c5c5c2028d0b16d7",
+      "step": 103
+    }
+  ],
+  "generation_platform": {
+    "machine": "arm64",
+    "python": "3.11.5",
+    "system": "Darwin"
+  },
+  "oracle": {
+    "commit": "462efa26dd3d11018cde2b9e9ce9245b91cef471",
+    "distribution": "kaggle-environments 1.30.1"
+  },
+  "ruleset_id": "orbit-wars-2p-v1",
+  "schema_version": 1,
+  "seed": 6,
+  "source": {
+    "kind": "representative-v69-match",
+    "player_0": "submissions/producer/v69/main.py",
+    "player_1": "agents/pool/orbit_wars_exp34.py"
+  }
+}

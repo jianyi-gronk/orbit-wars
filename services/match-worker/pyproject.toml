@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orbit-wars-match-worker"
+version = "0.1.0"
+description = "Authoritative Orbit Wars match execution worker."
+requires-python = ">=3.11"
+dependencies = [
+  "orbit-wars-contracts==0.1.0",
+  "orbit-wars-engine==0.1.0",
+  "orbit-wars-runtime==0.1.0",
+]

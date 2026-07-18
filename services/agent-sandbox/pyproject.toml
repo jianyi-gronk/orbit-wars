@@ -1,0 +1,9 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orbit-wars-agent-sandbox"
+version = "0.1.0"
+description = "Protocol runner for isolated Orbit Wars agents."
+requires-python = ">=3.11"

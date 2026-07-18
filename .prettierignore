@@ -1,0 +1,8 @@
+.codex/
+.next/
+.venv/
+node_modules/
+smooth/
+pnpm-lock.yaml
+packages/contracts/schemas/*.json
+*.min.js

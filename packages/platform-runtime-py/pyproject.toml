@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orbit-wars-runtime"
+version = "0.1.0"
+description = "Shared runtime configuration and infrastructure probes."
+requires-python = ">=3.11"
+dependencies = [
+  "boto3==1.43.50",
+  "psycopg[binary]==3.3.4",
+  "redis==8.0.1",
+]
+
+[tool.setuptools.package-data]
+orbit_runtime = ["py.typed"]

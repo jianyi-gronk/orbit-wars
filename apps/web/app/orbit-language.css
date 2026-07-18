@@ -1,0 +1,460 @@
+.ow-preview {
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.ow-masthead {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(2.5rem, 0.22fr) minmax(0, 1fr) minmax(14rem, 0.38fr);
+  gap: var(--ow-layout-gap);
+  min-height: 92svh;
+  max-width: var(--ow-content-max);
+  margin: 0 auto;
+  padding: 2rem clamp(1.25rem, 4vw, 4rem) var(--ow-section-padding);
+  align-items: end;
+  isolation: isolate;
+}
+
+.ow-masthead::before {
+  position: absolute;
+  z-index: -2;
+  inset: 8% -12% 18% 42%;
+  border: 1px solid var(--ow-color-line);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgb(255 184 77 / 10%), transparent 2%),
+    repeating-radial-gradient(circle, transparent 0 12%, rgb(240 234 220 / 5%) 12.2% 12.4%);
+  content: "";
+  transform: rotate(-14deg) scaleY(0.58);
+}
+
+.ow-masthead::after {
+  position: absolute;
+  z-index: -3;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgb(240 234 220 / 55%) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgb(98 200 255 / 42%) 0 1px, transparent 1.5px);
+  background-position:
+    0 0,
+    3rem 5rem;
+  background-size:
+    9rem 11rem,
+    13rem 17rem;
+  content: "";
+  mask-image: linear-gradient(to bottom, black, transparent 76%);
+  opacity: 0.3;
+}
+
+.ow-masthead__rail {
+  display: flex;
+  height: 100%;
+  min-height: 28rem;
+  padding: 0.75rem 0;
+  border-left: 1px solid var(--ow-color-line-strong);
+  color: var(--ow-color-muted);
+  font: 0.68rem/1 var(--ow-font-mono);
+  letter-spacing: 0.16em;
+  writing-mode: vertical-rl;
+  justify-content: space-between;
+}
+
+.ow-masthead__rail span:first-child {
+  color: var(--ow-color-warning);
+}
+
+.ow-masthead__copy {
+  position: relative;
+  z-index: 2;
+  padding-bottom: 1rem;
+}
+
+.ow-kicker {
+  margin: 0 0 1.25rem;
+  color: var(--ow-color-warning);
+  font: 0.72rem/1.3 var(--ow-font-mono);
+  letter-spacing: 0.16em;
+}
+
+.ow-masthead h1 {
+  max-width: 9ch;
+  margin: 0;
+  font: 800 clamp(4.8rem, 12.2vw, 12rem) / 0.73 var(--ow-font-display);
+  letter-spacing: -0.075em;
+  text-transform: uppercase;
+}
+
+.ow-masthead h1 em {
+  color: transparent;
+  font-style: normal;
+  -webkit-text-stroke: 1px var(--ow-color-ink);
+}
+
+.ow-masthead__lede {
+  max-width: 37rem;
+  margin: 2.5rem 0 0 12%;
+  color: var(--ow-color-ink-dim);
+  font-size: clamp(1rem, 1.5vw, 1.35rem);
+  line-height: 1.55;
+}
+
+.ow-orbit-mark {
+  position: relative;
+  align-self: center;
+  width: min(26vw, 23rem);
+  aspect-ratio: 1;
+  margin-left: -22%;
+  border: 1px solid var(--ow-color-line-strong);
+  border-radius: 50%;
+}
+
+.ow-orbit-mark__axis {
+  position: absolute;
+  inset: 14%;
+  border: 1px dashed var(--ow-color-energy);
+  border-radius: 50%;
+}
+
+.ow-orbit-mark__axis::after {
+  position: absolute;
+  top: 42%;
+  right: -0.35rem;
+  width: 0.65rem;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--ow-color-energy);
+  box-shadow: 0 0 1rem var(--ow-color-energy);
+  content: "";
+}
+
+.ow-orbit-mark__core {
+  position: absolute;
+  inset: 42%;
+  border-radius: 50%;
+  background: var(--ow-color-warning);
+  box-shadow: 0 0 3rem rgb(255 184 77 / 42%);
+}
+
+.ow-feature-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 0.8fr 1fr;
+  gap: var(--ow-layout-gap);
+  max-width: var(--ow-content-max);
+  margin: 0 auto;
+  padding: var(--ow-section-padding) clamp(1.25rem, 4vw, 4rem);
+  border-top: 1px solid var(--ow-color-line);
+}
+
+.ow-feature {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--ow-feature-color);
+}
+
+.ow-feature[data-tone="signal"] {
+  --ow-feature-color: var(--ow-color-signal);
+}
+
+.ow-feature[data-tone="energy"] {
+  --ow-feature-color: var(--ow-color-energy);
+}
+
+.ow-feature[data-tone="warning"] {
+  --ow-feature-color: var(--ow-color-warning);
+}
+
+.ow-feature:nth-child(2) {
+  margin-top: 6rem;
+}
+
+.ow-feature__number {
+  margin: 0;
+  color: var(--ow-feature-color);
+  font: 0.75rem/1 var(--ow-font-mono);
+}
+
+.ow-feature h2 {
+  margin: 0 0 1rem;
+  font: 700 clamp(1.8rem, 3vw, 3.5rem) / 0.95 var(--ow-font-display);
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.ow-feature p:last-child {
+  max-width: 30rem;
+  margin: 0;
+  color: var(--ow-color-ink-dim);
+  line-height: 1.7;
+}
+
+.ow-preview__tactical {
+  padding: clamp(4rem, 9vw, 8rem) clamp(1rem, 3vw, 3rem);
+  background:
+    linear-gradient(rgb(98 200 255 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(98 200 255 / 4%) 1px, transparent 1px), var(--ow-color-deep);
+  background-size: 2rem 2rem;
+}
+
+.ow-preview__section-label {
+  display: flex;
+  max-width: 90rem;
+  margin: 0 auto 1.25rem;
+  color: var(--ow-color-muted);
+  font: 0.68rem/1 var(--ow-font-mono);
+  letter-spacing: 0.14em;
+  justify-content: space-between;
+}
+
+.ow-preview__section-label span {
+  color: var(--ow-color-energy);
+}
+
+.ow-tactical {
+  max-width: 90rem;
+  margin: 0 auto;
+  border: 1px solid var(--ow-color-line-strong);
+  background: rgb(7 9 12 / 92%);
+  box-shadow: 0 2rem 8rem rgb(0 0 0 / 48%);
+}
+
+.ow-tactical__topline,
+.ow-tactical__status {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--ow-layout-gap);
+  min-height: 3.25rem;
+  padding: 0.8rem 1rem;
+  align-items: center;
+}
+
+.ow-tactical__topline {
+  border-bottom: 1px solid var(--ow-color-line);
+  color: var(--ow-color-muted);
+  font: 0.68rem/1 var(--ow-font-mono);
+  letter-spacing: 0.14em;
+}
+
+.ow-tactical__topline p {
+  margin: 0;
+}
+
+.ow-tactical__topline strong {
+  color: var(--ow-color-ink);
+}
+
+.ow-battlefield {
+  position: relative;
+  min-height: clamp(22rem, 52vw, 44rem);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 50%, rgb(255 184 77 / 8%), transparent 13rem),
+    radial-gradient(circle at 20% 40%, rgb(98 200 255 / 5%), transparent 22rem);
+}
+
+.ow-battlefield::before {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 8rem;
+  aspect-ratio: 1;
+  border: 1px solid rgb(255 184 77 / 22%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ow-color-warning), transparent 64%);
+  content: "";
+  filter: blur(0.25rem);
+  transform: translate(-50%, -50%);
+}
+
+.ow-battlefield__scan {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  height: 15%;
+  border-bottom: 1px solid rgb(98 200 255 / 30%);
+  background: linear-gradient(to bottom, transparent, rgb(98 200 255 / 5%));
+  pointer-events: none;
+}
+
+.ow-planet {
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  width: clamp(3.5rem, 7vw, 6rem);
+  aspect-ratio: 1;
+  border: 2px solid currentcolor;
+  border-radius: 50%;
+  color: var(--ow-color-muted);
+  background: var(--ow-color-surface);
+  box-shadow: 0 0 2rem color-mix(in srgb, currentcolor 28%, transparent);
+  font: 700 0.8rem/1 var(--ow-font-mono);
+  place-items: center;
+}
+
+.ow-planet--aurora {
+  top: 60%;
+  left: 14%;
+  color: var(--ow-color-energy);
+}
+
+.ow-planet--cinder {
+  top: 38%;
+  right: 13%;
+  color: var(--ow-color-signal);
+  clip-path: polygon(50% 0, 100% 78%, 50% 100%, 0 78%);
+  border-radius: 0;
+}
+
+.ow-planet--neutral {
+  top: 18%;
+  left: 46%;
+  width: clamp(2.75rem, 5vw, 4rem);
+}
+
+.ow-battlefield__trajectory {
+  position: absolute;
+  z-index: 2;
+  inset: 12% 6%;
+  width: 88%;
+  height: 76%;
+  overflow: visible;
+}
+
+.ow-battlefield__trajectory path {
+  fill: none;
+  stroke: var(--ow-color-warning);
+  stroke-dasharray: 0.02 0.025;
+  stroke-width: 0.35;
+  vector-effect: non-scaling-stroke;
+}
+
+.ow-tactical__status {
+  grid-template-columns: 1fr auto 1fr;
+  border-top: 1px solid var(--ow-color-line);
+}
+
+.ow-faction-mark {
+  display: inline-flex;
+  gap: 0.75rem;
+  color: var(--ow-faction-color);
+  font: 0.68rem/1 var(--ow-font-mono);
+  letter-spacing: 0.1em;
+  align-items: center;
+}
+
+.ow-faction-mark:last-child {
+  justify-self: end;
+}
+
+.ow-faction-mark__glyph {
+  width: 1.1rem;
+  aspect-ratio: 1;
+  border: 1px solid currentcolor;
+  background: var(--ow-faction-pattern);
+}
+
+[data-faction="aurora"] .ow-faction-mark__glyph {
+  border-radius: 50%;
+}
+
+[data-faction="cinder"] .ow-faction-mark__glyph {
+  clip-path: polygon(50% 0, 100% 80%, 50% 100%, 0 80%);
+}
+
+.ow-turn-clock {
+  display: grid;
+  min-width: 8rem;
+  text-align: center;
+}
+
+.ow-turn-clock span {
+  color: var(--ow-color-muted);
+  font: 0.58rem/1 var(--ow-font-mono);
+  letter-spacing: 0.12em;
+}
+
+.ow-turn-clock strong {
+  color: var(--ow-color-warning);
+  font: 700 2.2rem/1 var(--ow-font-display);
+}
+
+.ow-preview__footer {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem clamp(1.25rem, 4vw, 4rem);
+  color: var(--ow-color-muted);
+  font: 0.62rem/1.4 var(--ow-font-mono);
+  letter-spacing: 0.12em;
+  justify-content: space-between;
+}
+
+@media (width <= 64rem) {
+  .ow-masthead {
+    grid-template-columns: 2.5rem 1fr;
+  }
+
+  .ow-orbit-mark {
+    position: absolute;
+    z-index: 0;
+    top: 16%;
+    right: -8rem;
+    width: 22rem;
+    opacity: 0.58;
+  }
+
+  .ow-feature-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ow-feature:last-child {
+    grid-column: 2;
+  }
+}
+
+@media (width <= 42rem) {
+  .ow-masthead {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    min-height: 80svh;
+    padding-inline: 1rem;
+  }
+
+  .ow-masthead__rail {
+    min-height: 22rem;
+  }
+
+  .ow-masthead h1 {
+    font-size: clamp(3.9rem, 20vw, 6rem);
+  }
+
+  .ow-masthead__lede {
+    margin-left: 0;
+  }
+
+  .ow-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ow-feature:nth-child(2) {
+    margin-top: 2rem;
+  }
+
+  .ow-feature:last-child {
+    grid-column: auto;
+  }
+
+  .ow-tactical__status {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ow-turn-clock {
+    grid-row: 1;
+    grid-column: 1 / -1;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--ow-color-line);
+  }
+
+  .ow-preview__footer {
+    display: grid;
+  }
+}

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "orbit-wars-api"
+version = "0.1.0"
+description = "Orbit Wars HTTP and WebSocket control plane."
+requires-python = ">=3.11"
+dependencies = [
+  "alembic==1.18.5",
+  "fastapi==0.139.2",
+  "orbit-wars-runtime==0.1.0",
+  "orbit-wars-agent-sandbox==0.1.0",
+  "orbit-wars-engine==0.1.0",
+  "PyJWT[crypto]==2.13.0",
+  "pydantic==2.13.4",
+  "SQLAlchemy==2.0.51",
+  "uvicorn[standard]==0.51.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["orbit_api*"]

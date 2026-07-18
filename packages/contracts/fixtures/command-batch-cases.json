@@ -1,0 +1,76 @@
+[
+  {
+    "name": "valid command batch",
+    "valid": true,
+    "value": {
+      "schemaVersion": 1,
+      "matchId": "match_01",
+      "expectedStep": 12,
+      "commands": [{ "fromPlanetId": 3, "angle": 1.25, "ships": 8 }],
+      "idempotencyKey": "turn-12-alpha"
+    }
+  },
+  {
+    "name": "wrong schema version",
+    "valid": false,
+    "value": {
+      "schemaVersion": 2,
+      "matchId": "match_01",
+      "expectedStep": 12,
+      "commands": [],
+      "idempotencyKey": "turn-12-alpha"
+    }
+  },
+  {
+    "name": "negative expected step",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "matchId": "match_01",
+      "expectedStep": -1,
+      "commands": [],
+      "idempotencyKey": "turn-12-alpha"
+    }
+  },
+  {
+    "name": "angle outside normalized range",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "matchId": "match_01",
+      "expectedStep": 12,
+      "commands": [{ "fromPlanetId": 3, "angle": 7, "ships": 8 }],
+      "idempotencyKey": "turn-12-alpha"
+    }
+  },
+  {
+    "name": "non-positive ship count",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "matchId": "match_01",
+      "expectedStep": 12,
+      "commands": [{ "fromPlanetId": 3, "angle": 1.25, "ships": 0 }],
+      "idempotencyKey": "turn-12-alpha"
+    }
+  },
+  {
+    "name": "more than six launch commands",
+    "valid": false,
+    "value": {
+      "schemaVersion": 1,
+      "matchId": "match_01",
+      "expectedStep": 12,
+      "commands": [
+        { "fromPlanetId": 1, "angle": 0.1, "ships": 1 },
+        { "fromPlanetId": 1, "angle": 0.2, "ships": 1 },
+        { "fromPlanetId": 1, "angle": 0.3, "ships": 1 },
+        { "fromPlanetId": 1, "angle": 0.4, "ships": 1 },
+        { "fromPlanetId": 1, "angle": 0.5, "ships": 1 },
+        { "fromPlanetId": 1, "angle": 0.6, "ships": 1 },
+        { "fromPlanetId": 1, "angle": 0.7, "ships": 1 }
+      ],
+      "idempotencyKey": "turn-12-alpha"
+    }
+  }
+]

@@ -1,0 +1,15 @@
+groups:
+  - name: orbit-wars-critical
+    rules:
+      - alert: DeterminismMismatch
+        expr: determinism_mismatch_total > 0
+        severity: critical
+      - alert: DuplicateRatingSettlement
+        expr: rating_duplicate_settlement_total > 0
+        severity: critical
+      - alert: SandboxEscapeSignal
+        expr: sandbox_escape_signal_total > 0
+        severity: critical
+      - alert: ReplayUploadFailures
+        expr: replay_upload_failures_total >= 3
+        severity: warning

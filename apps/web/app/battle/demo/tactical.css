@@ -1,0 +1,242 @@
+.tactical-shell {
+  min-height: 100svh;
+  background: #06090b;
+  color: #edf3f2;
+  font-family: var(--ow-font-body), sans-serif;
+}
+
+.tactical-topbar {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 24px;
+  border-bottom: 1px solid rgb(255 255 255 / 14%);
+  letter-spacing: 0.12em;
+}
+
+.tactical-brand {
+  font:
+    700 14px/1 var(--ow-font-display),
+    sans-serif;
+}
+.match-ident {
+  text-align: center;
+  font: 10px/1.5 monospace;
+}
+.match-ident span {
+  color: #ffd76a;
+  margin-right: 12px;
+}
+.turn-countdown {
+  justify-self: end;
+  color: #ffd76a;
+  font: 600 28px/1 monospace;
+}
+
+.battle-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  min-height: calc(100svh - 72px);
+}
+.stage-wrap {
+  min-height: 650px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, #17232a 0, #090e12 46%, #050709 78%);
+}
+.stage-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 4px, rgb(255 255 255 / 1.5%) 5px);
+}
+.battle-stage {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+}
+.battle-stage canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.stage-status {
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  padding: 9px 12px;
+  border: 1px solid rgb(255 215 106 / 38%);
+  background: rgb(4 8 10 / 76%);
+  color: #ffd76a;
+  font: 11px monospace;
+}
+.faction-key {
+  position: absolute;
+  left: 22px;
+  bottom: 20px;
+  display: flex;
+  gap: 8px;
+  font: 10px monospace;
+}
+.faction {
+  padding: 8px 10px;
+  background: rgb(4 8 10 / 80%);
+  border: 1px solid currentColor;
+}
+.faction-aurora {
+  color: #67d8ff;
+}
+.faction-cinder {
+  color: #ff6b57;
+}
+
+.command-rail {
+  border-left: 1px solid rgb(255 255 255 / 14%);
+  padding: 34px 28px 24px;
+  background: #0c1114;
+  overflow-y: auto;
+}
+.eyebrow,
+.rail-note,
+.keyboard-help {
+  color: #8f9ba0;
+  font: 10px/1.6 monospace;
+  letter-spacing: 0.08em;
+}
+.command-rail h1 {
+  max-width: 7ch;
+  margin: 10px 0 14px;
+  font:
+    600 42px/0.9 var(--ow-font-display),
+    sans-serif;
+  letter-spacing: -0.045em;
+}
+.command-rail fieldset {
+  border: 0;
+  border-top: 1px solid rgb(255 255 255 / 16%);
+  margin: 26px 0 0;
+  padding: 18px 0 0;
+}
+.command-rail legend {
+  padding: 0 12px 0 0;
+  color: #ffd76a;
+  font: 11px monospace;
+}
+.planet-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.planet-buttons button,
+.queue-button {
+  border: 1px solid #344047;
+  background: transparent;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.planet-buttons button small {
+  display: block;
+  margin-top: 5px;
+  color: #89949a;
+  font: 9px monospace;
+}
+.planet-buttons button.is-selected {
+  border-color: #67d8ff;
+  box-shadow: inset 3px 0 #67d8ff;
+}
+.command-rail label:not(.performance-toggle) {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin: 14px 0;
+  font: 11px monospace;
+}
+.command-rail input[type="range"] {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: #ffd76a;
+}
+.queue-button {
+  width: 100%;
+  border-color: #ffd76a;
+  color: #ffd76a;
+  text-align: center;
+}
+.pending-list {
+  min-height: 112px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgb(255 255 255 / 16%);
+  font: 11px/1.6 monospace;
+}
+.pending-list > div {
+  display: flex;
+  justify-content: space-between;
+}
+.pending-list button {
+  border: 0;
+  background: transparent;
+  color: #8f9ba0;
+  cursor: pointer;
+}
+.pending-list p {
+  color: #778388;
+}
+.pending-list ol {
+  padding-left: 22px;
+}
+.command-error {
+  color: #ff826e;
+  font: 11px monospace;
+}
+.commit-button {
+  width: 100%;
+  border: 0;
+  padding: 16px;
+  background: #edf3f2;
+  color: #06090b;
+  font-weight: 700;
+  cursor: pointer;
+}
+.performance-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  color: #9ba6aa;
+  font: 10px monospace;
+}
+
+@media (max-width: 820px) {
+  .tactical-topbar {
+    grid-template-columns: 1fr auto;
+    padding: 0 14px;
+  }
+  .match-ident {
+    display: none;
+  }
+  .battle-grid {
+    grid-template-columns: 1fr;
+  }
+  .stage-wrap {
+    min-height: 54svh;
+  }
+  .command-rail {
+    border-left: 0;
+    border-top: 1px solid rgb(255 255 255 / 14%);
+  }
+  .command-rail h1 {
+    font-size: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .battle-stage,
+  .stage-wrap::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

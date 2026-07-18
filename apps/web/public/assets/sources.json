@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "policy": "Original assets only; licensed third-party assets require source and license fields.",
+  "assets": [
+    {
+      "id": "orbit-language-css-field",
+      "kind": "procedural-css",
+      "path": "app/orbit-language.css",
+      "source": "Created in-project",
+      "license": "Project original"
+    },
+    {
+      "id": "orbit-language-faction-glyphs",
+      "kind": "procedural-css",
+      "path": "components/battle/FactionMark.tsx",
+      "source": "Created in-project",
+      "license": "Project original"
+    },
+    {
+      "id": "orbit-product-editorial-layout",
+      "kind": "procedural-css",
+      "path": "app/product.css",
+      "source": "Created in-project from generic editorial grid principles",
+      "license": "Project original"
+    },
+    {
+      "id": "orbit-pixi-tactical-field",
+      "kind": "programmatic-canvas",
+      "path": "components/battle/BattleStage.tsx",
+      "source": "Created in-project; circles, orbital rings, and abstract faction colors",
+      "license": "Project original"
+    }
+  ],
+  "prohibitedReferences": [
+    "licensed film logos",
+    "recognizable franchise spacecraft silhouettes",
+    "copied AgenTank interface assets",
+    "copied fashion photography or typography"
+  ]
+}

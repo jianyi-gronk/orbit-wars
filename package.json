@@ -1,0 +1,44 @@
+{
+  "name": "orbit-wars-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Human and agent-controlled orbital fleet competition platform.",
+  "packageManager": "pnpm@10.6.3",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "bootstrap": "pnpm install && pnpm bootstrap:python",
+    "bootstrap:python": "python3 -m venv .venv && .venv/bin/python -m pip install --upgrade pip && .venv/bin/python -m pip install -r requirements-dev.txt",
+    "contracts:generate": "sh scripts/python.sh -m orbit_contracts.generate && pnpm --filter @orbit-wars/contracts generate:types",
+    "db:current": "sh scripts/python.sh -m alembic -c services/api/alembic.ini current",
+    "db:downgrade": "sh scripts/python.sh -m alembic -c services/api/alembic.ini downgrade -1",
+    "db:upgrade": "sh scripts/python.sh -m alembic -c services/api/alembic.ini upgrade head",
+    "dev:web": "pnpm --filter @orbit-wars/web dev",
+    "dev:worker": "sh scripts/python.sh -m orbit_match_worker.worker",
+    "format": "prettier --write . && sh scripts/python.sh -m ruff format services packages/orbit-engine-py",
+    "format:check": "prettier --check . && sh scripts/python.sh -m ruff format --check services packages/orbit-engine-py",
+    "infra:check": "sh scripts/python.sh scripts/check_infrastructure.py",
+    "infra:down": "docker compose -f infra/compose/docker-compose.yml down --remove-orphans",
+    "infra:reset": "docker compose -f infra/compose/docker-compose.yml down --volumes --remove-orphans",
+    "infra:test:check": "set -a && . ./.env.test.example && set +a && sh scripts/python.sh scripts/check_infrastructure.py",
+    "infra:test:reset": "docker compose --env-file .env.test.example -f infra/compose/docker-compose.yml down --volumes --remove-orphans",
+    "infra:test:up": "docker compose --env-file .env.test.example -f infra/compose/docker-compose.yml up -d --wait",
+    "infra:up": "docker compose -f infra/compose/docker-compose.yml up -d --wait",
+    "lint": "pnpm lint:js && pnpm lint:python",
+    "lint:js": "pnpm --recursive --if-present run lint",
+    "lint:python": "sh scripts/python.sh -m ruff check services packages/orbit-engine-py",
+    "typecheck": "pnpm typecheck:js && pnpm typecheck:python",
+    "typecheck:js": "pnpm --recursive --if-present run typecheck",
+    "typecheck:python": "sh scripts/python.sh -m mypy services/api/orbit_api services/match-worker/orbit_match_worker services/agent-sandbox/orbit_agent_sandbox packages/orbit-engine-py/orbit_engine packages/platform-runtime-py/orbit_runtime packages/contracts/orbit_contracts",
+    "warmup:agents": "sh scripts/python.sh scripts/warmup_agents.py",
+    "test": "pnpm test:js && pnpm test:python",
+    "test:js": "pnpm --recursive --if-present run test",
+    "test:python": "sh scripts/python.sh -m pytest",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "devDependencies": {
+    "prettier": "3.9.5"
+  }
+}

@@ -1,0 +1,50 @@
+.ow-motion-orbit {
+  animation: ow-orbit var(--ow-motion-orbit) linear infinite;
+}
+
+.ow-motion-scan {
+  animation: ow-scan var(--ow-motion-scan) linear infinite;
+}
+
+.ow-motion-reveal {
+  animation: ow-reveal var(--ow-motion-reveal) var(--ow-ease-command) both;
+}
+
+@keyframes ow-orbit {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes ow-scan {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(600%);
+  }
+}
+
+@keyframes ow-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ow-motion-orbit,
+  .ow-motion-scan,
+  .ow-motion-reveal {
+    animation: none;
+    transform: none;
+  }
+}
+
+[data-motion="reduced"] .ow-motion-orbit,
+[data-motion="reduced"] .ow-motion-scan,
+[data-motion="reduced"] .ow-motion-reveal {
+  animation: none;
+  transform: none;
+}

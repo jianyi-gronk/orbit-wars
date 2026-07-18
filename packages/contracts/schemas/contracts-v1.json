@@ -1,0 +1,774 @@
+{
+  "$defs": {
+    "ClientMessageV1": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TurnSubmitMessageV1"
+        },
+        {
+          "$ref": "#/$defs/MatchResyncMessageV1"
+        }
+      ],
+      "title": "ClientMessageV1"
+    },
+    "CometGroupV1": {
+      "additionalProperties": false,
+      "properties": {
+        "comets": {
+          "items": {
+            "$ref": "#/$defs/CometV1"
+          },
+          "title": "Comets",
+          "type": "array"
+        },
+        "id": {
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "comets"
+      ],
+      "title": "CometGroupV1",
+      "type": "object"
+    },
+    "CometV1": {
+      "additionalProperties": false,
+      "properties": {
+        "radius": {
+          "exclusiveMinimum": 0,
+          "title": "Radius",
+          "type": "number"
+        },
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "radius"
+      ],
+      "title": "CometV1",
+      "type": "object"
+    },
+    "CommandBatchV1": {
+      "additionalProperties": false,
+      "properties": {
+        "commands": {
+          "items": {
+            "$ref": "#/$defs/LaunchCommandV1"
+          },
+          "maxItems": 6,
+          "title": "Commands",
+          "type": "array"
+        },
+        "expectedStep": {
+          "minimum": 0,
+          "title": "Expectedstep",
+          "type": "integer"
+        },
+        "idempotencyKey": {
+          "maxLength": 128,
+          "minLength": 8,
+          "title": "Idempotencykey",
+          "type": "string"
+        },
+        "matchId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Matchid",
+          "type": "string"
+        },
+        "schemaVersion": {
+          "const": 1,
+          "title": "Schemaversion",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "matchId",
+        "expectedStep",
+        "commands",
+        "idempotencyKey"
+      ],
+      "title": "CommandBatchV1",
+      "type": "object"
+    },
+    "ControllerType": {
+      "enum": [
+        "human",
+        "agent"
+      ],
+      "title": "ControllerType",
+      "type": "string"
+    },
+    "FleetV1": {
+      "additionalProperties": false,
+      "properties": {
+        "angle": {
+          "exclusiveMaximum": 6.283185307179586,
+          "minimum": 0,
+          "title": "Angle",
+          "type": "number"
+        },
+        "fromPlanetId": {
+          "minimum": 0,
+          "title": "Fromplanetid",
+          "type": "integer"
+        },
+        "id": {
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "owner": {
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Owner",
+          "type": "integer"
+        },
+        "ships": {
+          "minimum": 0,
+          "title": "Ships",
+          "type": "number"
+        },
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "owner",
+        "x",
+        "y",
+        "angle",
+        "fromPlanetId",
+        "ships"
+      ],
+      "title": "FleetV1",
+      "type": "object"
+    },
+    "LaunchCommandV1": {
+      "additionalProperties": false,
+      "properties": {
+        "angle": {
+          "exclusiveMaximum": 6.283185307179586,
+          "minimum": 0,
+          "title": "Angle",
+          "type": "number"
+        },
+        "fromPlanetId": {
+          "minimum": 0,
+          "title": "Fromplanetid",
+          "type": "integer"
+        },
+        "ships": {
+          "exclusiveMinimum": 0,
+          "title": "Ships",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fromPlanetId",
+        "angle",
+        "ships"
+      ],
+      "title": "LaunchCommandV1",
+      "type": "object"
+    },
+    "MatchErrorMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "recoverable": {
+          "title": "Recoverable",
+          "type": "boolean"
+        },
+        "type": {
+          "const": "match.error",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "code",
+        "recoverable"
+      ],
+      "title": "MatchErrorMessageV1",
+      "type": "object"
+    },
+    "MatchFinishedMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "result": {
+          "$ref": "#/$defs/MatchResultV1"
+        },
+        "type": {
+          "const": "match.finished",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "result"
+      ],
+      "title": "MatchFinishedMessageV1",
+      "type": "object"
+    },
+    "MatchFrameMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "payload": {
+          "$ref": "#/$defs/ReplayFrameV1"
+        },
+        "type": {
+          "const": "match.frame",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "payload"
+      ],
+      "title": "MatchFrameMessageV1",
+      "type": "object"
+    },
+    "MatchMode": {
+      "enum": [
+        "training",
+        "ranked"
+      ],
+      "title": "MatchMode",
+      "type": "string"
+    },
+    "MatchParticipantV1": {
+      "additionalProperties": false,
+      "properties": {
+        "controllerType": {
+          "$ref": "#/$defs/ControllerType"
+        },
+        "fleetPublicId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Fleetpublicid",
+          "type": "string"
+        },
+        "slot": {
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Slot",
+          "type": "integer"
+        },
+        "strategyVersionId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Strategyversionid"
+        }
+      },
+      "required": [
+        "fleetPublicId",
+        "slot",
+        "controllerType"
+      ],
+      "title": "MatchParticipantV1",
+      "type": "object"
+    },
+    "MatchResultV1": {
+      "additionalProperties": false,
+      "properties": {
+        "endedAt": {
+          "format": "date-time",
+          "title": "Endedat",
+          "type": "string"
+        },
+        "finalStep": {
+          "minimum": 0,
+          "title": "Finalstep",
+          "type": "integer"
+        },
+        "reason": {
+          "enum": [
+            "elimination",
+            "step_limit",
+            "forfeit",
+            "failed"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "winnerSlot": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Winnerslot"
+        }
+      },
+      "required": [
+        "reason",
+        "finalStep",
+        "endedAt"
+      ],
+      "title": "MatchResultV1",
+      "type": "object"
+    },
+    "MatchResyncMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "lastSeenStep": {
+          "minimum": 0,
+          "title": "Lastseenstep",
+          "type": "integer"
+        },
+        "type": {
+          "const": "match.resync",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "lastSeenStep"
+      ],
+      "title": "MatchResyncMessageV1",
+      "type": "object"
+    },
+    "MatchSnapshotMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "payload": {
+          "$ref": "#/$defs/ObservationV1"
+        },
+        "type": {
+          "const": "match.snapshot",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "payload"
+      ],
+      "title": "MatchSnapshotMessageV1",
+      "type": "object"
+    },
+    "ObservationV1": {
+      "additionalProperties": false,
+      "properties": {
+        "angularVelocity": {
+          "title": "Angularvelocity",
+          "type": "number"
+        },
+        "comets": {
+          "items": {
+            "$ref": "#/$defs/CometGroupV1"
+          },
+          "title": "Comets",
+          "type": "array"
+        },
+        "deadlineAt": {
+          "format": "date-time",
+          "title": "Deadlineat",
+          "type": "string"
+        },
+        "fleets": {
+          "items": {
+            "$ref": "#/$defs/FleetV1"
+          },
+          "title": "Fleets",
+          "type": "array"
+        },
+        "initialPlanets": {
+          "items": {
+            "$ref": "#/$defs/PlanetV1"
+          },
+          "title": "Initialplanets",
+          "type": "array"
+        },
+        "matchId": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Matchid",
+          "type": "string"
+        },
+        "planets": {
+          "items": {
+            "$ref": "#/$defs/PlanetV1"
+          },
+          "title": "Planets",
+          "type": "array"
+        },
+        "player": {
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Player",
+          "type": "integer"
+        },
+        "schemaVersion": {
+          "const": 1,
+          "title": "Schemaversion",
+          "type": "integer"
+        },
+        "step": {
+          "minimum": 0,
+          "title": "Step",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "matchId",
+        "step",
+        "player",
+        "deadlineAt",
+        "angularVelocity",
+        "planets",
+        "fleets",
+        "initialPlanets",
+        "comets"
+      ],
+      "title": "ObservationV1",
+      "type": "object"
+    },
+    "PlanetV1": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "owner": {
+          "enum": [
+            -1,
+            0,
+            1
+          ],
+          "title": "Owner",
+          "type": "integer"
+        },
+        "production": {
+          "minimum": 0,
+          "title": "Production",
+          "type": "number"
+        },
+        "radius": {
+          "exclusiveMinimum": 0,
+          "title": "Radius",
+          "type": "number"
+        },
+        "ships": {
+          "minimum": 0,
+          "title": "Ships",
+          "type": "number"
+        },
+        "x": {
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "owner",
+        "x",
+        "y",
+        "radius",
+        "ships",
+        "production"
+      ],
+      "title": "PlanetV1",
+      "type": "object"
+    },
+    "PlayerMetricsV1": {
+      "additionalProperties": false,
+      "properties": {
+        "inTransitShips": {
+          "minimum": 0,
+          "title": "Intransitships",
+          "type": "number"
+        },
+        "planets": {
+          "minimum": 0,
+          "title": "Planets",
+          "type": "integer"
+        },
+        "production": {
+          "minimum": 0,
+          "title": "Production",
+          "type": "number"
+        },
+        "stationedShips": {
+          "minimum": 0,
+          "title": "Stationedships",
+          "type": "number"
+        }
+      },
+      "required": [
+        "planets",
+        "production",
+        "stationedShips",
+        "inTransitShips"
+      ],
+      "title": "PlayerMetricsV1",
+      "type": "object"
+    },
+    "ReplayFrameV1": {
+      "additionalProperties": false,
+      "properties": {
+        "fleets": {
+          "items": {
+            "$ref": "#/$defs/FleetV1"
+          },
+          "title": "Fleets",
+          "type": "array"
+        },
+        "metrics": {
+          "items": {
+            "$ref": "#/$defs/PlayerMetricsV1"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "title": "Metrics",
+          "type": "array"
+        },
+        "planets": {
+          "items": {
+            "$ref": "#/$defs/PlanetV1"
+          },
+          "title": "Planets",
+          "type": "array"
+        },
+        "schemaVersion": {
+          "const": 1,
+          "title": "Schemaversion",
+          "type": "integer"
+        },
+        "step": {
+          "minimum": 0,
+          "title": "Step",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schemaVersion",
+        "step",
+        "planets",
+        "fleets",
+        "metrics"
+      ],
+      "title": "ReplayFrameV1",
+      "type": "object"
+    },
+    "ServerMessageV1": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MatchSnapshotMessageV1"
+        },
+        {
+          "$ref": "#/$defs/TurnOpenMessageV1"
+        },
+        {
+          "$ref": "#/$defs/TurnAcceptedMessageV1"
+        },
+        {
+          "$ref": "#/$defs/TurnClosedMessageV1"
+        },
+        {
+          "$ref": "#/$defs/MatchFrameMessageV1"
+        },
+        {
+          "$ref": "#/$defs/MatchFinishedMessageV1"
+        },
+        {
+          "$ref": "#/$defs/MatchErrorMessageV1"
+        }
+      ],
+      "title": "ServerMessageV1"
+    },
+    "TurnAcceptedMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "commandHash": {
+          "maxLength": 64,
+          "minLength": 64,
+          "title": "Commandhash",
+          "type": "string"
+        },
+        "step": {
+          "minimum": 0,
+          "title": "Step",
+          "type": "integer"
+        },
+        "type": {
+          "const": "turn.accepted",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "step",
+        "commandHash"
+      ],
+      "title": "TurnAcceptedMessageV1",
+      "type": "object"
+    },
+    "TurnClosedMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "step": {
+          "minimum": 0,
+          "title": "Step",
+          "type": "integer"
+        },
+        "type": {
+          "const": "turn.closed",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "step"
+      ],
+      "title": "TurnClosedMessageV1",
+      "type": "object"
+    },
+    "TurnOpenMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "deadlineAt": {
+          "format": "date-time",
+          "title": "Deadlineat",
+          "type": "string"
+        },
+        "step": {
+          "minimum": 0,
+          "title": "Step",
+          "type": "integer"
+        },
+        "type": {
+          "const": "turn.open",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "step",
+        "deadlineAt"
+      ],
+      "title": "TurnOpenMessageV1",
+      "type": "object"
+    },
+    "TurnSubmitMessageV1": {
+      "additionalProperties": false,
+      "properties": {
+        "payload": {
+          "$ref": "#/$defs/CommandBatchV1"
+        },
+        "type": {
+          "const": "turn.submit",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "payload"
+      ],
+      "title": "TurnSubmitMessageV1",
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.orbit-wars.example/contracts-v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Schema bundle that keeps every public V1 definition reachable.",
+  "properties": {
+    "clientMessage": {
+      "$ref": "#/$defs/ClientMessageV1"
+    },
+    "commandBatch": {
+      "$ref": "#/$defs/CommandBatchV1"
+    },
+    "mode": {
+      "$ref": "#/$defs/MatchMode"
+    },
+    "observation": {
+      "$ref": "#/$defs/ObservationV1"
+    },
+    "participant": {
+      "$ref": "#/$defs/MatchParticipantV1"
+    },
+    "replayFrame": {
+      "$ref": "#/$defs/ReplayFrameV1"
+    },
+    "result": {
+      "$ref": "#/$defs/MatchResultV1"
+    },
+    "serverMessage": {
+      "$ref": "#/$defs/ServerMessageV1"
+    }
+  },
+  "required": [
+    "observation",
+    "commandBatch",
+    "participant",
+    "result",
+    "replayFrame",
+    "serverMessage",
+    "clientMessage",
+    "mode"
+  ],
+  "title": "ContractsV1",
+  "type": "object"
+}

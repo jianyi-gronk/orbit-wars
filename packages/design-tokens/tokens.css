@@ -1,0 +1,88 @@
+:root {
+  color-scheme: dark;
+  --ow-color-void: #07090c;
+  --ow-color-deep: #0b0f14;
+  --ow-color-surface: #10141a;
+  --ow-color-surface-raised: #171c23;
+  --ow-color-ink: #f0eadc;
+  --ow-color-ink-dim: #b8b4aa;
+  --ow-color-muted: #8f969e;
+  --ow-color-line: rgb(240 234 220 / 18%);
+  --ow-color-line-strong: rgb(240 234 220 / 42%);
+  --ow-color-signal: #ff4b3e;
+  --ow-color-energy: #62c8ff;
+  --ow-color-warning: #ffb84d;
+  --ow-color-positive: #8fe0a4;
+  --ow-font-display: "Arial Narrow", "Aptos Display", "Helvetica Neue", sans-serif;
+  --ow-font-body: "Aptos", "Helvetica Neue", Arial, sans-serif;
+  --ow-font-mono: "SFMono-Regular", "Roboto Mono", Consolas, monospace;
+  --ow-space-1: 0.25rem;
+  --ow-space-2: 0.5rem;
+  --ow-space-3: 0.75rem;
+  --ow-space-4: 1rem;
+  --ow-space-6: 1.5rem;
+  --ow-space-8: 2rem;
+  --ow-space-12: 3rem;
+  --ow-space-16: 4rem;
+  --ow-space-24: 6rem;
+  --ow-radius-control: 0.125rem;
+  --ow-radius-panel: 0.25rem;
+  --ow-line-hairline: 1px;
+  --ow-line-command: 2px;
+  --ow-motion-fast: 160ms;
+  --ow-motion-reveal: 640ms;
+  --ow-motion-orbit: 18s;
+  --ow-motion-scan: 2.4s;
+  --ow-ease-command: cubic-bezier(0.2, 0.75, 0.2, 1);
+  --ow-content-max: 92rem;
+  --ow-layout-gap: clamp(1.5rem, 4vw, 5rem);
+  --ow-section-padding: clamp(4rem, 11vw, 10rem);
+}
+
+[data-density="editorial"] {
+  --ow-content-max: 92rem;
+  --ow-layout-gap: clamp(1.5rem, 4vw, 5rem);
+  --ow-section-padding: clamp(4rem, 11vw, 10rem);
+}
+
+[data-density="tactical"] {
+  --ow-content-max: 100%;
+  --ow-layout-gap: 0.75rem;
+  --ow-section-padding: 1rem;
+}
+
+[data-motion="reduced"] {
+  --ow-motion-fast: 0ms;
+  --ow-motion-reveal: 0ms;
+  --ow-motion-orbit: 0ms;
+  --ow-motion-scan: 0ms;
+}
+
+[data-faction="aurora"] {
+  --ow-faction-color: var(--ow-color-energy);
+  --ow-faction-pattern: repeating-linear-gradient(135deg, currentcolor 0 1px, transparent 1px 5px);
+}
+
+[data-faction="cinder"] {
+  --ow-faction-color: var(--ow-color-signal);
+  --ow-faction-pattern:
+    repeating-linear-gradient(45deg, currentcolor 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(-45deg, currentcolor 0 1px, transparent 1px 5px);
+}
+
+@media (width <= 48rem) {
+  :root,
+  [data-density="editorial"] {
+    --ow-layout-gap: 1.25rem;
+    --ow-section-padding: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ow-motion-fast: 0ms;
+    --ow-motion-reveal: 0ms;
+    --ow-motion-orbit: 0ms;
+    --ow-motion-scan: 0ms;
+  }
+}
