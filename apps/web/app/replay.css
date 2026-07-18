@@ -198,11 +198,20 @@
 
 .replay-grid-overlay::after {
   position: absolute;
-  top: -30%;
-  bottom: -30%;
+  top: 0;
+  bottom: 0;
   left: 50%;
   width: 1px;
-  background: linear-gradient(transparent, rgb(255 202 99 / 18%), transparent);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgb(255 202 99 / 18%) 28%,
+    rgb(255 202 99 / 10%) 34%,
+    transparent 40% 60%,
+    rgb(255 202 99 / 10%) 66%,
+    rgb(255 202 99 / 18%) 72%,
+    transparent 100%
+  );
   content: "";
 }
 

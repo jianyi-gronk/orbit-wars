@@ -25,6 +25,27 @@
 
 > 已在中文真实回放页面进行桌面端视觉复核。后续如调整太阳配色，重点继续对比 Kaggle 参考中的圆盘饱和度与光晕宽度，不重新加入战术装饰。
 
+## 克制精修验证
+
+### 代码审查
+
+- [x] 太阳实体仍使用 `SUN_RADIUS`，只增加一套复用并显式销毁的实体渐变资源。
+- [x] 实体色差控制在同一金黄色相内，未增加纹理、尖刺、动画或误导碰撞范围的装饰。
+- [x] 回放中轴仅在太阳区域渐隐，战场上下方阵营分界仍保留。
+
+### 自动化检查
+
+- [x] `pnpm --filter @orbit-wars/web test` — 10 个测试文件、35 项测试通过。
+- [x] `pnpm --filter @orbit-wars/web typecheck` — 通过。
+- [x] `pnpm --filter @orbit-wars/web lint` — 通过。
+- [x] `pnpm --filter @orbit-wars/web build` — 两轮色彩微调后的最终生产构建通过。
+
+### 实际页面证据
+
+- [x] `/zh/replay/replay_JzIuAokYL5Ub3yLAYuuzA-8Y` 已刷新到最终生产构建：圆盘为亮金黄、边缘明暗差克制，近缘暖光饱和且向外连续衰减。
+- [x] 中轴在太阳实体完整直径内不可见，太阳上下方仍能看到渐出的战场分界。
+- [x] 浏览器控制台无 warning 或 error。
+
 
 ## 自动化检查记录 - 2026-07-18T12:26:07.910Z
 
@@ -153,4 +174,133 @@ apps/web test: Done
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
 165 passed, 5 skipped, 1 warning in 36.73s
+```
+
+## 自动化检查记录 - 2026-07-18T12:40:01.035Z
+
+| 检查 | 结果 | 命令 |
+|---|---|---|
+| smooth-artifacts | pass | `（内置）` |
+| lint | pass | `pnpm run lint` |
+| typecheck | pass | `pnpm run typecheck` |
+| test | pass | `pnpm run test` |
+
+### smooth-artifacts
+
+校验 Smooth 变更产物结构
+
+结果：**pass**（2ms）
+
+```text
+变更产物结构有效。
+```
+
+### lint
+
+检测到 package script：lint
+
+结果：**pass**（10994ms）
+
+```text
+> orbit-wars-platform@0.1.0 lint /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> pnpm lint:js && pnpm lint:python
+
+
+> orbit-wars-platform@0.1.0 lint:js /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> pnpm --recursive --if-present run lint
+
+Scope: 3 of 4 workspace projects
+packages/contracts lint$ pnpm check:generated && tsc --noEmit
+packages/design-tokens lint$ tsc --noEmit
+packages/contracts lint: > @orbit-wars/contracts@0.1.0 check:generated /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat/packages/contracts
+packages/contracts lint: > node scripts/generate-types.mjs --check
+packages/design-tokens lint: Done
+packages/contracts lint: Done
+apps/web lint$ eslint .
+apps/web lint: Done
+
+> orbit-wars-platform@0.1.0 lint:python /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> sh scripts/python.sh -m ruff check services packages/orbit-engine-py
+
+All checks passed!
+```
+
+### typecheck
+
+检测到 package script：typecheck
+
+结果：**pass**（22000ms）
+
+```text
+> orbit-wars-platform@0.1.0 typecheck /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> pnpm typecheck:js && pnpm typecheck:python
+
+
+> orbit-wars-platform@0.1.0 typecheck:js /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> pnpm --recursive --if-present run typecheck
+
+Scope: 3 of 4 workspace projects
+packages/contracts typecheck$ tsc --noEmit
+packages/design-tokens typecheck$ tsc --noEmit
+packages/design-tokens typecheck: Done
+packages/contracts typecheck: Done
+apps/web typecheck$ tsc --noEmit
+apps/web typecheck: Done
+
+> orbit-wars-platform@0.1.0 typecheck:python /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> sh scripts/python.sh -m mypy services/api/orbit_api services/match-worker/orbit_match_worker services/agent-sandbox/orbit_agent_sandbox packages/orbit-engine-py/orbit_engine packages/platform-runtime-py/orbit_runtime packages/contracts/orbit_contracts
+
+Success: no issues found in 74 source files
+```
+
+### test
+
+检测到 package script：test
+
+结果：**pass**（23440ms）
+
+```text
+> orbit-wars-platform@0.1.0 test /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> pnpm test:js && pnpm test:python
+
+
+> orbit-wars-platform@0.1.0 test:js /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> pnpm --recursive --if-present run test
+
+Scope: 3 of 4 workspace projects
+packages/contracts test$ vitest run
+packages/design-tokens test$ vitest run
+packages/design-tokens test:  RUN  v4.1.10 /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat/packages/design-tokens
+packages/contracts test:  RUN  v4.1.10 /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat/packages/contracts
+packages/design-tokens test:  Test Files  1 passed (1)
+packages/design-tokens test:       Tests  4 passed (4)
+packages/design-tokens test:    Start at  20:39:39
+packages/design-tokens test:    Duration  434ms (transform 63ms, setup 0ms, import 98ms, tests 9ms, environment 0ms)
+packages/design-tokens test: Done
+packages/contracts test:  Test Files  2 passed (2)
+packages/contracts test:       Tests  12 passed (12)
+packages/contracts test:    Start at  20:39:39
+packages/contracts test:    Duration  713ms (transform 172ms, setup 0ms, import 734ms, tests 14ms, environment 1ms)
+packages/contracts test: Done
+apps/web test$ vitest run
+apps/web test:  RUN  v4.1.10 /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat/apps/web
+apps/web test:  Test Files  10 passed (10)
+apps/web test:       Tests  35 passed (35)
+apps/web test:    Start at  20:39:40
+apps/web test:    Duration  862ms (transform 453ms, setup 0ms, import 803ms, tests 150ms, environment 4ms)
+apps/web test: Done
+
+> orbit-wars-platform@0.1.0 test:python /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat
+> sh scripts/python.sh -m pytest
+
+.............................................................ss......... [ 42%]
+.......................................sss.............................. [ 84%]
+..........................                                               [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.11/site-packages/fastapi/testclient.py:1
+  /Users/jianyi-gronk/Documents/Codex/2026-07-17/new-chat/.venv/lib/python3.11/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+165 passed, 5 skipped, 1 warning in 17.31s
 ```

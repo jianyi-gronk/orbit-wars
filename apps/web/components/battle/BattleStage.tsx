@@ -29,6 +29,7 @@ type BattleStageProps = {
 type PixiRuntime = typeof import("pixi.js");
 type StageAssets = {
   sunGlow: FillGradient;
+  sunBody: FillGradient;
 };
 type StageState = Pick<BattleStageProps, "planets" | "player" | "selectedPlanetId" | "angle"> & {
   fleets: FleetView[];
@@ -44,14 +45,29 @@ function createStageAssets(runtime: PixiRuntime): StageAssets {
       outerCenter: { x: 0.5, y: 0.5 },
       outerRadius: 0.5,
       colorStops: [
-        { offset: 0, color: "rgba(255, 170, 22, 0.24)" },
-        { offset: 0.34, color: "rgba(255, 142, 0, 0.18)" },
-        { offset: 0.62, color: "rgba(187, 82, 0, 0.09)" },
-        { offset: 0.82, color: "rgba(110, 42, 0, 0.035)" },
-        { offset: 1, color: "rgba(55, 18, 0, 0)" },
+        { offset: 0, color: "rgba(255, 190, 42, 0.34)" },
+        { offset: 0.32, color: "rgba(255, 151, 0, 0.25)" },
+        { offset: 0.58, color: "rgba(215, 92, 0, 0.13)" },
+        { offset: 0.8, color: "rgba(127, 43, 0, 0.055)" },
+        { offset: 1, color: "rgba(48, 14, 0, 0)" },
       ],
       textureSpace: "local",
       textureSize: 512,
+    }),
+    sunBody: new runtime.FillGradient({
+      type: "radial",
+      center: { x: 0.45, y: 0.4 },
+      innerRadius: 0,
+      outerCenter: { x: 0.5, y: 0.5 },
+      outerRadius: 0.54,
+      colorStops: [
+        { offset: 0, color: "#ffdc70" },
+        { offset: 0.34, color: "#ffca38" },
+        { offset: 0.76, color: "#ffb80a" },
+        { offset: 1, color: "#ffab00" },
+      ],
+      textureSpace: "local",
+      textureSize: 256,
     }),
   };
 }
@@ -86,14 +102,18 @@ function drawStage(
   const sunY = offsetY + SUN_CENTER * scale;
   const sunRadius = SUN_RADIUS * scale;
   const sunGlow = new Graphics();
-  sunGlow.circle(sunX, sunY, sunRadius * 2.8);
+  sunGlow.circle(sunX, sunY, sunRadius * 3);
   sunGlow.fill(assets.sunGlow);
   app.stage.addChild(sunGlow);
 
+  const sunBloom = new Graphics();
+  sunBloom.circle(sunX, sunY, sunRadius * 1.08);
+  sunBloom.fill({ color: 0xffb20a, alpha: 0.1 });
+  app.stage.addChild(sunBloom);
+
   const sunBody = new Graphics();
   sunBody.circle(sunX, sunY, sunRadius);
-  sunBody.fill({ color: 0xffb800, alpha: 1 });
-  sunBody.stroke({ color: 0xffd04a, alpha: 0.58, width: Math.max(1, scale * 0.12) });
+  sunBody.fill(assets.sunBody);
   app.stage.addChild(sunBody);
 
   for (const planet of state.planets) {
@@ -256,6 +276,7 @@ export function BattleStage(props: BattleStageProps) {
       assetsRef.current = null;
       app?.destroy(true, { children: true });
       assets?.sunGlow.destroy();
+      assets?.sunBody.destroy();
     };
   }, [lowPerformance]);
 

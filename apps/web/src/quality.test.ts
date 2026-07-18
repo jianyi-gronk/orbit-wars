@@ -76,12 +76,15 @@ describe("release performance and accessibility budgets", () => {
 
   it("keeps the central sun visually aligned with the simple Kaggle reference", () => {
     const stage = readFileSync("components/battle/BattleStage.tsx", "utf8");
+    const css = readFileSync("app/replay.css", "utf8");
 
     expect(stage).toContain("new runtime.FillGradient");
-    expect(stage).toContain("sunRadius * 2.8");
+    expect(stage).toContain("sunRadius * 3");
     expect(stage).toContain("sunBody.circle(sunX, sunY, sunRadius)");
+    expect(stage).toContain("sunBody.fill(assets.sunBody)");
     expect(stage).not.toContain("hazardRing");
     expect(stage).not.toContain("solarFlares");
     expect(stage).not.toContain("coronaPoints");
+    expect(css).toMatch(/\.replay-grid-overlay::after[\s\S]*?transparent 40% 60%/);
   });
 });
