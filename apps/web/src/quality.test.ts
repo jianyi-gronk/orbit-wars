@@ -123,4 +123,41 @@ describe("release performance and accessibility budgets", () => {
     expect(stage).not.toContain("coronaPoints");
     expect(css).toMatch(/\.replay-grid-overlay::after[\s\S]*?transparent 40% 60%/);
   });
+
+  it("keeps leaderboard and history semantics audience-first and bilingual", () => {
+    const competition = readFileSync("components/product/PublicCompetition.tsx", "utf8");
+    const route = readFileSync("app/[locale]/[[...slug]]/page.tsx", "utf8");
+    const replay = readFileSync("components/battle/ReplayPlayer.tsx", "utf8");
+    const css = readFileSync("app/product.css", "utf8");
+
+    expect(route).toContain('["score", "win_rate", "wins"]');
+    expect(competition).toContain("Beta(1,1)");
+    expect(competition).toContain("BATTLE HEAT");
+    expect(competition).toContain("战况强度");
+    expect(competition).toContain("match.highlights.map");
+    expect(competition).toContain('<details className="history-details">');
+    expect(replay).toContain('searchParams.get("step")');
+    expect(css).toContain('.history-intensity[data-band="volatile"]');
+  });
+
+  it("keeps the Command next mission dynamic and the one-time key out of storage", () => {
+    const command = readFileSync("app/command/CommandCenter.tsx", "utf8");
+    const handoff = readFileSync("src/agent-handoff.ts", "utf8");
+    const clipboard = readFileSync("src/clipboard.ts", "utf8");
+
+    for (const state of [
+      "copy-handoff",
+      "needs-agent-key",
+      "needs-ready-strategy",
+      "battle-ready",
+    ]) {
+      expect(command).toContain(state);
+    }
+    expect(command).toContain('aria-live="polite"');
+    expect(command).not.toContain("navigator.clipboard");
+    expect(handoff).not.toContain("localStorage");
+    expect(handoff).not.toContain("sessionStorage");
+    expect(clipboard).toContain("clipboard timeout");
+    expect(clipboard).toContain('document.execCommand("copy")');
+  });
 });

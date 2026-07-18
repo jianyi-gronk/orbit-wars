@@ -18,13 +18,13 @@
 
 ## 阶段 4：Agent 交接
 
-- [ ] **抽取可靠剪贴板工具** — 复用 Clipboard timeout 与 legacy fallback，并迁移 ReplayPlayer。
-- [ ] **生成安全 Agent 交接包** — 纯函数输出 API Base、Guide、Key、fleet ID 和首条指令，补充安全测试。
-- [ ] **改造 Command Center NEXT** — 实现四种任务状态、一次性复制全部/仅 Key 和双语反馈。
+- [x] **抽取可靠剪贴板工具** — 复用 Clipboard timeout 与 legacy fallback，并迁移 ReplayPlayer。
+- [x] **生成安全 Agent 交接包** — 纯函数输出 API Base、Guide、Key、fleet ID 和首条指令，补充安全测试。
+- [x] **改造 Command Center NEXT** — 实现四种任务状态、一次性复制全部/仅 Key 和双语反馈。
 
 ## 阶段 5：验证与交付
 
-- [ ] **补充质量保护** — 覆盖榜单语义、强度确定性、高光边界、交接包安全和关键视觉状态。
+- [x] **补充质量保护** — 覆盖榜单语义、强度确定性、高光边界、交接包安全和关键视觉状态。
 - [ ] **运行全量工程验证** — 执行 Smooth check 与生产 build，修复本轮问题。
 - [ ] **执行浏览器验收** — 检查中英榜单/历史/指挥中心、桌面/窄屏、高光跳转和复制反馈。
 - [ ] **记录并交付** — 完成 verify.md，按内聚批次 commit，最终统一 push 到 origin/main。

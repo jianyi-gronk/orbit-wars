@@ -3,7 +3,16 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
-import { ApiError, apiFetch, type AgentKey, type Fleet, type FleetProfile } from "../../src/api";
+import { buildAgentHandoffBundle, resolveCommandMission } from "../../src/agent-handoff";
+import {
+  ApiError,
+  apiFetch,
+  apiUrl,
+  type AgentKey,
+  type Fleet,
+  type FleetProfile,
+} from "../../src/api";
+import { writeClipboard } from "../../src/clipboard";
 import {
   errorMessage,
   formatDate,
@@ -33,6 +42,7 @@ export function CommandCenter({ locale = "zh" }: { locale?: Locale }) {
   const [secret, setSecret] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [copyState, setCopyState] = useState<"bundle" | "key" | "error" | null>(null);
 
   const load = useCallback(async () => {
     setError("");
@@ -54,6 +64,12 @@ export function CommandCenter({ locale = "zh" }: { locale?: Locale }) {
     const timer = window.setTimeout(() => void load(), 0);
     return () => window.clearTimeout(timer);
   }, [load]);
+
+  useEffect(() => {
+    if (!copyState) return;
+    const timer = window.setTimeout(() => setCopyState(null), 2400);
+    return () => window.clearTimeout(timer);
+  }, [copyState]);
 
   async function createKey() {
     if (!fleet) return;
@@ -107,6 +123,26 @@ export function CommandCenter({ locale = "zh" }: { locale?: Locale }) {
     }
   }
 
+  async function copyAgentAccess(target: "bundle" | "key") {
+    if (!secret || !fleet) return;
+    const text =
+      target === "key"
+        ? secret
+        : buildAgentHandoffBundle({
+            locale,
+            key: secret,
+            fleetId: fleet.publicId,
+            apiBaseUrl: apiUrl("/api/agent/v1", window.location.origin),
+            guideUrl: new URL(localPath(locale, "/agent-guide"), window.location.origin).toString(),
+          });
+    try {
+      await writeClipboard(text);
+      setCopyState(target);
+    } catch {
+      setCopyState("error");
+    }
+  }
+
   if (!fleet || !profile) {
     return (
       <div className="page-shell">
@@ -122,6 +158,47 @@ export function CommandCenter({ locale = "zh" }: { locale?: Locale }) {
     );
   }
 
+  const currentVersion = profile.versions.find(
+    (version) => version.publicId === fleet.currentStrategyVersionId,
+  );
+  const mission = resolveCommandMission({
+    secret,
+    hasActiveKey: keys.some((key) => key.active),
+    currentStrategyStatus: currentVersion?.status ?? null,
+  });
+  const missionCopy = {
+    "copy-handoff": {
+      eyebrow: "ONE-TIME UPLINK",
+      title: zh
+        ? "密钥已生成。现在把接入包交给 Agent。"
+        : "Key generated. Hand the uplink to your Agent.",
+      body: zh
+        ? "一次复制 API 地址、接入指南、舰队 ID、密钥和安全的首条任务。离开页面后无法再次查看该密钥。"
+        : "Copy the API address, guide, fleet ID, key, and a safe first mission in one action. The key cannot be shown again after you leave.",
+    },
+    "needs-agent-key": {
+      eyebrow: "AGENT ACCESS REQUIRED",
+      title: zh ? "先生成 Agent Key。" : "Generate an Agent Key first.",
+      body: zh
+        ? "这是 Agent 调用舰队、版本、对手和比赛 API 的唯一凭证；明文只展示一次。"
+        : "This is the Agent's credential for fleet, version, opponent, and match APIs. Its plaintext is shown once.",
+    },
+    "needs-ready-strategy": {
+      eyebrow: "STRATEGY REQUIRED",
+      title: zh ? "选择一个 ready 策略。" : "Select a ready strategy.",
+      body: zh
+        ? "比赛只会锁定当前 ready 版本。请在下方版本列表中选择，或先按接入指南上传新版本。"
+        : "Matches lock the current ready version. Select one below, or follow the guide to upload a new version.",
+    },
+    "battle-ready": {
+      eyebrow: "READY FOR CONTACT",
+      title: zh ? "接入完成。让 Agent 出战。" : "Uplink ready. Deploy the Agent.",
+      body: zh
+        ? "默认从训练赛开始，不影响排名；确认表现后再切换到正式排位。"
+        : "Start with training so rating is unaffected, then move to ranked play after verifying performance.",
+    },
+  }[mission];
+
   return (
     <div className="page-shell">
       <div className="section-heading">
@@ -133,45 +210,60 @@ export function CommandCenter({ locale = "zh" }: { locale?: Locale }) {
           {error}
         </p>
       )}
-      <section className="mission-cta" aria-labelledby="next-mission-title">
+      <section className="mission-cta" data-state={mission} aria-labelledby="next-mission-title">
         <span className="mission-cta__index">
           NEXT
           <br />
           01
         </span>
         <div>
-          <p className="eyebrow">READY FOR CONTACT</p>
-          <h2 id="next-mission-title">
-            {zh
-              ? humanPlayEnabled
-                ? "舰队已就位。现在开一把。"
-                : "舰队已就位。让 Agent 出战。"
-              : humanPlayEnabled
-                ? "Your fleet is ready. Start a match."
-                : "Your fleet is ready. Deploy the Agent."}
-          </h2>
-          <p>
-            {humanPlayEnabled
-              ? zh
-                ? "默认是训练赛，不影响排名。选择 Human 亲自操作，或让当前 Agent 策略执行。"
-                : "Training is the default and does not affect rating. Command as Human or run the current Agent strategy."
-              : zh
-                ? "默认是训练赛，不影响排名。比赛会锁定当前 ready 策略并由 Agent 自主执行。"
-                : "Training is the default and does not affect rating. The match locks the current ready strategy and runs autonomously."}
-          </p>
+          <p className="eyebrow">{missionCopy.eyebrow}</p>
+          <h2 id="next-mission-title">{missionCopy.title}</h2>
+          <p>{missionCopy.body}</p>
         </div>
-        <div className="mission-cta__actions">
-          {humanPlayEnabled && (
-            <Link className="button" href={`${localPath(locale, "/arena")}?control=human`}>
-              {zh ? "我来操作" : "Command it"}
+        <div className="mission-cta__actions" aria-live="polite">
+          {mission === "copy-handoff" && (
+            <button
+              className="button button--primary"
+              onClick={() => void copyAgentAccess("bundle")}
+              type="button"
+            >
+              {copyState === "bundle"
+                ? zh
+                  ? "接入包已复制"
+                  : "Handoff copied"
+                : copyState === "error"
+                  ? zh
+                    ? "复制失败，请重试"
+                    : "Copy failed — retry"
+                  : zh
+                    ? "复制完整接入包 →"
+                    : "Copy full handoff →"}
+            </button>
+          )}
+          {mission === "needs-agent-key" && (
+            <button
+              className="button button--primary"
+              disabled={busy}
+              onClick={() => void createKey()}
+              type="button"
+            >
+              {zh ? "生成一次性 Key →" : "Generate one-time key →"}
+            </button>
+          )}
+          {mission === "needs-ready-strategy" && (
+            <a className="button button--primary" href="#strategy-versions">
+              {zh ? "查看策略版本 ↓" : "Review strategy versions ↓"}
+            </a>
+          )}
+          {mission === "battle-ready" && (
+            <Link
+              className="button button--primary"
+              href={`${localPath(locale, "/arena")}?control=agent`}
+            >
+              {zh ? "让 Agent 出战 →" : "Deploy Agent →"}
             </Link>
           )}
-          <Link
-            className="button button--primary"
-            href={`${localPath(locale, "/arena")}?control=agent`}
-          >
-            {zh ? "让 Agent 出战 →" : "Deploy Agent →"}
-          </Link>
         </div>
       </section>
       <div className="page-grid">
@@ -198,7 +290,7 @@ export function CommandCenter({ locale = "zh" }: { locale?: Locale }) {
               {competitiveRankPoints(locale, profile.rating.competitiveRank)}
             </strong>
           </div>
-          <h2>{zh ? "策略版本" : "Strategy versions"}</h2>
+          <h2 id="strategy-versions">{zh ? "策略版本" : "Strategy versions"}</h2>
           <div className="status-list">
             {profile.versions.map((version) => (
               <div className="status-row" key={version.publicId}>
@@ -248,11 +340,35 @@ export function CommandCenter({ locale = "zh" }: { locale?: Locale }) {
               <p className="secret">{secret}</p>
               <button
                 className="button button--small"
-                onClick={() => void navigator.clipboard.writeText(secret)}
+                onClick={() => void copyAgentAccess("key")}
                 type="button"
               >
-                {zh ? "复制密钥" : "Copy key"}
+                {copyState === "key"
+                  ? zh
+                    ? "密钥已复制"
+                    : "Key copied"
+                  : zh
+                    ? "仅复制密钥"
+                    : "Copy key only"}
               </button>
+              <button
+                className="button button--primary button--small"
+                onClick={() => void copyAgentAccess("bundle")}
+                type="button"
+              >
+                {copyState === "bundle"
+                  ? zh
+                    ? "接入包已复制"
+                    : "Handoff copied"
+                  : zh
+                    ? "复制完整接入包"
+                    : "Copy full handoff"}
+              </button>
+              {copyState === "error" && (
+                <p className="notice notice--error">
+                  {zh ? "复制失败，请重试。" : "Copy failed. Please retry."}
+                </p>
+              )}
             </div>
           )}
           <div className="status-list">
