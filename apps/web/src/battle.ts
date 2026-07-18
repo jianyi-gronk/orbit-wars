@@ -99,8 +99,86 @@ export function setShips(
   requested: number,
 ): CommandDraft {
   const planet = planets.find((candidate) => candidate.id === draft.selectedPlanetId);
-  const available = planet ? Math.floor(planet.ships) : 1;
+  const available = planet ? availableShips(draft, planets, planet.id) : 1;
   return { ...draft, ships: Math.max(1, Math.min(available, Math.floor(requested))) };
+}
+
+export function queuedShipsForPlanet(
+  draft: CommandDraft,
+  planetId: number,
+  excludeIndex: number | null = null,
+): number {
+  return draft.pending.reduce(
+    (total, command, index) =>
+      index !== excludeIndex && command.fromPlanetId === planetId ? total + command.ships : total,
+    0,
+  );
+}
+
+export function availableShips(
+  draft: CommandDraft,
+  planets: PlanetView[],
+  planetId: number,
+): number {
+  const planet = planets.find((candidate) => candidate.id === planetId);
+  return Math.max(0, Math.floor(planet?.ships ?? 0) - queuedShipsForPlanet(draft, planetId));
+}
+
+export function aimAtPoint(
+  draft: CommandDraft,
+  planets: PlanetView[],
+  targetX: number,
+  targetY: number,
+): CommandDraft {
+  const source = planets.find((candidate) => candidate.id === draft.selectedPlanetId);
+  if (!source) return { ...draft, error: "先选择一颗己方星球。" };
+  return setAngle(draft, Math.atan2(targetY - source.y, targetX - source.x));
+}
+
+export function setShipRatio(
+  draft: CommandDraft,
+  planets: PlanetView[],
+  ratio: number,
+): CommandDraft {
+  if (draft.selectedPlanetId === null) return { ...draft, error: "先选择一颗己方星球。" };
+  const available = availableShips(draft, planets, draft.selectedPlanetId);
+  return {
+    ...draft,
+    ships: Math.max(1, Math.floor(available * Math.max(0, Math.min(1, ratio)))),
+    error: null,
+  };
+}
+
+export function removeQueuedLaunch(draft: CommandDraft, index: number): CommandDraft {
+  return {
+    ...draft,
+    pending: draft.pending.filter((_command, commandIndex) => commandIndex !== index),
+    error: null,
+  };
+}
+
+export function updateQueuedLaunch(
+  draft: CommandDraft,
+  planets: PlanetView[],
+  index: number,
+  requestedShips: number,
+): CommandDraft {
+  const command = draft.pending[index];
+  if (!command) return draft;
+  const planet = planets.find((candidate) => candidate.id === command.fromPlanetId);
+  const remaining = Math.max(
+    1,
+    Math.floor(planet?.ships ?? 1) - queuedShipsForPlanet(draft, command.fromPlanetId, index),
+  );
+  return {
+    ...draft,
+    pending: draft.pending.map((candidate, commandIndex) =>
+      commandIndex === index
+        ? { ...candidate, ships: Math.max(1, Math.min(remaining, Math.floor(requestedShips))) }
+        : candidate,
+    ),
+    error: null,
+  };
 }
 
 export function queueLaunch(draft: CommandDraft, planets: PlanetView[]): CommandDraft {
@@ -111,14 +189,16 @@ export function queueLaunch(draft: CommandDraft, planets: PlanetView[]): Command
     return { ...draft, error: "每回合最多六条发射指令。" };
   }
   const planet = planets.find((candidate) => candidate.id === draft.selectedPlanetId);
-  const alreadyQueued = draft.pending
-    .filter((command) => command.fromPlanetId === draft.selectedPlanetId)
-    .reduce((total, command) => total + command.ships, 0);
+  const alreadyQueued = queuedShipsForPlanet(draft, draft.selectedPlanetId);
   if (!planet || alreadyQueued + draft.ships > planet.ships) {
     return { ...draft, error: "待提交兵力超过当前库存。" };
   }
   return {
     ...draft,
+    ships: Math.max(
+      1,
+      Math.min(draft.ships, Math.floor(planet.ships) - alreadyQueued - draft.ships),
+    ),
     pending: [
       ...draft.pending,
       { fromPlanetId: draft.selectedPlanetId, angle: draft.angle, ships: draft.ships },

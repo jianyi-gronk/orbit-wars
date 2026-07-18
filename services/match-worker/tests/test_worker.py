@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any, cast
 
@@ -66,6 +67,24 @@ def test_worker_publishes_a_slot_scoped_live_snapshot() -> None:
     assert first["payload"]["player"] == 0
     assert second["payload"]["player"] == 1
     assert first["payload"]["planets"]
+
+
+def test_agent_only_turns_do_not_wait_for_the_human_deadline() -> None:
+    client = SnapshotRedis()
+    worker = MatchWorker(cast(Any, client))
+    deadline = datetime.now(UTC) + timedelta(seconds=worker.turn_seconds)
+
+    commands, cursor = worker._human_actions(
+        "match-agent-only",
+        cast(Any, (None, None)),
+        set(),
+        "0-0",
+        deadline,
+    )
+
+    assert worker.turn_seconds == 2.5
+    assert commands == {}
+    assert cursor == "0-0"
 
 
 def test_worker_runs_selected_kaggle_builtin() -> None:

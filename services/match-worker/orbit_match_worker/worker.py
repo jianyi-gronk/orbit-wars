@@ -73,7 +73,7 @@ class MatchWorker:
         self,
         client: Redis,
         *,
-        turn_seconds: float = 5.0,
+        turn_seconds: float = 2.5,
         replay_store: Any | None = None,
         replay_directory: Path | None = None,
     ) -> None:
@@ -91,7 +91,7 @@ class MatchWorker:
     @classmethod
     def from_environment(cls) -> MatchWorker:
         settings = InfrastructureSettings.from_environment()
-        seconds = float(os.environ.get("ORBIT_TURN_SECONDS", "10"))
+        seconds = float(os.environ.get("ORBIT_TURN_SECONDS", "2.5"))
         return cls(
             Redis.from_url(
                 settings.redis_url,

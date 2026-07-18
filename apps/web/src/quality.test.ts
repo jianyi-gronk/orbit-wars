@@ -27,6 +27,24 @@ describe("release performance and accessibility budgets", () => {
     expect(css).toContain("prefers-reduced-motion: reduce");
   });
 
+  it("keeps Human command training-only, recoverable, and hidden behind its feature flag", () => {
+    const arena = readFileSync("app/arena/ArenaForm.tsx", "utf8");
+    const battle = readFileSync("components/battle/LiveBattle.tsx", "utf8");
+    const stage = readFileSync("components/battle/BattleStage.tsx", "utf8");
+
+    expect(arena).toContain("humanPlayEnabled && control ===");
+    expect(arena).toContain('setMode("training")');
+    expect(arena).toContain("Human Beta 仅开放训练赛");
+    expect(arena).toContain("Human Beta is training-only");
+    expect(arena).toContain('localStorage.setItem("orbit.human-tutorial.v1"');
+    expect(battle).toContain('type: "match.resync"');
+    expect(battle).toContain("submittedSteps.current.has(step)");
+    expect(battle).toContain("sendTurn(observation.step, [], true)");
+    expect(battle).toContain("500 * 2 ** attempts");
+    expect(battle).not.toContain("P-{planet.id}");
+    expect(stage).toContain("showPlanetIds = false");
+  });
+
   it("keeps the home mission flow keyboard-ready and motion-safe", () => {
     const home = readFileSync("components/product/HomeExperience.tsx", "utf8");
     const layout = readFileSync("app/layout.tsx", "utf8");

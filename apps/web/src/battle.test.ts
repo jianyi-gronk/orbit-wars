@@ -3,14 +3,19 @@ import {
   BATTLEFIELD_SIZE,
   SUN_CENTER,
   SUN_RADIUS,
+  aimAtPoint,
+  availableShips,
   battlefieldViewport,
   fleetDirection,
   formatPlanetLabel,
   initialDraft,
   queueLaunch,
+  removeQueuedLaunch,
   selectPlanet,
   setAngle,
+  setShipRatio,
   setShips,
+  updateQueuedLaunch,
   type PlanetView,
 } from "./battle";
 
@@ -30,11 +35,33 @@ describe("human tactical command draft", () => {
     let draft = selectPlanet(initialDraft, planets, 0, 0);
     draft = setAngle(setShips(draft, planets, 6), -Math.PI / 2);
     draft = queueLaunch(draft, planets);
-    draft = setShips(draft, planets, 5);
+    draft = { ...draft, ships: 5 };
     draft = queueLaunch(draft, planets);
     expect(draft.angle).toBeCloseTo(Math.PI * 1.5);
     expect(draft.pending).toHaveLength(1);
     expect(draft.error).toContain("库存");
+  });
+
+  it("aims at map points and offers quick force ratios from unqueued inventory", () => {
+    let draft = selectPlanet(initialDraft, planets, 0, 0);
+    draft = aimAtPoint(draft, planets, 0, 10);
+    expect(draft.angle).toBeCloseTo(Math.PI / 2);
+    draft = setShipRatio(draft, planets, 0.5);
+    expect(draft.ships).toBe(5);
+    draft = queueLaunch(draft, planets);
+    expect(availableShips(draft, planets, 0)).toBe(5);
+    expect(setShipRatio(draft, planets, 1).ships).toBe(5);
+  });
+
+  it("edits and removes queued launches without exceeding planet inventory", () => {
+    let draft = selectPlanet(initialDraft, planets, 0, 0);
+    draft = queueLaunch(setShips(draft, planets, 4), planets);
+    draft = queueLaunch(setShips(draft, planets, 3), planets);
+    draft = updateQueuedLaunch(draft, planets, 0, 9);
+    expect(draft.pending.map((command) => command.ships)).toEqual([7, 3]);
+    draft = removeQueuedLaunch(draft, 1);
+    expect(draft.pending).toHaveLength(1);
+    expect(availableShips(draft, planets, 0)).toBe(3);
   });
 });
 

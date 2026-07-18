@@ -44,6 +44,15 @@ export function ArenaForm({
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState("");
   const [errorCode, setErrorCode] = useState("");
+  const [tutorialStep, setTutorialStep] = useState(0);
+  const [tutorialComplete, setTutorialComplete] = useState(true);
+
+  useEffect(() => {
+    if (!humanPlayEnabled) return;
+    const complete = localStorage.getItem("orbit.human-tutorial.v1") === "complete";
+    const timer = window.setTimeout(() => setTutorialComplete(complete), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const findOffer = useCallback(
     async (nextControl: Control) => {
@@ -106,9 +115,31 @@ export function ArenaForm({
 
   function choose(next: Control) {
     setControl(next);
+    if (next === "human") setMode("training");
     setConfirmed(false);
     void findOffer(next);
   }
+
+  function finishTutorial() {
+    localStorage.setItem("orbit.human-tutorial.v1", "complete");
+    setTutorialComplete(true);
+    setTutorialStep(0);
+  }
+
+  const tutorial = [
+    zh
+      ? ["选择源星", "点选己方星球；星球内部数字就是当前可用兵力。"]
+      : ["Select an origin", "Choose an owned planet. Its number is the current force."],
+    zh
+      ? ["拖拽瞄准", "在正方形战场上点击或拖拽，预览舰队航向。"]
+      : ["Aim directly", "Click or drag across the square battlefield to preview a heading."],
+    zh
+      ? ["分配兵力", "使用 25% / 50% / 75% / ALL 快捷档，再加入命令队列。"]
+      : ["Allocate force", "Use 25% / 50% / 75% / ALL, then add the launch to the queue."],
+    zh
+      ? ["按时提交", "每回合约 2.5 秒；来不及操作时平台会自动提交空动作。"]
+      : ["Commit on time", "Each turn is about 2.5s. The platform auto-passes if you do nothing."],
+  ];
 
   return (
     <section className="panel arena-panel">
@@ -172,10 +203,42 @@ export function ArenaForm({
           </span>
         </div>
       )}
+      {humanPlayEnabled && control === "human" && !tutorialComplete && (
+        <section className="human-tutorial" aria-live="polite">
+          <p className="eyebrow">
+            HUMAN COMMAND / {String(tutorialStep + 1).padStart(2, "0")} OF 04
+          </p>
+          <h3>{tutorial[tutorialStep][0]}</h3>
+          <p>{tutorial[tutorialStep][1]}</p>
+          <div className="toolbar">
+            <button className="button" onClick={finishTutorial} type="button">
+              {zh ? "跳过教学" : "Skip tutorial"}
+            </button>
+            <button
+              className="button button--primary"
+              onClick={() =>
+                tutorialStep === tutorial.length - 1
+                  ? finishTutorial()
+                  : setTutorialStep((value) => value + 1)
+              }
+              type="button"
+            >
+              {tutorialStep === tutorial.length - 1
+                ? zh
+                  ? "完成并继续 →"
+                  : "Finish and continue →"
+                : zh
+                  ? "下一步 →"
+                  : "Next →"}
+            </button>
+          </div>
+        </section>
+      )}
       <div className="field">
         <label htmlFor="mode">02 / {zh ? "选择模式" : "CHOOSE MODE"}</label>
         <select
           id="mode"
+          disabled={control === "human"}
           onChange={(event) => {
             setMode(event.target.value as Mode);
             setConfirmed(false);
@@ -183,11 +246,18 @@ export function ArenaForm({
           value={mode}
         >
           <option value="training">{zh ? "训练 / 不计分" : "Training / unrated"}</option>
-          <option value="ranked">
+          <option disabled={control === "human"} value="ranked">
             {zh ? "排位 / 改变统一 rating" : "Ranked / changes unified rating"}
           </option>
         </select>
       </div>
+      {control === "human" && (
+        <p className="notice">
+          {zh
+            ? "Human Beta 仅开放训练赛，不改变统一 rating。"
+            : "Human Beta is training-only and does not change the unified rating."}
+        </p>
+      )}
       {offer && (
         <div className="opponent-card">
           <div>
@@ -236,7 +306,12 @@ export function ArenaForm({
         {!created ? (
           <button
             className="button button--primary"
-            disabled={busy || !offer || !canQueue(mode, confirmed)}
+            disabled={
+              busy ||
+              !offer ||
+              !canQueue(mode, confirmed) ||
+              (control === "human" && !tutorialComplete)
+            }
             onClick={() => void queue()}
             type="button"
           >

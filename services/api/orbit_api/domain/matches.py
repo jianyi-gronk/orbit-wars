@@ -42,6 +42,10 @@ class MatchNotFound(MatchCreationError):
     code = "match.not_found"
 
 
+class HumanRankedNotAllowed(MatchCreationError):
+    code = "match.human_training_only"
+
+
 @dataclass(frozen=True)
 class MatchCreationRequest:
     fleet_id: str
@@ -105,6 +109,11 @@ def create_match(
         mode = MatchMode(request.mode)
     except ValueError as error:
         raise MatchCreationError("unsupported mode or controller") from error
+    if mode == MatchMode.RANKED and ControllerType.HUMAN in {
+        own_controller,
+        opponent_controller,
+    }:
+        raise HumanRankedNotAllowed("human control is limited to training matches")
     own_version = _version_for(session, fleet, own_controller)
     opponent_version = _version_for(session, opponent, opponent_controller)
     payload = {

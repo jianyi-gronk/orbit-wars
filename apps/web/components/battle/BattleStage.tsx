@@ -220,7 +220,7 @@ export function BattleStage(props: BattleStageProps) {
     selectedPlanetId,
     angle,
     lowPerformance,
-    showPlanetIds = true,
+    showPlanetIds = false,
     onSelect,
     onAim,
   } = props;
@@ -310,6 +310,7 @@ export function BattleStage(props: BattleStageProps) {
     <div
       className="battle-stage"
       ref={host}
+      onPointerDown={aimFromPointer}
       onPointerMove={aimFromPointer}
       role="img"
       aria-label="权威战场视图；中央太阳为舰队危险碰撞区"

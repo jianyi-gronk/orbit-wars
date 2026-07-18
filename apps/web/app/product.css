@@ -1000,6 +1000,30 @@
   padding: 0.35rem 0.65rem;
 }
 
+.human-tutorial {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--ow-color-accent) 12%, transparent),
+      transparent
+    ),
+    var(--ow-color-surface);
+  border: 1px solid var(--ow-color-accent);
+  display: grid;
+  gap: 0.8rem;
+  margin: 1.25rem 0;
+  padding: clamp(1rem, 3vw, 1.75rem);
+}
+
+.human-tutorial h3,
+.human-tutorial p {
+  margin: 0;
+}
+
+.human-tutorial h3 {
+  font: clamp(1.8rem, 4vw, 3.5rem) / 1 var(--ow-font-display);
+}
+
 .strategy-lab {
   display: grid;
   gap: 1.5rem;

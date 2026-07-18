@@ -72,7 +72,7 @@ def fleet(client: httpx.AsyncClient, subject: str) -> str:
     return response.json()["publicId"]
 
 
-def test_match_creation_pins_random_slots_controller_versions_queue_and_ticket(
+def test_training_match_creation_pins_random_slots_controller_versions_queue_and_ticket(
     match_client,
 ) -> None:
     client, factory = match_client
@@ -81,7 +81,7 @@ def test_match_creation_pins_random_slots_controller_versions_queue_and_ticket(
     payload = {
         "fleetId": own,
         "opponentFleetId": opponent,
-        "mode": "ranked",
+        "mode": "training",
         "controllerType": "human",
         "opponentControllerType": "agent",
         "idempotencyKey": "ranked-001",
@@ -122,6 +122,48 @@ def test_match_creation_pins_random_slots_controller_versions_queue_and_ticket(
     assert agent.strategy_version_id is not None
     assert claims.fleet_id == own
     assert app.state.match_queue.items == [body["publicId"]]
+
+
+def test_human_control_is_rejected_for_ranked_matches(match_client) -> None:
+    client, _factory = match_client
+    own = fleet(client, "human-ranked")
+    opponent = fleet(client, "agent-ranked")
+
+    rejected = send(
+        client,
+        "POST",
+        "/api/v1/matches",
+        "human-ranked",
+        {
+            "fleetId": own,
+            "opponentFleetId": opponent,
+            "mode": "ranked",
+            "controllerType": "human",
+            "opponentControllerType": "agent",
+            "idempotencyKey": "human-ranked-001",
+        },
+    )
+
+    assert rejected.status_code == 422
+    assert rejected.json()["detail"]["code"] == "match.human_training_only"
+    assert app.state.match_queue.items == []
+
+    agent_ranked = send(
+        client,
+        "POST",
+        "/api/v1/matches",
+        "human-ranked",
+        {
+            "fleetId": own,
+            "opponentFleetId": opponent,
+            "mode": "ranked",
+            "controllerType": "agent",
+            "opponentControllerType": "agent",
+            "idempotencyKey": "agent-ranked-001",
+        },
+    )
+    assert agent_ranked.status_code == 201
+    assert agent_ranked.json()["mode"] == "ranked"
 
 
 def test_match_conflicting_retry_is_rejected_and_match_is_visible_only_to_participant(

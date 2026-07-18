@@ -137,6 +137,32 @@
   text-align: left;
   cursor: pointer;
 }
+.queue-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+.force-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin: 12px 0;
+}
+.force-presets button {
+  border: 1px solid #344047;
+  background: #080d10;
+  color: #d9e1e1;
+  cursor: pointer;
+  font: 10px/1 monospace;
+  padding: 9px 4px;
+}
+.force-presets button:hover:not(:disabled) {
+  border-color: #ffd76a;
+  color: #ffd76a;
+}
+.force-presets button:disabled {
+  cursor: not-allowed;
+  opacity: 0.32;
+}
 .planet-buttons button small {
   display: block;
   margin-top: 5px;
@@ -172,10 +198,6 @@
   border-top: 1px solid rgb(255 255 255 / 16%);
   font: 11px/1.6 monospace;
 }
-.pending-list > div {
-  display: flex;
-  justify-content: space-between;
-}
 .pending-list button {
   border: 0;
   background: transparent;
@@ -186,7 +208,43 @@
   color: #778388;
 }
 .pending-list ol {
-  padding-left: 22px;
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.pending-list li {
+  align-items: end;
+  background: #080d10;
+  border: 1px solid #273137;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 76px auto;
+  padding: 10px;
+}
+.pending-list li > div {
+  display: grid;
+  gap: 4px;
+}
+.pending-list li > div span {
+  color: #ffd76a;
+}
+.pending-list li label {
+  margin: 0 !important;
+}
+.pending-list li input {
+  background: #05090b;
+  border: 1px solid #344047;
+  color: #edf3f2;
+  min-width: 0;
+  padding: 6px;
+  width: 100%;
+}
+.pending-list li > button {
+  color: #ff826e;
+  font: 9px/1 monospace;
+  padding: 8px 2px;
 }
 .command-error {
   color: #ff826e;
