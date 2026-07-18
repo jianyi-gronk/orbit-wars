@@ -19,7 +19,7 @@
 
 ## 阶段 4：验证与交付
 
-- [ ] **补充质量保护** — 覆盖首页轻量读取、reduced-motion、交接安全和 hover 文字可见性。
-- [ ] **运行工程验证** — 执行 web test、lint、typecheck 和生产 build，修复本轮问题。
-- [ ] **执行浏览器视觉验收** — 检查中英首页、桌面/窄屏、真实预览、最近对局、回放复制和控制台。
-- [ ] **记录验证并交付** — 生成 verify.md，按内聚批次 commit，最终统一 push 到 origin/main。
+- [x] **补充质量保护** — 覆盖首页轻量读取、reduced-motion、交接安全和 hover 文字可见性。
+- [x] **运行工程验证** — 执行 web test、lint、typecheck 和生产 build，修复本轮问题。
+- [x] **执行浏览器视觉验收** — 检查中英首页、桌面/窄屏、真实预览、最近对局、回放复制和控制台。
+- [x] **记录验证并交付** — 生成 verify.md，按内聚批次 commit，最终统一 push 到 origin/main。

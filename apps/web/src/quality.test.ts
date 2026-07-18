@@ -40,6 +40,23 @@ describe("release performance and accessibility budgets", () => {
     expect(css).toContain("scroll-snap-type: y mandatory");
   });
 
+  it("keeps the homepage battle feed real, lightweight, and motion-safe", () => {
+    const feed = readFileSync("components/product/HomeBattleFeed.tsx", "utf8");
+    const home = readFileSync("components/product/HomeExperience.tsx", "utf8");
+    const css = readFileSync("app/game-ux.css", "utf8");
+
+    expect(home).toContain('variant="preview"');
+    expect(home).toContain('variant="latest"');
+    expect(feed).toContain("/api/public/v1/matches?period=all&limit=3");
+    expect(feed).toContain("/segments/0");
+    expect(feed).not.toContain("/segments/20");
+    expect(feed).toContain("reconstructSegment(records).slice(0, 20)");
+    expect(feed).toContain("reducedMotion");
+    expect(feed).toContain("!document.hidden");
+    expect(css).toContain(".home-battle-preview__link:hover");
+    expect(css).toContain(".home-match-card:hover strong");
+  });
+
   it("keeps the orbital world optional, motion-safe, and disposable", () => {
     const home = readFileSync("components/product/HomeExperience.tsx", "utf8");
     const world = readFileSync("components/product/OrbitalWorld.tsx", "utf8");
@@ -74,6 +91,23 @@ describe("release performance and accessibility budgets", () => {
       /\.replay-controls \.replay-play-button:hover:not\(:disabled\)[\s\S]*?color: #080b0d/,
     );
     expect(css).toContain("@media (max-width: 620px)");
+  });
+
+  it("keeps the replay-to-Agent handoff explicit and key-free", () => {
+    const player = readFileSync("components/battle/ReplayPlayer.tsx", "utf8");
+    const handoff = readFileSync("src/public-replay.ts", "utf8");
+    const css = readFileSync("app/replay.css", "utf8");
+
+    expect(player).toContain('copyPublicReplay("analysis")');
+    expect(player).toContain('copyPublicReplay("replay")');
+    expect(player).toContain('copyPublicReplay("data")');
+    expect(player).toContain('aria-live="polite"');
+    expect(handoff).toContain("keyEvents: compact.events.slice(0, 20)");
+    expect(handoff).not.toContain("AgentKey");
+    expect(handoff).not.toContain("owk_");
+    expect(css).toMatch(
+      /\.replay-handoff__actions \.replay-handoff__primary:hover:not\(:disabled\)[\s\S]*?color: #080b0d/,
+    );
   });
 
   it("keeps the central sun visually aligned with the simple Kaggle reference", () => {
