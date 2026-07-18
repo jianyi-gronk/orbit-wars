@@ -108,7 +108,11 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
               : "unknown";
         const description = reason instanceof Error ? reason.message : String(reason);
         setError(errorMessage(locale, reason instanceof ApiError ? reason.code : undefined));
-        setErrorDetail(`${stage} / ${code} / ${description}`);
+        setErrorDetail(
+          process.env.NODE_ENV === "production"
+            ? `${stage} / ${code}`
+            : `${stage} / ${code} / ${description}`,
+        );
         if (process.env.NODE_ENV !== "production") {
           console.warn("Replay load failed", { publicId, stage, reason });
         }
