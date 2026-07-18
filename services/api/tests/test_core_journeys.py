@@ -206,7 +206,7 @@ def test_three_clean_environment_product_loops(journey) -> None:
             "opponentFleetId": opponent,
             "mode": "ranked",
             "controllerType": "agent",
-            "opponentControllerType": "human",
+            "opponentControllerType": "agent",
             "idempotencyKey": "journey-ranked-001",
         },
     )

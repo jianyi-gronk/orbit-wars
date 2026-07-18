@@ -60,14 +60,14 @@ def _free_credits() -> int:
 
 
 def _initial_draft(fleet: Fleet) -> StrategyDraft:
-    parameters = dict(DEFAULT_PARAMETERS)
+    parameters = DEFAULT_PARAMETERS.copy()
     return StrategyDraft(
         fleet_id=fleet.id,
         base_strategy_version_id=fleet.current_strategy_version_id,
         source_code=guided_source(
             float(parameters["launchRatio"]),
             int(parameters["minimumShips"]),
-            str(parameters["targetPreference"]),  # type: ignore[arg-type]
+            parameters["targetPreference"],
         ),
         mode="guided",
         parameters=parameters,
@@ -102,9 +102,7 @@ def get_workspace(
             session.commit()
         except IntegrityError:
             session.rollback()
-            draft = session.scalar(
-                select(StrategyDraft).where(StrategyDraft.fleet_id == fleet.id)
-            )
+            draft = session.scalar(select(StrategyDraft).where(StrategyDraft.fleet_id == fleet.id))
             credits = session.get(AiCreditAccount, fleet.owner_user_id)
             if draft is None or credits is None:
                 raise

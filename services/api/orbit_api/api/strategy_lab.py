@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, cast
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, ConfigDict, Field
@@ -102,7 +102,7 @@ StoreDependency = Annotated[StrategyPackageStore, Depends(strategy_store)]
 _simulation_limiter = SlidingWindowLimiter(limit=10, window_seconds=60)
 
 
-def _limit_simulation(request: Request, fleet_id: int, actor: str) -> None:
+def _limit_simulation(request: Request, fleet_id: object, actor: str) -> None:
     limiter = getattr(request.app.state, "simulation_rate_limiter", _simulation_limiter)
     if not limiter.allow(f"fleet:{fleet_id}") or not limiter.allow(f"actor:{actor}"):
         raise HTTPException(
@@ -383,9 +383,12 @@ def create_ai_assist(
         user = session.get(User, workspace.fleet.owner_user_id)
         if user is None:
             raise StrategyLabError("the fleet owner is unavailable")
-        provider: AiProvider = getattr(request.app.state, "ai_provider", None)
-        if provider is None:
+        provider_value = getattr(request.app.state, "ai_provider", None)
+        provider: AiProvider
+        if provider_value is None:
             provider = DeepSeekProvider.from_environment()
+        else:
+            provider = cast(AiProvider, provider_value)
         result = run_ai_assist(
             session,
             user=user,
