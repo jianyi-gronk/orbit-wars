@@ -13,6 +13,12 @@ export class ApiError extends Error {
 const apiBase = process.env.NEXT_PUBLIC_ORBIT_API_BASE ?? "/orbit-api";
 const devSubject = process.env.NEXT_PUBLIC_ORBIT_DEV_SUBJECT;
 
+export function apiUrl(path: string, origin?: string): string {
+  const value = `${apiBase.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+  if (/^https?:\/\//.test(value) || !origin) return value;
+  return new URL(value, origin).toString();
+}
+
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");

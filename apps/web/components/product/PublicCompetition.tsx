@@ -20,6 +20,7 @@ import {
   type Locale,
 } from "../../src/i18n";
 import { competitiveRankLabel, competitiveRankPoints } from "../../src/rating";
+import type { PublicMatchSummary } from "../../src/public-replay";
 import { formatRatingDelta } from "../../src/replay";
 import { ModeTag } from "./ModeTag";
 
@@ -296,31 +297,6 @@ export function FleetProfileView({ locale, publicId }: { locale: Locale; publicI
   );
 }
 
-type HistoryMatch = {
-  publicId: string;
-  mode: string;
-  mapId: string;
-  result: { winnerSlot?: number | null; reason?: string } | null;
-  replayPublicId: string;
-  replayArtifact: {
-    schemaVersion: number;
-    frameCount: number;
-    sizeBytes: number;
-    savedAt: string;
-  };
-  createdAt: string;
-  featured: boolean;
-  participants: Array<{
-    slot: number;
-    fleetPublicId: string;
-    fleetName: string;
-    controllerType: "human" | "agent";
-    strategyVersionId: string | null;
-    submittedBy: string | null;
-    ratingChange: { delta?: number } | null;
-  }>;
-};
-
 function formatArtifactSize(locale: Locale, bytes: number): string {
   if (bytes < 1024) return `${formatNumber(locale, bytes)} B`;
   return `${new Intl.NumberFormat(locale === "zh" ? "zh-CN" : "en", { maximumFractionDigits: 1 }).format(bytes / 1024)} KB`;
@@ -328,7 +304,7 @@ function formatArtifactSize(locale: Locale, bytes: number): string {
 
 export function HistoryView({ locale }: { locale: Locale }) {
   const zh = locale === "zh";
-  const [matches, setMatches] = useState<HistoryMatch[] | null>(null);
+  const [matches, setMatches] = useState<PublicMatchSummary[] | null>(null);
   const [featured, setFeatured] = useState(false);
   const [control, setControl] = useState("all");
   const [error, setError] = useState("");
@@ -336,7 +312,7 @@ export function HistoryView({ locale }: { locale: Locale }) {
   useEffect(() => {
     const controller = new AbortController();
     const query = `period=all&featured=${featured}${control === "all" ? "" : `&controller_type=${control}`}`;
-    void apiFetchWithRetry<{ matches: HistoryMatch[] }>(
+    void apiFetchWithRetry<{ matches: PublicMatchSummary[] }>(
       `/api/public/v1/matches?${query}`,
       { signal: controller.signal },
       { attempts: 3 },

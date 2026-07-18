@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 
 import { adjacentSceneIndex, clampSceneIndex, sceneState } from "../../src/home-motion";
 import { localPath, type Locale } from "../../src/i18n";
+import { HomeBattleFeed } from "./HomeBattleFeed";
 import { OrbitalWorld, type OrbitalPointer } from "./OrbitalWorld";
 
 const sceneCount = 4;
@@ -181,16 +182,12 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
             </Link>
           </div>
         </div>
-        <div className="orbital-radar" aria-hidden="true">
-          <span className="orbital-radar__ring orbital-radar__ring--outer" />
-          <span className="orbital-radar__ring orbital-radar__ring--inner" />
-          <span className="orbital-radar__sweep" />
-          <span className="orbital-radar__core" />
-          <span className="orbital-radar__ship orbital-radar__ship--alpha" />
-          <span className="orbital-radar__ship orbital-radar__ship--beta" />
-          <span className="orbital-radar__track" />
-          <small>CONTACTS 02 / SIGNAL LOCKED</small>
-        </div>
+        <HomeBattleFeed
+          active={activeScene === 0}
+          locale={locale}
+          reducedMotion={reducedMotion}
+          variant="preview"
+        />
         <div className="scene-telemetry" aria-hidden="true">
           <span>RULESET 2P-V1</span>
           <span>ENGINE DETERMINISTIC</span>
@@ -249,20 +246,12 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
 
       <section className="home-scene home-scene--network" {...sceneProps(2)}>
         <div className="scene-corners" aria-hidden="true" />
-        <div className="network-map" aria-hidden="true">
-          {["WARM-01", "WARM-02", "WARM-03", "WARM-04", "WARM-05", "WARM-06"].map(
-            (agent, index) => (
-              <span data-agent-index={index + 1} key={agent}>
-                <i /> {agent}
-              </span>
-            ),
-          )}
-          <strong>
-            ORBIT/WARS
-            <br />
-            ONE POOL
-          </strong>
-        </div>
+        <HomeBattleFeed
+          active={activeScene === 2}
+          locale={locale}
+          reducedMotion={reducedMotion}
+          variant="latest"
+        />
         <div className="network-copy">
           <p className="scene-kicker">COMPETITION NETWORK / 03</p>
           <h2>
