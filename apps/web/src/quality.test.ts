@@ -40,6 +40,22 @@ describe("release performance and accessibility budgets", () => {
     expect(css).toContain("scroll-snap-type: y mandatory");
   });
 
+  it("keeps the orbital world optional, motion-safe, and disposable", () => {
+    const home = readFileSync("components/product/HomeExperience.tsx", "utf8");
+    const world = readFileSync("components/product/OrbitalWorld.tsx", "utf8");
+    const css = readFileSync("app/game-ux.css", "utf8");
+
+    expect(home).toContain("<OrbitalWorld");
+    expect(world).toContain('await import("three")');
+    expect(world).toContain('aria-hidden="true"');
+    expect(world).toContain('document.addEventListener("visibilitychange"');
+    expect(world).toContain("reducedMotionRef.current");
+    expect(world).toContain("window.cancelAnimationFrame(animationFrame)");
+    expect(world).toContain("entry.dispose()");
+    expect(world).toContain("renderer.forceContextLoss()");
+    expect(css).toMatch(/\.orbital-world\s*\{[\s\S]*?pointer-events: none/);
+  });
+
   it("loads the localized replay surface and collapses dense events into accessible markers", () => {
     const layout = readFileSync("app/layout.tsx", "utf8");
     const player = readFileSync("components/battle/ReplayPlayer.tsx", "utf8");
