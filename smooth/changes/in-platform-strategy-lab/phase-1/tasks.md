@@ -9,12 +9,12 @@
 
 - [x] **新增草稿与 AI 额度迁移** — 建立 StrategyDraft、AiCreditAccount 和 AiAssistRequest 模型及迁移。
 - [x] **建立确定性单文件策略包** — 提供平台基础模板、参数生成、源码校验与稳定 ZIP/hash 测试。
-- [ ] **实现私有草稿 API** — 支持读取、revision 保存、模板重置、owner 隔离和聚合 workspace 响应。
+- [x] **实现私有草稿 API** — 支持读取、revision 保存、模板重置、owner 隔离和聚合 workspace 响应。
 
 ## 阶段 3：模拟与发布
 
-- [ ] **扩展 Owner 候选模拟** — 从服务器草稿校验候选并运行训练模拟，持久化验证 hash，不改变 current/rating。
-- [ ] **实现站内发布** — 仅发布当前已验证草稿，复用不可变版本校验并支持设为 current。
+- [x] **扩展 Owner 候选模拟** — 从服务器草稿校验候选并运行训练模拟，持久化验证 hash，不改变 current/rating。
+- [x] **实现站内发布** — 仅发布当前已验证草稿，复用不可变版本校验并支持设为 current。
 
 ## 阶段 4：AI 副驾
 

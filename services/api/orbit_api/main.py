@@ -12,6 +12,7 @@ from orbit_api.api.matches import router as matches_router
 from orbit_api.api.replays import router as replays_router
 from orbit_api.api.session import router as session_router
 from orbit_api.api.simulations import router as simulations_router
+from orbit_api.api.strategy_lab import router as strategy_lab_router
 from orbit_api.api.ws_matches import router as ws_matches_router
 from orbit_api.db.session import SessionLocal
 from orbit_api.middleware.idempotency import IdempotencyMiddleware
@@ -27,6 +28,7 @@ app.include_router(leaderboard_router)
 app.include_router(matches_router)
 app.include_router(replays_router)
 app.include_router(simulations_router)
+app.include_router(strategy_lab_router)
 app.include_router(session_router)
 app.include_router(ws_matches_router)
 
