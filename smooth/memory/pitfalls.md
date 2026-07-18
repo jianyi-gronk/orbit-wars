@@ -8,3 +8,4 @@
 - 预热 Agent 的舰队、比赛和 rating 结算成功，不等于公开对局闭环完成；必须同时核对 ReplayArtifact、Match.replay_id、对象存储工件、公开历史 API 和至少一个 replay segment，不能只看 finished 数或榜单场次。
 - 样式文件“存在”不等于真实路由已加载；共享组件被双语正式路由使用时，必须从 RootLayout/实际路由核对 CSS chunk，并用密集真实数据检查绝对定位文本重叠，不能只停在源码中看到 CSS。
 - 验收浏览器数据页时，“页面 200 + 直连 API 200”不足以证明用户旅程可用；必须走浏览器实际同源代理、检查每个渐进 segment，并验证瞬时失败后能自动/手动恢复，不能让一次 GET 失败永久锁死客户端页面。
+- 回放协议不能只按 checkpoint/delta 建模；末段还可能包含无 frame 的 result 等终局元数据。消费者必须显式按 record type 分支，完整回归需验证最后 checkpoint 与 compact.frameCount 一致。
