@@ -7,8 +7,8 @@
 
 ## 阶段 2：草稿与源码包
 
-- [ ] **新增草稿与 AI 额度迁移** — 建立 StrategyDraft、AiCreditAccount 和 AiAssistRequest 模型及迁移。
-- [ ] **建立确定性单文件策略包** — 提供平台基础模板、参数生成、源码校验与稳定 ZIP/hash 测试。
+- [x] **新增草稿与 AI 额度迁移** — 建立 StrategyDraft、AiCreditAccount 和 AiAssistRequest 模型及迁移。
+- [x] **建立确定性单文件策略包** — 提供平台基础模板、参数生成、源码校验与稳定 ZIP/hash 测试。
 - [ ] **实现私有草稿 API** — 支持读取、revision 保存、模板重置、owner 隔离和聚合 workspace 响应。
 
 ## 阶段 3：模拟与发布

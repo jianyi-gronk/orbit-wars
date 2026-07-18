@@ -119,6 +119,54 @@ class StrategyVersion(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
 
+class StrategyDraft(Base):
+    __tablename__ = "strategy_drafts"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    fleet_id: Mapped[UUID] = mapped_column(ForeignKey("fleets.id"), unique=True, index=True)
+    base_strategy_version_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("strategy_versions.id")
+    )
+    source_code: Mapped[str] = mapped_column(Text)
+    mode: Mapped[str] = mapped_column(String(16), default="guided")
+    parameters: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
+    revision: Mapped[int] = mapped_column(Integer, default=1)
+    last_validation: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    validated_content_hash: Mapped[str | None] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+
+class AiCreditAccount(Base):
+    __tablename__ = "ai_credit_accounts"
+
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    remaining: Mapped[int] = mapped_column(Integer, default=30)
+    granted: Mapped[int] = mapped_column(Integer, default=30)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+
+class AiAssistRequest(Base):
+    __tablename__ = "ai_assist_requests"
+
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    public_id: Mapped[str] = mapped_column(
+        String(64), unique=True, index=True, default=lambda: new_public_id("assist")
+    )
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), index=True)
+    fleet_id: Mapped[UUID] = mapped_column(ForeignKey("fleets.id"), index=True)
+    draft_revision: Mapped[int] = mapped_column(Integer)
+    kind: Mapped[str] = mapped_column(String(16))
+    cost: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(24), default="reserved", index=True)
+    model: Mapped[str] = mapped_column(String(80), default="deepseek-v4-flash")
+    input_tokens: Mapped[int | None] = mapped_column(Integer)
+    output_tokens: Mapped[int | None] = mapped_column(Integer)
+    error_code: Mapped[str | None] = mapped_column(String(120))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class Match(Base):
     __tablename__ = "matches"
 
