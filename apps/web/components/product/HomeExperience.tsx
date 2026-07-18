@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 
-import { adjacentSceneIndex, clampSceneIndex, sceneState } from "../../src/home-motion";
+import {
+  adjacentSceneIndex,
+  clampSceneIndex,
+  createWheelGestureState,
+  reduceWheelGesture,
+  sceneState,
+} from "../../src/home-motion";
 import { localPath, type Locale } from "../../src/i18n";
 import { HomeBattleFeed } from "./HomeBattleFeed";
 import { OrbitalWorld, type OrbitalPointer } from "./OrbitalWorld";
@@ -19,11 +25,14 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
   const zh = locale === "zh";
   const containerRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef<OrbitalPointer>({ x: 0, y: 0 });
+  const activeSceneRef = useRef(0);
+  const wheelGestureRef = useRef(createWheelGestureState());
   const [activeScene, setActiveScene] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const goToScene = useCallback((requested: number, behavior: ScrollBehavior = "smooth") => {
     const index = clampSceneIndex(requested, sceneCount);
+    activeSceneRef.current = index;
     setActiveScene(index);
     containerRef.current
       ?.querySelector<HTMLElement>(`[data-scene-index="${index}"]`)
@@ -44,10 +53,13 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries
-          .filter((entry) => entry.isIntersecting)
+          .filter((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.55)
           .sort((left, right) => right.intersectionRatio - left.intersectionRatio)[0];
         const index = Number((visible?.target as HTMLElement | undefined)?.dataset.sceneIndex);
-        if (Number.isInteger(index)) setActiveScene(index);
+        if (Number.isInteger(index)) {
+          activeSceneRef.current = index;
+          setActiveScene(index);
+        }
       },
       { root: container, threshold: [0.55, 0.72] },
     );
@@ -60,23 +72,24 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
   useEffect(() => {
     const container = containerRef.current;
     if (!container || reducedMotion) return;
-    let lockedUntil = 0;
     const onWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaY) < 18 || Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
-      const now = window.performance.now();
-      if (now < lockedUntil) {
-        event.preventDefault();
-        return;
-      }
-      const next = adjacentSceneIndex(activeScene, event.deltaY, sceneCount);
-      if (next === activeScene) return;
+      if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
       event.preventDefault();
-      lockedUntil = now + 680;
+      const result = reduceWheelGesture(
+        wheelGestureRef.current,
+        event.deltaY,
+        window.performance.now(),
+      );
+      wheelGestureRef.current = result.state;
+      if (result.direction === 0) return;
+      const current = activeSceneRef.current;
+      const next = adjacentSceneIndex(current, result.direction, sceneCount);
+      if (next === current) return;
       goToScene(next);
     };
     container.addEventListener("wheel", onWheel, { passive: false });
     return () => container.removeEventListener("wheel", onWheel);
-  }, [activeScene, goToScene, reducedMotion]);
+  }, [goToScene, reducedMotion]);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
