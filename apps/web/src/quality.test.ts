@@ -63,6 +63,8 @@ describe("release performance and accessibility budgets", () => {
 
     expect(layout).toContain('import "./replay.css"');
     expect(player).toContain("aria-label={label}");
+    expect(player).toContain("messages[locale].replay.loading");
+    expect(player).not.toContain("messages[locale].common.loading");
     expect(player).toContain("data-edge={eventEdge(position)}");
     expect(css).toContain(".replay-stage-wrap .battle-stage");
     expect(css).toMatch(/\.replay-stage-wrap\s*\{[\s\S]*?aspect-ratio: 1/);

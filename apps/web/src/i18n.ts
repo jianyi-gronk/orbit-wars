@@ -43,6 +43,9 @@ export const messages = {
       training: "训练",
       ranked: "排位",
     },
+    replay: {
+      loading: "正在加载对局记录…",
+    },
     errors: {
       authentication_required: "请先登录再继续。",
       fleet_already_exists: "此账号已经拥有舰队。",
@@ -77,6 +80,9 @@ export const messages = {
       retry: "Retry",
       training: "Training",
       ranked: "Ranked",
+    },
+    replay: {
+      loading: "Loading match record…",
     },
     errors: {
       authentication_required: "Sign in to continue.",

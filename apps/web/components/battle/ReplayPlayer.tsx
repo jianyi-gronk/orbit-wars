@@ -148,7 +148,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
     ? zh
       ? `${frames.length}/${compact.frameCount} 帧权威数据${loadingSegments ? ` · 正在载入 ${loadingSegments} 个分段` : " · 已完整载入"}`
       : `${frames.length}/${compact.frameCount} authoritative frames${loadingSegments ? ` · loading ${loadingSegments} segments` : " · fully loaded"}`
-    : messages[locale].common.loading;
+    : messages[locale].replay.loading;
   const resultSummary =
     compact?.result?.winnerSlot == null
       ? zh
@@ -230,7 +230,7 @@ export function ReplayPlayer({ publicId, locale = "zh" }: { publicId: string; lo
           />
         ) : (
           <div className="battle-stage" role="status">
-            <span className="replay-stage-loading">{messages[locale].common.loading}</span>
+            <span className="replay-stage-loading">{messages[locale].replay.loading}</span>
           </div>
         )}
         <div className="replay-grid-overlay" aria-hidden="true" />

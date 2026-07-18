@@ -17,6 +17,13 @@ describe("localized paths", () => {
   it("keeps common navigation and error keys complete in both languages", () => {
     expect(Object.keys(messages.en.nav).sort()).toEqual(Object.keys(messages.zh.nav).sort());
     expect(Object.keys(messages.en.common).sort()).toEqual(Object.keys(messages.zh.common).sort());
+    expect(Object.keys(messages.en.replay).sort()).toEqual(Object.keys(messages.zh.replay).sort());
     expect(Object.keys(messages.en.errors).sort()).toEqual(Object.keys(messages.zh.errors).sort());
+  });
+
+  it("uses user-facing match record copy for replay loading only", () => {
+    expect(messages.zh.replay.loading).toBe("正在加载对局记录…");
+    expect(messages.en.replay.loading).toBe("Loading match record…");
+    expect(messages.zh.common.loading).toBe("正在读取权威数据…");
   });
 });
