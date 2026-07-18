@@ -67,6 +67,9 @@ describe("release performance and accessibility budgets", () => {
     expect(css).toContain(".replay-stage-wrap .battle-stage");
     expect(css).toMatch(/\.replay-event-track button span[\s\S]*opacity: 0/);
     expect(css).toContain(".replay-event-track button:hover span");
+    expect(css).toMatch(
+      /\.replay-controls \.replay-play-button:hover:not\(:disabled\)[\s\S]*?color: #080b0d/,
+    );
     expect(css).toContain("@media (max-width: 620px)");
   });
 });

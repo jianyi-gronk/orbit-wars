@@ -347,6 +347,12 @@
   gap: 0.65rem;
 }
 
+.replay-controls .replay-play-button:hover:not(:disabled),
+.replay-controls .replay-play-button:focus-visible {
+  background: #ffd173;
+  color: #080b0d;
+}
+
 .replay-play-button i {
   font-style: normal;
 }
