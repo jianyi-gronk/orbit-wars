@@ -17,4 +17,4 @@
 - [x] **补充自动化质量检查** — 覆盖动态加载、装饰层语义、可见性暂停、资源释放和 reduced-motion 分支。
 - [x] **运行工程验证** — 执行 web test、lint、typecheck 与生产 build，修复本轮引入的问题。
 - [x] **执行浏览器视觉验收** — 检查 `/zh`、`/en` 的桌面、窄屏、四幕切换、控制台和 reduced-motion，并记录证据。
-- [ ] **按批次提交并统一推送** — 每个内聚实现批次独立 commit，所有验证通过后一次 push 到 `origin/main`。
+- [x] **按批次提交并统一推送** — 每个内聚实现批次独立 commit，所有验证通过后一次 push 到 `origin/main`。
