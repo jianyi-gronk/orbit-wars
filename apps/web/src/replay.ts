@@ -1,10 +1,15 @@
-import type { PlanetView } from "./battle";
+import type { FleetView, PlanetView } from "./battle";
 
-export type ReplayFrame = { step: number; planets: PlanetView[]; stateHash: string };
+export type ReplayFrame = {
+  step: number;
+  planets: PlanetView[];
+  fleets: FleetView[];
+  stateHash: string;
+};
 export type ReplayRecord =
   | {
       type: "checkpoint" | "delta";
-      frame: { step: number; stateHash?: string; planets?: number[][] };
+      frame: { step: number; stateHash?: string; planets?: number[][]; fleets?: number[][] };
     }
   | { type: "result"; result?: Record<string, unknown> };
 
@@ -20,6 +25,18 @@ function planets(rows: number[][]): PlanetView[] {
   }));
 }
 
+function fleets(rows: number[][]): FleetView[] {
+  return rows.map((row) => ({
+    id: row[0],
+    owner: row[1] as 0 | 1,
+    x: row[2],
+    y: row[3],
+    angle: row[4],
+    fromPlanetId: row[5],
+    ships: row[6],
+  }));
+}
+
 export function reconstructSegment(records: ReplayRecord[]): ReplayFrame[] {
   const frames: ReplayFrame[] = [];
   let current: ReplayFrame | null = null;
@@ -30,12 +47,14 @@ export function reconstructSegment(records: ReplayRecord[]): ReplayFrame[] {
         step: record.frame.step,
         stateHash: record.frame.stateHash ?? "",
         planets: planets(record.frame.planets),
+        fleets: fleets(record.frame.fleets ?? []),
       };
     } else if (record.type === "delta" && current) {
       current = {
         step: record.frame.step,
         stateHash: record.frame.stateHash ?? current.stateHash,
         planets: record.frame.planets ? planets(record.frame.planets) : current.planets,
+        fleets: record.frame.fleets ? fleets(record.frame.fleets) : current.fleets,
       };
     } else continue;
     if (current) frames.push(current);

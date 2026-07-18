@@ -2,7 +2,7 @@
 
 ## 计划
 
-- [ ] 恢复 replay frame 的 fleets
+- [x] 恢复 replay frame 的 fleets
 - [ ] 绘制在途舰队、短尾迹和兵力
 - [ ] 真实回放与自动化验证
 

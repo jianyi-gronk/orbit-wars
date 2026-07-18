@@ -8,6 +8,16 @@ export type PlanetView = {
   production: number;
 };
 
+export type FleetView = {
+  id: number;
+  owner: 0 | 1;
+  x: number;
+  y: number;
+  angle: number;
+  fromPlanetId: number;
+  ships: number;
+};
+
 export type PendingLaunch = {
   fromPlanetId: number;
   angle: number;

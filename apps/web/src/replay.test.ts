@@ -33,6 +33,33 @@ describe("replay checkpoint seek", () => {
 
     expect(frames.map((frame) => frame.step)).toEqual([160, 161]);
   });
+
+  it("reconstructs, inherits, and explicitly clears fleets", () => {
+    const frames = reconstructSegment([
+      {
+        type: "checkpoint",
+        frame: {
+          step: 20,
+          planets: [[0, 0, 1, 2, 3, 10, 1]],
+          fleets: [[7, 1, 6.9, 31.7, 1.56, 31, 6]],
+        },
+      },
+      { type: "delta", frame: { step: 21 } },
+      { type: "delta", frame: { step: 22, fleets: [] } },
+    ]);
+
+    expect(frames[0].fleets[0]).toEqual({
+      id: 7,
+      owner: 1,
+      x: 6.9,
+      y: 31.7,
+      angle: 1.56,
+      fromPlanetId: 31,
+      ships: 6,
+    });
+    expect(frames[1].fleets).toEqual(frames[0].fleets);
+    expect(frames[2].fleets).toEqual([]);
+  });
 });
 
 describe("replay presentation", () => {
