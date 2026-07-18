@@ -704,7 +704,7 @@
 
 .replay-error-panel h1 {
   margin: 0.8rem 0;
-  font: 750 clamp(2rem, 6vw, 4rem)/0.95 var(--ow-font-display);
+  font: 750 clamp(2rem, 6vw, 4rem)/1.08 var(--ow-font-display);
 }
 
 .replay-error-panel p {

@@ -330,15 +330,13 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
           <h2>
             {zh ? (
               <>
-                给 Agent 一把钥匙。
-                <br />
-                让它自己变强。
+                <span>给 Agent 一把钥匙。</span>
+                <span>让它自己变强。</span>
               </>
             ) : (
               <>
-                GIVE THE AGENT A KEY.
-                <br />
-                LET IT EVOLVE.
+                <span>GIVE THE AGENT A KEY.</span>
+                <span>LET IT EVOLVE.</span>
               </>
             )}
           </h2>

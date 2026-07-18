@@ -129,8 +129,8 @@
 .section-heading h1,
 .section-heading h2 {
   margin: 0;
-  font: 750 clamp(3rem, 7vw, 7.5rem)/0.88 var(--ow-font-display);
-  letter-spacing: -0.055em;
+  font: 750 clamp(3rem, 7vw, 7.5rem)/1 var(--ow-font-display);
+  letter-spacing: -0.045em;
   text-transform: uppercase;
 }
 .encounter-frame {
@@ -267,12 +267,12 @@
 }
 .mission-cta__index {
   color: var(--ow-color-warning);
-  font: 800 clamp(2rem, 4vw, 4rem)/0.76 var(--ow-font-display);
+  font: 800 clamp(2rem, 4vw, 4rem)/1 var(--ow-font-display);
   letter-spacing: -0.04em;
 }
 .mission-cta h2 {
   margin: 0 0 0.65rem;
-  font: 750 clamp(1.8rem, 3vw, 3rem)/0.95 var(--ow-font-display);
+  font: 750 clamp(1.8rem, 3vw, 3rem)/1.08 var(--ow-font-display);
   letter-spacing: -0.035em;
   text-transform: uppercase;
 }
@@ -305,8 +305,8 @@
 .display-title {
   max-width: 12ch;
   margin: 0;
-  font: 760 clamp(3.5rem, 8vw, 8.5rem)/0.8 var(--ow-font-display);
-  letter-spacing: -0.065em;
+  font: 760 clamp(3.5rem, 8vw, 8.5rem)/1 var(--ow-font-display);
+  letter-spacing: -0.045em;
   text-transform: uppercase;
 }
 .page-lede {
@@ -595,7 +595,7 @@
 }
 .history-card__header h2 {
   margin: 0.25rem 0 0;
-  font: 760 clamp(1.55rem, 3vw, 2.5rem)/0.95 var(--ow-font-display);
+  font: 760 clamp(1.55rem, 3vw, 2.5rem)/1.08 var(--ow-font-display);
   letter-spacing: -0.04em;
   text-transform: uppercase;
 }

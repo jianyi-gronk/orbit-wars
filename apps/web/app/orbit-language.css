@@ -80,8 +80,8 @@
 .ow-masthead h1 {
   max-width: 9ch;
   margin: 0;
-  font: 800 clamp(4.8rem, 12.2vw, 12rem) / 0.73 var(--ow-font-display);
-  letter-spacing: -0.075em;
+  font: 800 clamp(4.8rem, 12.2vw, 12rem) / 0.96 var(--ow-font-display);
+  letter-spacing: -0.055em;
   text-transform: uppercase;
 }
 
@@ -178,7 +178,7 @@
 
 .ow-feature h2 {
   margin: 0 0 1rem;
-  font: 700 clamp(1.8rem, 3vw, 3.5rem) / 0.95 var(--ow-font-display);
+  font: 700 clamp(1.8rem, 3vw, 3.5rem) / 1.08 var(--ow-font-display);
   letter-spacing: -0.04em;
   text-transform: uppercase;
 }

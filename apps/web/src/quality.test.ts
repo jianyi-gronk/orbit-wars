@@ -160,4 +160,24 @@ describe("release performance and accessibility budgets", () => {
     expect(clipboard).toContain("clipboard timeout");
     expect(clipboard).toContain('document.execCommand("copy")');
   });
+
+  it("keeps multiline display titles clear of glyph collisions", () => {
+    const home = readFileSync("components/product/HomeExperience.tsx", "utf8");
+    const gameCss = readFileSync("app/game-ux.css", "utf8");
+    const productCss = readFileSync("app/product.css", "utf8");
+    const replayCss = readFileSync("app/replay.css", "utf8");
+
+    expect(gameCss).toMatch(/\.scene-copy h1\s*\{[\s\S]*?\/0\.98 var\(--ow-font-display\)/);
+    expect(gameCss).toMatch(/\.network-copy h2,[\s\S]*?\/0\.98 var\(--ow-font-display\)/);
+    expect(gameCss).toMatch(
+      /@media \(width <= 48rem\)[\s\S]*?\.scene-copy h1[\s\S]*?line-height: 1/,
+    );
+    expect(productCss).toMatch(/\.section-heading h2\s*\{[\s\S]*?\/1 var\(--ow-font-display\)/);
+    expect(productCss).toMatch(/\.display-title\s*\{[\s\S]*?\/1 var\(--ow-font-display\)/);
+    expect(replayCss).toMatch(
+      /\.replay-error-panel h1\s*\{[\s\S]*?\/1\.08 var\(--ow-font-display\)/,
+    );
+    expect(home).toContain("<span>给 Agent 一把钥匙。</span>");
+    expect(home).toContain("<span>GIVE THE AGENT A KEY.</span>");
+  });
 });
