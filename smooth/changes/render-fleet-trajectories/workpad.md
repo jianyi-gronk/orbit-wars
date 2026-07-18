@@ -26,4 +26,11 @@
 
 ## 疑问
 
-- 无阻塞项。
+- 自动浏览器此前拒绝本地 URL reload，不能绕过该策略；生产服务已重启，当前标签页手动刷新后即可补视觉确认。
+
+## 结果
+
+- 指定 replay：STEP 20 / 40 / 83 分别包含 5 / 8 / 43 支权威在途舰队。
+- Web：32 个测试、lint、typecheck、production build 通过。
+- 全仓：Smooth 产物、lint、typecheck、JS/Python 测试通过；Python 165 passed、5 skipped。
+- 本地生产 Web `3003` 与 API `8000` 正在监听，页面和 compact API 均返回 HTTP 200。
