@@ -6,12 +6,10 @@ describe("mission action", () => {
   it.each([
     [{ authenticated: false }, "signed-out"],
     [{ authenticated: true, hasFleet: false }, "needs-fleet"],
-    [{ authenticated: true, hasFleet: true, hasActiveAgentKey: false }, "needs-agent"],
     [
       {
         authenticated: true,
         hasFleet: true,
-        hasActiveAgentKey: true,
         currentStrategyStatus: "draft",
       },
       "needs-strategy",
@@ -20,7 +18,6 @@ describe("mission action", () => {
       {
         authenticated: true,
         hasFleet: true,
-        hasActiveAgentKey: true,
         currentStrategyStatus: "ready",
       },
       "battle-ready",
@@ -40,9 +37,18 @@ describe("mission action", () => {
       resolveMissionAction("en", {
         authenticated: true,
         hasFleet: true,
-        hasActiveAgentKey: true,
         currentStrategyStatus: "ready",
       }),
     ).toEqual({ state: "battle-ready", href: "/en/arena", label: "Play now" });
+  });
+
+  it("routes a fleet without a ready strategy to the in-platform lab", () => {
+    expect(
+      resolveMissionAction("zh", {
+        authenticated: true,
+        hasFleet: true,
+        currentStrategyStatus: "rejected",
+      }),
+    ).toEqual({ state: "needs-strategy", href: "/zh/strategy-lab", label: "优化策略" });
   });
 });

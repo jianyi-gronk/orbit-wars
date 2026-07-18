@@ -50,26 +50,30 @@ export function SiteHeader({ locale = "zh" }: { locale?: Locale }) {
           </summary>
           <div className="mission-menu__panel">
             <p>{zh ? "战术档案" : "TACTICAL ARCHIVE"}</p>
-            <Link href={localPath(locale, "/history")}>
+            <Link href={localPath(locale, "/strategy-lab")}>
               <span>01</span>
+              {zh ? "策略实验室" : "Strategy Lab"}
+            </Link>
+            <Link href={localPath(locale, "/history")}>
+              <span>02</span>
               {t.history}
             </Link>
             <Link href={localPath(locale, "/agent-guide")}>
-              <span>02</span>Agent Guide
+              <span>03</span>Agent Guide
             </Link>
             <Link href={localPath(locale, "/about")}>
-              <span>03</span>
+              <span>04</span>
               {zh ? "规则与世界" : "Rulebook"}
             </Link>
             <Link href={localPath(locale, "/qa")}>
-              <span>04</span>Q&amp;A
+              <span>05</span>Q&amp;A
             </Link>
             <Link href={localPath(locale, "/updates")}>
-              <span>05</span>
+              <span>06</span>
               {zh ? "更新日志" : "Updates"}
             </Link>
             <Link href={`/auth/logout?returnTo=${encodeURIComponent(localPath(locale))}`}>
-              <span>06</span>
+              <span>07</span>
               {messages[locale].nav.logout}
             </Link>
           </div>

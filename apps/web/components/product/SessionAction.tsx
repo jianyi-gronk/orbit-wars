@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { ApiError, apiFetch, type AgentKey, type Fleet, type FleetProfile } from "../../src/api";
+import { ApiError, apiFetch, type Fleet, type FleetProfile } from "../../src/api";
 import { type Locale } from "../../src/i18n";
 import { resolveMissionAction, type MissionAction } from "../../src/mission";
 
@@ -24,14 +24,10 @@ export function SessionAction({ locale }: { locale: Locale }) {
           const fleet = await apiFetch<Fleet>("/api/v1/me/fleet", {
             signal: controller.signal,
           });
-          const [profile, keys] = await Promise.all([
-            apiFetch<FleetProfile>(`/api/public/v1/fleet-profiles/${fleet.publicId}`, {
-              signal: controller.signal,
-            }),
-            apiFetch<AgentKey[]>(`/api/v1/fleets/${fleet.publicId}/agent-keys`, {
-              signal: controller.signal,
-            }),
-          ]);
+          const profile = await apiFetch<FleetProfile>(
+            `/api/public/v1/fleet-profiles/${fleet.publicId}`,
+            { signal: controller.signal },
+          );
           const currentVersion = profile.versions.find(
             (version) => version.publicId === fleet.currentStrategyVersionId,
           );
@@ -39,7 +35,6 @@ export function SessionAction({ locale }: { locale: Locale }) {
             resolveMissionAction(locale, {
               authenticated: true,
               hasFleet: true,
-              hasActiveAgentKey: keys.some((key) => key.active),
               currentStrategyStatus: currentVersion?.status ?? null,
             }),
           );
