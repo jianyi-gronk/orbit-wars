@@ -18,6 +18,10 @@ export type FleetView = {
   ships: number;
 };
 
+export const BATTLEFIELD_SIZE = 100;
+export const SUN_CENTER = BATTLEFIELD_SIZE / 2;
+export const SUN_RADIUS = 10;
+
 export type PendingLaunch = {
   fromPlanetId: number;
   angle: number;

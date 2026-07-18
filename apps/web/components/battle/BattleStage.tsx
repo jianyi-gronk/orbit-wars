@@ -3,6 +3,9 @@
 import type { Application } from "pixi.js";
 import { useEffect, useRef } from "react";
 import {
+  BATTLEFIELD_SIZE,
+  SUN_CENTER,
+  SUN_RADIUS,
   fleetDirection,
   formatPlanetLabel,
   type FleetView,
@@ -40,14 +43,43 @@ function drawStage(
   for (const child of app.stage.removeChildren()) child.destroy();
   const width = host.clientWidth;
   const height = host.clientHeight;
-  const scaleX = width / 100;
-  const scaleY = height / 100;
+  const scaleX = width / BATTLEFIELD_SIZE;
+  const scaleY = height / BATTLEFIELD_SIZE;
   const grid = new Graphics();
   for (let ring = 1; ring <= 4; ring += 1) {
     grid.circle(width / 2, height / 2, ring * Math.min(width, height) * 0.11);
   }
   grid.stroke({ color: 0x50616c, alpha: 0.16, width: 1 });
   app.stage.addChild(grid);
+
+  const sunX = SUN_CENTER * scaleX;
+  const sunY = SUN_CENTER * scaleY;
+  const sunRadius = SUN_RADIUS * Math.min(scaleX, scaleY);
+  const sunGlow = new Graphics();
+  sunGlow.circle(sunX, sunY, sunRadius * 1.45);
+  sunGlow.fill({ color: 0xff8d35, alpha: 0.06 });
+  app.stage.addChild(sunGlow);
+
+  const solarRays = new Graphics();
+  for (let ray = 0; ray < 12; ray += 1) {
+    const rayAngle = (ray / 12) * Math.PI * 2;
+    const inner = sunRadius * 1.08;
+    const outer = sunRadius * (ray % 2 === 0 ? 1.28 : 1.18);
+    solarRays.moveTo(sunX + Math.cos(rayAngle) * inner, sunY + Math.sin(rayAngle) * inner);
+    solarRays.lineTo(sunX + Math.cos(rayAngle) * outer, sunY + Math.sin(rayAngle) * outer);
+  }
+  solarRays.stroke({ color: 0xffb44d, alpha: 0.32, width: 1 });
+  app.stage.addChild(solarRays);
+
+  const sun = new Graphics();
+  sun.circle(sunX, sunY, sunRadius);
+  sun.fill({ color: 0xff8d35, alpha: 0.18 });
+  sun.stroke({ color: 0xffc15c, alpha: 0.72, width: 1.5 });
+  sun.circle(sunX, sunY, sunRadius * 0.64);
+  sun.fill({ color: 0xffb43f, alpha: 0.68 });
+  sun.circle(sunX, sunY, sunRadius * 0.3);
+  sun.fill({ color: 0xfff0b0, alpha: 0.96 });
+  app.stage.addChild(sun);
 
   for (const planet of state.planets) {
     const x = planet.x * scaleX;
@@ -230,7 +262,7 @@ export function BattleStage(props: BattleStageProps) {
       ref={host}
       onPointerMove={aimFromPointer}
       role="img"
-      aria-label="权威战场视图；选择星球后移动指针可预览航线"
+      aria-label="权威战场视图；中央太阳为舰队危险碰撞区"
     />
   );
 }

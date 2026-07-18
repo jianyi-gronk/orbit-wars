@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  BATTLEFIELD_SIZE,
+  SUN_CENTER,
+  SUN_RADIUS,
   fleetDirection,
   formatPlanetLabel,
   initialDraft,
@@ -46,5 +49,13 @@ describe("fleet trajectories", () => {
     expect(fleetDirection(0)).toEqual({ x: 1, y: 0 });
     expect(fleetDirection(Math.PI / 2).x).toBeCloseTo(0);
     expect(fleetDirection(Math.PI / 2).y).toBeCloseTo(1);
+  });
+});
+
+describe("central sun rules", () => {
+  it("matches the pinned engine collision geometry", () => {
+    expect(BATTLEFIELD_SIZE).toBe(100);
+    expect(SUN_CENTER).toBe(50);
+    expect(SUN_RADIUS).toBe(10);
   });
 });
