@@ -3,7 +3,7 @@
 ## 计划
 
 - [x] 确认 replay 元数据存在
-- [ ] 定位 compact 或 segment 的实际失败点
+- [x] 定位 compact 或 segment 的实际失败点
 - [ ] 修复历史回放读取闭环
 - [ ] 使用指定 replay ID 做浏览器回归
 
@@ -21,9 +21,11 @@
 
 ## 备注
 
-- 基础 replay 元数据端点当前返回 200，需继续检查 compact 和 0–160 checkpoint。
+- 指定 replay 的 compact、0–160 checkpoint、对象工件经 API 和 Node fetch 全部返回 200 且结构有效。
+- in-app Browser 对 `/orbit-api/...` 返回 `ERR_BLOCKED_BY_CLIENT`；当前 apiFetch 默认使用这个路径，因此页面只得到无状态的网络异常。
+- 修复方向是把默认同源代理改为 `/gateway`，同时保留旧路径兼容已有部署。
 - 每个内聚修复独立 commit，全部验证后统一 push。
 
 ## 疑问
 
-- 失败是对象存储工件读取、segment 边界，还是前端串行加载期间的瞬时失败，待实测确认。
+- 无阻塞项；根因已定位为客户端代理路径被浏览器拦截，不是历史数据或对象存储丢失。
