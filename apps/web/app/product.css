@@ -846,9 +846,17 @@
   font: 700 1.4rem/1 var(--ow-font-display);
 }
 .rank-table a {
+  display: grid;
+  gap: 0.3rem;
   text-decoration: underline;
   text-decoration-color: var(--ow-color-line-strong);
   text-underline-offset: 0.3rem;
+}
+.rank-table a small {
+  color: var(--ow-color-muted);
+  font: 0.58rem/1 var(--ow-font-mono);
+  letter-spacing: 0.06em;
+  text-decoration: none;
 }
 .rank-division {
   display: grid;

@@ -6,10 +6,7 @@ describe("mission action", () => {
   it.each([
     [{ authenticated: false }, "signed-out"],
     [{ authenticated: true, hasFleet: false }, "needs-fleet"],
-    [
-      { authenticated: true, hasFleet: true, hasActiveAgentKey: false },
-      "needs-agent",
-    ],
+    [{ authenticated: true, hasFleet: true, hasActiveAgentKey: false }, "needs-agent"],
     [
       {
         authenticated: true,

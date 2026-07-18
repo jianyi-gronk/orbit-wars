@@ -113,7 +113,10 @@ export function HomeBattleFeed({
 
   if (variant === "latest") {
     return (
-      <div className="home-latest-matches" aria-label={zh ? "最近公开对局" : "Latest public matches"}>
+      <div
+        className="home-latest-matches"
+        aria-label={zh ? "最近公开对局" : "Latest public matches"}
+      >
         <header>
           <span>LIVE ARCHIVE</span>
           <strong>{zh ? "最近公开对局" : "LATEST ENCOUNTERS"}</strong>

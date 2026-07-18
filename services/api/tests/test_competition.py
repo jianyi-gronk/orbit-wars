@@ -28,9 +28,12 @@ def test_competition_record_is_draw_aware_and_sample_protected() -> None:
         "adjustedWinRate": 0.5,
     }
     assert competition_record([(0, {"winnerSlot": 0})])["adjustedWinRate"] == 2 / 3
-    assert competition_record([(0, {"winnerSlot": 0})] * 8 + [(0, {"winnerSlot": 1})] * 2)[
-        "adjustedWinRate"
-    ] == 9 / 12
+    assert (
+        competition_record([(0, {"winnerSlot": 0})] * 8 + [(0, {"winnerSlot": 1})] * 2)[
+            "adjustedWinRate"
+        ]
+        == 9 / 12
+    )
 
 
 def test_battle_intensity_is_deterministic_bounded_and_handles_missing_analysis() -> None:

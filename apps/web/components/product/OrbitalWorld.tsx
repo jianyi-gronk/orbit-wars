@@ -190,16 +190,19 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
           [5.0, 3.1, -0.24, 0.72],
         ].forEach(([width, height, rotationX, rotationY], index) => {
           const curve = new THREE.EllipseCurve(0, 0, width, height, 0, Math.PI * 2, false, 0);
-          const points = curve.getPoints(isCompact ? 80 : 160).map(
-            (point) => new THREE.Vector3(point.x, point.y, 0),
-          );
+          const points = curve
+            .getPoints(isCompact ? 80 : 160)
+            .map((point) => new THREE.Vector3(point.x, point.y, 0));
           const material = new THREE.LineBasicMaterial({
             blending: THREE.AdditiveBlending,
             color: index === 3 ? 0xffb84d : 0x62c8ff,
             opacity: 0.2,
             transparent: true,
           });
-          const orbit = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points), material);
+          const orbit = new THREE.LineLoop(
+            new THREE.BufferGeometry().setFromPoints(points),
+            material,
+          );
           orbit.rotation.set(rotationX, rotationY, index * 0.31);
           orbitMaterials.push(material);
           world.add(orbit);
@@ -226,7 +229,14 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
           );
           beacon.scale.setScalar(0.75 + random() * 0.85);
           beacons.add(beacon);
-          connectionPositions.push(0, 0, 0, beacon.position.x, beacon.position.y, beacon.position.z);
+          connectionPositions.push(
+            0,
+            0,
+            0,
+            beacon.position.x,
+            beacon.position.y,
+            beacon.position.z,
+          );
         }
         world.add(beacons);
 
@@ -306,7 +316,8 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
           camera.lookAt(lookAt);
 
           beaconMaterial.opacity += (target.beaconOpacity - beaconMaterial.opacity) * blend;
-          connectionMaterial.opacity += (target.beaconOpacity * 0.12 - connectionMaterial.opacity) * blend;
+          connectionMaterial.opacity +=
+            (target.beaconOpacity * 0.12 - connectionMaterial.opacity) * blend;
           orbitMaterials.forEach((material, index) => {
             const offset = index === activeSceneRef.current ? 0.14 : 0;
             material.opacity += (target.orbitOpacity + offset - material.opacity) * blend;
@@ -382,8 +393,7 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
             }
             if ("material" in object) {
               const material = object.material as
-                | InstanceType<typeof THREE.Material>
-                | InstanceType<typeof THREE.Material>[];
+                InstanceType<typeof THREE.Material> | InstanceType<typeof THREE.Material>[];
               (Array.isArray(material) ? material : [material]).forEach((entry) => entry.dispose());
             }
           });

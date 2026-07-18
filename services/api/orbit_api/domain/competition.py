@@ -46,9 +46,7 @@ def battle_intensity(
     lead_changes = event_types.count("production_lead_changed") + event_types.count(
         "ship_lead_changed"
     )
-    decisive_events = event_types.count("home_planet_lost") + event_types.count(
-        "player_eliminated"
-    )
+    decisive_events = event_types.count("home_planet_lost") + event_types.count("player_eliminated")
     has_largest_launch = "largest_launch" in event_types
     max_rating_delta = max(
         (

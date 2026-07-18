@@ -146,9 +146,7 @@ def leaderboard(
             )
         )
     else:
-        entries.sort(
-            key=lambda entry: (-entry["displayScore"], entry["name"].casefold())
-        )
+        entries.sort(key=lambda entry: (-entry["displayScore"], entry["name"].casefold()))
     for rank, entry in enumerate(entries, start=1):
         entry["rank"] = rank
     return {

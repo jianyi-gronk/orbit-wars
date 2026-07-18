@@ -441,7 +441,9 @@ export function HistoryView({ locale }: { locale: Locale }) {
                   <p className="eyebrow">
                     RANKED ENCOUNTER / {formatDate(locale, match.createdAt)}
                   </p>
-                  <h2>{replayReasonName(locale, match.result?.reason)}</h2>
+                  <h2>
+                    {winner ? replayReasonName(locale, match.result?.reason) : zh ? "平局" : "Draw"}
+                  </h2>
                   <p className="history-card__result">
                     {winner
                       ? zh

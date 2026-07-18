@@ -3,13 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import {
-  ApiError,
-  apiFetch,
-  type AgentKey,
-  type Fleet,
-  type FleetProfile,
-} from "../../src/api";
+import { ApiError, apiFetch, type AgentKey, type Fleet, type FleetProfile } from "../../src/api";
 import { type Locale } from "../../src/i18n";
 import { resolveMissionAction, type MissionAction } from "../../src/mission";
 

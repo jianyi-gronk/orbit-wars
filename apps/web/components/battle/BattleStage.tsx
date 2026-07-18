@@ -266,7 +266,9 @@ export function BattleStage(props: BattleStageProps) {
       appRef.current = app;
       runtimeRef.current = runtime;
       assetsRef.current = assets;
-      drawStage(app, runtime, host.current, stateRef.current, assets, (id) => onSelectRef.current(id));
+      drawStage(app, runtime, host.current, stateRef.current, assets, (id) =>
+        onSelectRef.current(id),
+      );
     });
     return () => {
       disposed = true;

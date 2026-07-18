@@ -1,12 +1,7 @@
 import { localPath, type Locale } from "./i18n";
 
 export type MissionState =
-  | "signed-out"
-  | "needs-fleet"
-  | "needs-agent"
-  | "needs-strategy"
-  | "battle-ready"
-  | "continue";
+  "signed-out" | "needs-fleet" | "needs-agent" | "needs-strategy" | "battle-ready" | "continue";
 
 export type MissionSnapshot = {
   authenticated: boolean;
@@ -31,10 +26,7 @@ export function resolveMissionState(snapshot: MissionSnapshot): MissionState {
   return "battle-ready";
 }
 
-export function resolveMissionAction(
-  locale: Locale,
-  snapshot: MissionSnapshot,
-): MissionAction {
+export function resolveMissionAction(locale: Locale, snapshot: MissionSnapshot): MissionAction {
   const state = resolveMissionState(snapshot);
   const zh = locale === "zh";
   const definitions: Record<MissionState, { path: string; labels: [string, string] }> = {
