@@ -1,6 +1,6 @@
 "use client";
 
-import type { Application } from "pixi.js";
+import type { Application, FillGradient } from "pixi.js";
 import { useEffect, useRef } from "react";
 import {
   SUN_CENTER,
@@ -27,16 +27,41 @@ type BattleStageProps = {
 };
 
 type PixiRuntime = typeof import("pixi.js");
+type StageAssets = {
+  sunGlow: FillGradient;
+};
 type StageState = Pick<BattleStageProps, "planets" | "player" | "selectedPlanetId" | "angle"> & {
   fleets: FleetView[];
   showPlanetIds: boolean;
 };
+
+function createStageAssets(runtime: PixiRuntime): StageAssets {
+  return {
+    sunGlow: new runtime.FillGradient({
+      type: "radial",
+      center: { x: 0.5, y: 0.5 },
+      innerRadius: 0,
+      outerCenter: { x: 0.5, y: 0.5 },
+      outerRadius: 0.5,
+      colorStops: [
+        { offset: 0, color: "rgba(255, 170, 22, 0.24)" },
+        { offset: 0.34, color: "rgba(255, 142, 0, 0.18)" },
+        { offset: 0.62, color: "rgba(187, 82, 0, 0.09)" },
+        { offset: 0.82, color: "rgba(110, 42, 0, 0.035)" },
+        { offset: 1, color: "rgba(55, 18, 0, 0)" },
+      ],
+      textureSpace: "local",
+      textureSize: 512,
+    }),
+  };
+}
 
 function drawStage(
   app: Application,
   runtime: PixiRuntime,
   host: HTMLDivElement,
   state: StageState,
+  assets: StageAssets,
   select: (planetId: number) => void,
 ) {
   const { Graphics, Text } = runtime;
@@ -60,68 +85,16 @@ function drawStage(
   const sunX = offsetX + SUN_CENTER * scale;
   const sunY = offsetY + SUN_CENTER * scale;
   const sunRadius = SUN_RADIUS * scale;
-  const coreRadius = Math.max(8, sunRadius * 0.24);
   const sunGlow = new Graphics();
-  sunGlow.circle(sunX, sunY, coreRadius * 3.5);
-  sunGlow.fill({ color: 0xff7a28, alpha: 0.025 });
-  sunGlow.circle(sunX, sunY, coreRadius * 2.5);
-  sunGlow.fill({ color: 0xff9638, alpha: 0.045 });
-  sunGlow.circle(sunX, sunY, coreRadius * 1.7);
-  sunGlow.fill({ color: 0xffbb55, alpha: 0.08 });
+  sunGlow.circle(sunX, sunY, sunRadius * 2.8);
+  sunGlow.fill(assets.sunGlow);
   app.stage.addChild(sunGlow);
 
-  const hazardRing = new Graphics();
-  const hazardSegments = 40;
-  for (let segment = 0; segment < hazardSegments; segment += 2) {
-    const start = (segment / hazardSegments) * Math.PI * 2;
-    const end = ((segment + 1.15) / hazardSegments) * Math.PI * 2;
-    hazardRing.moveTo(sunX + Math.cos(start) * sunRadius, sunY + Math.sin(start) * sunRadius);
-    hazardRing.lineTo(sunX + Math.cos(end) * sunRadius, sunY + Math.sin(end) * sunRadius);
-  }
-  hazardRing.stroke({ color: 0xffbd5c, alpha: 0.48, width: 1 });
-  app.stage.addChild(hazardRing);
-
-  const flareAngles = [0.18, 1.32, 2.55, 3.74, 5.16];
-  const solarFlares = new Graphics();
-  for (const [index, flareAngle] of flareAngles.entries()) {
-    const inner = coreRadius * 1.08;
-    const outer = coreRadius * (index % 2 === 0 ? 1.9 : 1.55);
-    solarFlares.moveTo(
-      sunX + Math.cos(flareAngle) * inner,
-      sunY + Math.sin(flareAngle) * inner,
-    );
-    solarFlares.lineTo(
-      sunX + Math.cos(flareAngle) * outer,
-      sunY + Math.sin(flareAngle) * outer,
-    );
-  }
-  solarFlares.stroke({ color: 0xffc769, alpha: 0.4, width: 1.4 });
-  app.stage.addChild(solarFlares);
-
-  const corona = new Graphics();
-  const coronaPoints = 48;
-  for (let point = 0; point < coronaPoints; point += 1) {
-    const coronaAngle = (point / coronaPoints) * Math.PI * 2;
-    const variation = Math.sin(coronaAngle * 5 + 0.6) * 0.09 + Math.sin(coronaAngle * 11) * 0.05;
-    const radius = coreRadius * (1.22 + variation);
-    const x = sunX + Math.cos(coronaAngle) * radius;
-    const y = sunY + Math.sin(coronaAngle) * radius;
-    if (point === 0) corona.moveTo(x, y);
-    else corona.lineTo(x, y);
-  }
-  corona.closePath();
-  corona.fill({ color: 0xff9638, alpha: 0.34 });
-  corona.stroke({ color: 0xffc15c, alpha: 0.46, width: 1 });
-  app.stage.addChild(corona);
-
-  const sunCore = new Graphics();
-  sunCore.circle(sunX, sunY, coreRadius);
-  sunCore.fill({ color: 0xffa13e, alpha: 0.9 });
-  sunCore.circle(sunX, sunY, coreRadius * 0.66);
-  sunCore.fill({ color: 0xffcf6c, alpha: 0.96 });
-  sunCore.circle(sunX, sunY, coreRadius * 0.3);
-  sunCore.fill({ color: 0xffffdc, alpha: 1 });
-  app.stage.addChild(sunCore);
+  const sunBody = new Graphics();
+  sunBody.circle(sunX, sunY, sunRadius);
+  sunBody.fill({ color: 0xffb800, alpha: 1 });
+  sunBody.stroke({ color: 0xffd04a, alpha: 0.58, width: Math.max(1, scale * 0.12) });
+  app.stage.addChild(sunBody);
 
   for (const planet of state.planets) {
     const x = offsetX + planet.x * scale;
@@ -234,6 +207,7 @@ export function BattleStage(props: BattleStageProps) {
   const host = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
   const runtimeRef = useRef<PixiRuntime | null>(null);
+  const assetsRef = useRef<StageAssets | null>(null);
   const stateRef = useRef<StageState>({
     planets,
     fleets,
@@ -267,23 +241,33 @@ export function BattleStage(props: BattleStageProps) {
         return;
       }
       app.ticker.maxFPS = lowPerformance ? 30 : 60;
+      const assets = createStageAssets(runtime);
       host.current.appendChild(app.canvas);
       appRef.current = app;
       runtimeRef.current = runtime;
-      drawStage(app, runtime, host.current, stateRef.current, (id) => onSelectRef.current(id));
+      assetsRef.current = assets;
+      drawStage(app, runtime, host.current, stateRef.current, assets, (id) => onSelectRef.current(id));
     });
     return () => {
       disposed = true;
       appRef.current = null;
       runtimeRef.current = null;
+      const assets = assetsRef.current;
+      assetsRef.current = null;
       app?.destroy(true, { children: true });
+      assets?.sunGlow.destroy();
     };
   }, [lowPerformance]);
 
   useEffect(() => {
-    if (appRef.current && runtimeRef.current && host.current) {
-      drawStage(appRef.current, runtimeRef.current, host.current, stateRef.current, (id) =>
-        onSelectRef.current(id),
+    if (appRef.current && runtimeRef.current && assetsRef.current && host.current) {
+      drawStage(
+        appRef.current,
+        runtimeRef.current,
+        host.current,
+        stateRef.current,
+        assetsRef.current,
+        (id) => onSelectRef.current(id),
       );
     }
   }, [angle, fleets, planets, player, selectedPlanetId, showPlanetIds]);

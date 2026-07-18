@@ -73,4 +73,15 @@ describe("release performance and accessibility budgets", () => {
     );
     expect(css).toContain("@media (max-width: 620px)");
   });
+
+  it("keeps the central sun visually aligned with the simple Kaggle reference", () => {
+    const stage = readFileSync("components/battle/BattleStage.tsx", "utf8");
+
+    expect(stage).toContain("new runtime.FillGradient");
+    expect(stage).toContain("sunRadius * 2.8");
+    expect(stage).toContain("sunBody.circle(sunX, sunY, sunRadius)");
+    expect(stage).not.toContain("hazardRing");
+    expect(stage).not.toContain("solarFlares");
+    expect(stage).not.toContain("coronaPoints");
+  });
 });
