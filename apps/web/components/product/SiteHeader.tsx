@@ -68,6 +68,10 @@ export function SiteHeader({ locale = "zh" }: { locale?: Locale }) {
               <span>05</span>
               {zh ? "更新日志" : "Updates"}
             </Link>
+            <Link href={`/auth/logout?returnTo=${encodeURIComponent(localPath(locale))}`}>
+              <span>06</span>
+              {messages[locale].nav.logout}
+            </Link>
           </div>
         </details>
         <SessionAction locale={locale} />
