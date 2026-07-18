@@ -302,6 +302,7 @@ body {
 .home-experience {
   --pointer-x: 0;
   --pointer-y: 0;
+  --scene-glow: 98 200 255;
   position: relative;
   height: 100svh;
   overflow-x: hidden;
@@ -313,6 +314,44 @@ body {
   scroll-snap-type: y mandatory;
 }
 
+.home-experience[data-active-scene="0"] {
+  --scene-glow: 255 184 77;
+}
+
+.home-experience[data-active-scene="2"] {
+  --scene-glow: 98 200 255;
+}
+
+.home-experience[data-active-scene="3"] {
+  --scene-glow: 255 117 95;
+}
+
+.home-experience::before,
+.home-experience::after {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.home-experience::before {
+  background:
+    radial-gradient(circle at 68% 48%, rgb(var(--scene-glow) / 8%), transparent 32%),
+    linear-gradient(90deg, rgb(3 6 9 / 84%) 0%, rgb(3 6 9 / 54%) 38%, transparent 67%),
+    linear-gradient(0deg, rgb(3 6 9 / 62%), transparent 28% 72%, rgb(3 6 9 / 58%));
+  transition: background 700ms ease;
+}
+
+.home-experience::after {
+  background:
+    linear-gradient(90deg, rgb(98 200 255 / 5%) 1px, transparent 1px),
+    linear-gradient(rgb(98 200 255 / 4%) 1px, transparent 1px);
+  background-size: clamp(3.2rem, 5vw, 5.5rem) clamp(3.2rem, 5vw, 5.5rem);
+  mask-image: linear-gradient(to bottom, transparent, black 28%, black 72%, transparent);
+  opacity: 0.34;
+}
+
 .home-experience::-webkit-scrollbar {
   display: none;
 }
@@ -320,7 +359,7 @@ body {
 .home-starfield {
   position: fixed;
   z-index: 0;
-  inset: -8%;
+  inset: 0;
   background-image:
     radial-gradient(circle, rgb(240 234 220 / 58%) 0 1px, transparent 1.4px),
     radial-gradient(circle, rgb(98 200 255 / 54%) 0 1px, transparent 1.4px),
@@ -334,15 +373,25 @@ body {
     17rem 19rem,
     23rem 29rem;
   mask-image: radial-gradient(circle at 50% 45%, black, transparent 80%);
-  opacity: 0.38;
+  opacity: 0.2;
   pointer-events: none;
-  transform: translate(calc(var(--pointer-x) * -0.8rem), calc(var(--pointer-y) * -0.8rem));
-  transition: transform 180ms ease-out;
+}
+
+.orbital-world {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.92;
+  filter: saturate(1.08) contrast(1.05);
+  pointer-events: none;
 }
 
 .home-scene {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   min-height: 100svh;
   padding: clamp(7.5rem, 11vh, 9rem) clamp(4.5rem, 7vw, 8rem) clamp(3rem, 7vh, 5rem);
@@ -508,6 +557,18 @@ body {
   position: relative;
   z-index: 3;
   max-width: 78rem;
+  filter: drop-shadow(0 0.8rem 1.8rem rgb(0 0 0 / 68%));
+}
+
+.scene-copy::before,
+.network-copy::before,
+.protocol-copy::before {
+  position: absolute;
+  z-index: -1;
+  inset: -4rem -6rem -4rem -8rem;
+  background: radial-gradient(ellipse at 42% 48%, rgb(3 6 9 / 84%), transparent 70%);
+  content: "";
+  pointer-events: none;
 }
 .scene-copy h1 {
   max-width: 12ch;
@@ -539,7 +600,12 @@ body {
   box-shadow:
     inset 0 0 4rem rgb(98 200 255 / 5%),
     0 0 5rem rgb(98 200 255 / 4%);
+  mix-blend-mode: screen;
   transform: translate(calc(var(--pointer-x) * 0.9rem), calc(var(--pointer-y) * 0.7rem));
+}
+
+.home-scene[data-scene-state="active"] > .orbital-radar {
+  opacity: 0.46;
 }
 
 .orbital-radar::before {
@@ -663,7 +729,13 @@ body {
   padding: clamp(1.25rem, 2.4vw, 2.5rem);
   overflow: hidden;
   border: 1px solid var(--ow-color-line-strong);
-  background: linear-gradient(135deg, rgb(98 200 255 / 5%), transparent 48%), rgb(12 15 19 / 80%);
+  background:
+    linear-gradient(135deg, rgb(98 200 255 / 8%), transparent 48%),
+    rgb(7 11 15 / 76%);
+  backdrop-filter: blur(0.65rem) saturate(1.2);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 2%),
+    0 1.5rem 5rem rgb(0 0 0 / 24%);
 }
 .operation-card::after {
   position: absolute;
@@ -729,7 +801,12 @@ body {
     transparent 0 16%,
     rgb(98 200 255 / 9%) 16.1% 16.3%
   );
+  mix-blend-mode: screen;
   transform: translate(calc(var(--pointer-x) * -0.6rem), calc(var(--pointer-y) * -0.5rem));
+}
+
+.home-scene[data-scene-state="active"] > .network-map {
+  opacity: 0.48;
 }
 .network-map::before,
 .network-map::after {
@@ -795,7 +872,9 @@ body {
   left: 5%;
 }
 .network-copy {
+  position: relative;
   max-width: 54rem;
+  filter: drop-shadow(0 0.8rem 1.8rem rgb(0 0 0 / 68%));
 }
 .network-stats {
   display: grid;
@@ -833,7 +912,8 @@ body {
   padding: 1.25rem;
   overflow: hidden;
   border: 1px solid var(--ow-color-energy);
-  background: rgb(4 12 15 / 86%);
+  background: rgb(4 12 15 / 76%);
+  backdrop-filter: blur(0.8rem) saturate(1.18);
   box-shadow: 0 0 4rem rgb(98 200 255 / 8%);
 }
 .protocol-console__line {
@@ -867,7 +947,9 @@ body {
   pointer-events: none;
 }
 .protocol-copy {
+  position: relative;
   max-width: 56rem;
+  filter: drop-shadow(0 0.8rem 1.8rem rgb(0 0 0 / 68%));
 }
 .protocol-footer {
   display: flex;
@@ -1083,6 +1165,22 @@ body {
     min-height: 100svh;
     padding: 9.2rem 2.8rem 3rem 1.4rem;
   }
+  .home-experience::before {
+    background:
+      radial-gradient(circle at 70% 36%, rgb(var(--scene-glow) / 8%), transparent 36%),
+      linear-gradient(90deg, rgb(3 6 9 / 78%), rgb(3 6 9 / 34%) 72%, transparent);
+  }
+  .home-experience::after {
+    opacity: 0.22;
+  }
+  .orbital-world {
+    opacity: 0.72;
+  }
+  .scene-copy::before,
+  .network-copy::before,
+  .protocol-copy::before {
+    inset: -3rem -2rem;
+  }
   .home-scene::before {
     inset: 7.1rem 0.55rem 0.55rem;
     background-size: 2.5rem 2.5rem;
@@ -1106,6 +1204,10 @@ body {
     font-size: clamp(3.3rem, 15vw, 5.6rem);
     line-height: 0.82;
   }
+  :lang(en) .scene-copy h1 {
+    font-size: clamp(2.15rem, 9.2vw, 3rem);
+    letter-spacing: -0.075em;
+  }
   .scene-lede {
     font-size: 0.92rem;
   }
@@ -1122,7 +1224,9 @@ body {
     top: 18%;
     right: -18%;
     width: 78vw;
-    opacity: 0.42;
+  }
+  .home-scene[data-scene-state="active"] > .orbital-radar {
+    opacity: 0.32;
   }
   .orbital-radar small {
     display: none;
@@ -1192,7 +1296,9 @@ body {
     top: 14%;
     left: -22%;
     width: 92vw;
-    opacity: 0.28;
+  }
+  .home-scene[data-scene-state="active"] > .network-map {
+    opacity: 0.24;
   }
   .network-copy {
     align-self: center;
@@ -1241,6 +1347,7 @@ body {
     scroll-behavior: auto;
   }
   .home-starfield,
+  .orbital-world,
   .orbital-radar,
   .network-map,
   .home-scene > *:not(.scene-corners),

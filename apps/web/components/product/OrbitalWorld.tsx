@@ -26,10 +26,10 @@ const sceneTargets = [
   {
     accent: 0x62c8ff,
     beaconOpacity: 0.28,
-    camera: [-0.5, 1.25, 10.4],
+    camera: [0.4, 0.9, 9.4],
     coreScale: 0.62,
     orbitOpacity: 0.4,
-    position: [0.3, -0.35, -0.7],
+    position: [2.35, 0.85, -0.45],
     rotation: [0.12, 0.3, -0.22],
   },
   {
@@ -47,7 +47,7 @@ const sceneTargets = [
     camera: [-0.3, -0.1, 7.5],
     coreScale: 1.2,
     orbitOpacity: 0.48,
-    position: [-2.2, 0.35, 0.2],
+    position: [-3.45, 1.7, -0.15],
     rotation: [0.22, 1.45, -0.12],
   },
 ] as const;
@@ -64,6 +64,7 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
   const activeSceneRef = useRef(activeScene);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reducedMotionRef = useRef(reducedMotion);
+  const restartRef = useRef<(() => void) | null>(null);
   const renderStaticRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
 
   useEffect(() => {
     reducedMotionRef.current = reducedMotion;
-    renderStaticRef.current?.();
+    restartRef.current?.();
   }, [reducedMotion]);
 
   useEffect(() => {
@@ -145,9 +146,9 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
 
         const planetGeometry = new THREE.IcosahedronGeometry(1.52, isCompact ? 3 : 5);
         const planetMaterial = new THREE.MeshStandardMaterial({
-          color: 0x101a22,
-          emissive: 0x07131c,
-          emissiveIntensity: 0.75,
+          color: 0x172835,
+          emissive: 0x0a2030,
+          emissiveIntensity: 1.05,
           metalness: 0.28,
           roughness: 0.86,
         });
@@ -157,7 +158,7 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
         const gridMaterial = new THREE.MeshBasicMaterial({
           blending: THREE.AdditiveBlending,
           color: 0x62c8ff,
-          opacity: 0.12,
+          opacity: 0.18,
           transparent: true,
           wireframe: true,
         });
@@ -171,7 +172,7 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
         const atmosphereMaterial = new THREE.MeshBasicMaterial({
           blending: THREE.AdditiveBlending,
           color: 0x62c8ff,
-          opacity: 0.1,
+          opacity: 0.15,
           side: THREE.BackSide,
           transparent: true,
         });
@@ -350,6 +351,7 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
           if (reducedMotionRef.current) renderStatic();
           else if (!document.hidden) animationFrame = window.requestAnimationFrame(animate);
         };
+        restartRef.current = start;
 
         const onVisibilityChange = () => {
           if (document.hidden) window.cancelAnimationFrame(animationFrame);
@@ -371,6 +373,7 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
 
         const dispose = () => {
           window.cancelAnimationFrame(animationFrame);
+          restartRef.current = null;
           renderStaticRef.current = null;
           removeRuntimeListeners?.();
           scene.traverse((object) => {
@@ -400,6 +403,7 @@ export function OrbitalWorld({ activeScene, pointerRef, reducedMotion }: Orbital
     return () => {
       disposed = true;
       window.cancelAnimationFrame(animationFrame);
+      restartRef.current = null;
       renderStaticRef.current = null;
       teardownRuntime?.();
     };

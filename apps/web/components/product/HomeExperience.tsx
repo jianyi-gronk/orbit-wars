@@ -113,6 +113,7 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
   return (
     <div
       className="home-experience"
+      data-active-scene={activeScene}
       data-reduced-motion={reducedMotion}
       onPointerMove={onPointerMove}
       ref={containerRef}
