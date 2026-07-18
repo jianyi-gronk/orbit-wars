@@ -156,7 +156,9 @@
 
 .replay-stage-wrap {
   position: relative;
-  height: clamp(27rem, 58svh, 49rem);
+  width: min(100%, 72svh, 49rem);
+  height: auto;
+  aspect-ratio: 1;
   overflow: hidden;
   isolation: isolate;
   background:
@@ -711,7 +713,9 @@
   }
 
   .replay-stage-wrap {
-    height: clamp(23rem, 52svh, 34rem);
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
   }
 
   .replay-step {

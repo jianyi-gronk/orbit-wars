@@ -22,6 +22,23 @@ export const BATTLEFIELD_SIZE = 100;
 export const SUN_CENTER = BATTLEFIELD_SIZE / 2;
 export const SUN_RADIUS = 10;
 
+export type BattlefieldViewport = {
+  size: number;
+  scale: number;
+  offsetX: number;
+  offsetY: number;
+};
+
+export function battlefieldViewport(width: number, height: number): BattlefieldViewport {
+  const size = Math.max(0, Math.min(width, height));
+  return {
+    size,
+    scale: size / BATTLEFIELD_SIZE,
+    offsetX: (width - size) / 2,
+    offsetY: (height - size) / 2,
+  };
+}
+
 export type PendingLaunch = {
   fromPlanetId: number;
   angle: number;

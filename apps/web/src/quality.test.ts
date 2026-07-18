@@ -65,6 +65,7 @@ describe("release performance and accessibility budgets", () => {
     expect(player).toContain("aria-label={label}");
     expect(player).toContain("data-edge={eventEdge(position)}");
     expect(css).toContain(".replay-stage-wrap .battle-stage");
+    expect(css).toMatch(/\.replay-stage-wrap\s*\{[\s\S]*?aspect-ratio: 1/);
     expect(css).toMatch(/\.replay-event-track button span[\s\S]*opacity: 0/);
     expect(css).toContain(".replay-event-track button:hover span");
     expect(css).toMatch(

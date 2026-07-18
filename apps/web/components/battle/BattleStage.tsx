@@ -3,9 +3,9 @@
 import type { Application } from "pixi.js";
 import { useEffect, useRef } from "react";
 import {
-  BATTLEFIELD_SIZE,
   SUN_CENTER,
   SUN_RADIUS,
+  battlefieldViewport,
   fleetDirection,
   formatPlanetLabel,
   type FleetView,
@@ -43,48 +43,90 @@ function drawStage(
   for (const child of app.stage.removeChildren()) child.destroy();
   const width = host.clientWidth;
   const height = host.clientHeight;
-  const scaleX = width / BATTLEFIELD_SIZE;
-  const scaleY = height / BATTLEFIELD_SIZE;
+  const { size, scale, offsetX, offsetY } = battlefieldViewport(width, height);
+  const centerX = offsetX + size / 2;
+  const centerY = offsetY + size / 2;
+  const boundary = new Graphics();
+  boundary.rect(offsetX, offsetY, size, size);
+  boundary.stroke({ color: 0x50616c, alpha: 0.2, width: 1 });
+  app.stage.addChild(boundary);
   const grid = new Graphics();
   for (let ring = 1; ring <= 4; ring += 1) {
-    grid.circle(width / 2, height / 2, ring * Math.min(width, height) * 0.11);
+    grid.circle(centerX, centerY, ring * size * 0.11);
   }
   grid.stroke({ color: 0x50616c, alpha: 0.16, width: 1 });
   app.stage.addChild(grid);
 
-  const sunX = SUN_CENTER * scaleX;
-  const sunY = SUN_CENTER * scaleY;
-  const sunRadius = SUN_RADIUS * Math.min(scaleX, scaleY);
+  const sunX = offsetX + SUN_CENTER * scale;
+  const sunY = offsetY + SUN_CENTER * scale;
+  const sunRadius = SUN_RADIUS * scale;
+  const coreRadius = Math.max(8, sunRadius * 0.24);
   const sunGlow = new Graphics();
-  sunGlow.circle(sunX, sunY, sunRadius * 1.45);
-  sunGlow.fill({ color: 0xff8d35, alpha: 0.06 });
+  sunGlow.circle(sunX, sunY, coreRadius * 3.5);
+  sunGlow.fill({ color: 0xff7a28, alpha: 0.025 });
+  sunGlow.circle(sunX, sunY, coreRadius * 2.5);
+  sunGlow.fill({ color: 0xff9638, alpha: 0.045 });
+  sunGlow.circle(sunX, sunY, coreRadius * 1.7);
+  sunGlow.fill({ color: 0xffbb55, alpha: 0.08 });
   app.stage.addChild(sunGlow);
 
-  const solarRays = new Graphics();
-  for (let ray = 0; ray < 12; ray += 1) {
-    const rayAngle = (ray / 12) * Math.PI * 2;
-    const inner = sunRadius * 1.08;
-    const outer = sunRadius * (ray % 2 === 0 ? 1.28 : 1.18);
-    solarRays.moveTo(sunX + Math.cos(rayAngle) * inner, sunY + Math.sin(rayAngle) * inner);
-    solarRays.lineTo(sunX + Math.cos(rayAngle) * outer, sunY + Math.sin(rayAngle) * outer);
+  const hazardRing = new Graphics();
+  const hazardSegments = 40;
+  for (let segment = 0; segment < hazardSegments; segment += 2) {
+    const start = (segment / hazardSegments) * Math.PI * 2;
+    const end = ((segment + 1.15) / hazardSegments) * Math.PI * 2;
+    hazardRing.moveTo(sunX + Math.cos(start) * sunRadius, sunY + Math.sin(start) * sunRadius);
+    hazardRing.lineTo(sunX + Math.cos(end) * sunRadius, sunY + Math.sin(end) * sunRadius);
   }
-  solarRays.stroke({ color: 0xffb44d, alpha: 0.32, width: 1 });
-  app.stage.addChild(solarRays);
+  hazardRing.stroke({ color: 0xffbd5c, alpha: 0.48, width: 1 });
+  app.stage.addChild(hazardRing);
 
-  const sun = new Graphics();
-  sun.circle(sunX, sunY, sunRadius);
-  sun.fill({ color: 0xff8d35, alpha: 0.18 });
-  sun.stroke({ color: 0xffc15c, alpha: 0.72, width: 1.5 });
-  sun.circle(sunX, sunY, sunRadius * 0.64);
-  sun.fill({ color: 0xffb43f, alpha: 0.68 });
-  sun.circle(sunX, sunY, sunRadius * 0.3);
-  sun.fill({ color: 0xfff0b0, alpha: 0.96 });
-  app.stage.addChild(sun);
+  const flareAngles = [0.18, 1.32, 2.55, 3.74, 5.16];
+  const solarFlares = new Graphics();
+  for (const [index, flareAngle] of flareAngles.entries()) {
+    const inner = coreRadius * 1.08;
+    const outer = coreRadius * (index % 2 === 0 ? 1.9 : 1.55);
+    solarFlares.moveTo(
+      sunX + Math.cos(flareAngle) * inner,
+      sunY + Math.sin(flareAngle) * inner,
+    );
+    solarFlares.lineTo(
+      sunX + Math.cos(flareAngle) * outer,
+      sunY + Math.sin(flareAngle) * outer,
+    );
+  }
+  solarFlares.stroke({ color: 0xffc769, alpha: 0.4, width: 1.4 });
+  app.stage.addChild(solarFlares);
+
+  const corona = new Graphics();
+  const coronaPoints = 48;
+  for (let point = 0; point < coronaPoints; point += 1) {
+    const coronaAngle = (point / coronaPoints) * Math.PI * 2;
+    const variation = Math.sin(coronaAngle * 5 + 0.6) * 0.09 + Math.sin(coronaAngle * 11) * 0.05;
+    const radius = coreRadius * (1.22 + variation);
+    const x = sunX + Math.cos(coronaAngle) * radius;
+    const y = sunY + Math.sin(coronaAngle) * radius;
+    if (point === 0) corona.moveTo(x, y);
+    else corona.lineTo(x, y);
+  }
+  corona.closePath();
+  corona.fill({ color: 0xff9638, alpha: 0.34 });
+  corona.stroke({ color: 0xffc15c, alpha: 0.46, width: 1 });
+  app.stage.addChild(corona);
+
+  const sunCore = new Graphics();
+  sunCore.circle(sunX, sunY, coreRadius);
+  sunCore.fill({ color: 0xffa13e, alpha: 0.9 });
+  sunCore.circle(sunX, sunY, coreRadius * 0.66);
+  sunCore.fill({ color: 0xffcf6c, alpha: 0.96 });
+  sunCore.circle(sunX, sunY, coreRadius * 0.3);
+  sunCore.fill({ color: 0xffffdc, alpha: 1 });
+  app.stage.addChild(sunCore);
 
   for (const planet of state.planets) {
-    const x = planet.x * scaleX;
-    const y = planet.y * scaleY;
-    const radius = Math.max(8, planet.radius * Math.min(scaleX, scaleY));
+    const x = offsetX + planet.x * scale;
+    const y = offsetY + planet.y * scale;
+    const radius = Math.max(8, planet.radius * scale);
     const body = new Graphics();
     const color = planet.owner === 0 ? 0x67d8ff : planet.owner === 1 ? 0xff6b57 : 0x89949a;
     body.circle(x, y, radius);
@@ -117,8 +159,8 @@ function drawStage(
   }
 
   for (const fleet of state.fleets) {
-    const x = fleet.x * scaleX;
-    const y = fleet.y * scaleY;
+    const x = offsetX + fleet.x * scale;
+    const y = offsetY + fleet.y * scale;
     const direction = fleetDirection(fleet.angle);
     const perpendicular = { x: -direction.y, y: direction.x };
     const color = fleet.owner === 0 ? 0x67d8ff : 0xff6b57;
@@ -168,8 +210,8 @@ function drawStage(
   const selected = state.planets.find((planet) => planet.id === state.selectedPlanetId);
   if (selected) {
     const trajectory = new Graphics();
-    const startX = selected.x * scaleX;
-    const startY = selected.y * scaleY;
+    const startX = offsetX + selected.x * scale;
+    const startY = offsetY + selected.y * scale;
     trajectory.moveTo(startX, startY);
     trajectory.lineTo(startX + Math.cos(state.angle) * 130, startY + Math.sin(state.angle) * 130);
     trajectory.stroke({ color: 0xffd76a, alpha: 0.72, width: 2 });
@@ -251,8 +293,9 @@ export function BattleStage(props: BattleStageProps) {
     const selected = planets.find((planet) => planet.id === selectedPlanetId);
     if (!selected) return;
     const bounds = event.currentTarget.getBoundingClientRect();
-    const sourceX = bounds.left + (selected.x / 100) * bounds.width;
-    const sourceY = bounds.top + (selected.y / 100) * bounds.height;
+    const viewport = battlefieldViewport(bounds.width, bounds.height);
+    const sourceX = bounds.left + viewport.offsetX + selected.x * viewport.scale;
+    const sourceY = bounds.top + viewport.offsetY + selected.y * viewport.scale;
     onAim(Math.atan2(event.clientY - sourceY, event.clientX - sourceX));
   }
 

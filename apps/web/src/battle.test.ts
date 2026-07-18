@@ -3,6 +3,7 @@ import {
   BATTLEFIELD_SIZE,
   SUN_CENTER,
   SUN_RADIUS,
+  battlefieldViewport,
   fleetDirection,
   formatPlanetLabel,
   initialDraft,
@@ -57,5 +58,22 @@ describe("central sun rules", () => {
     expect(BATTLEFIELD_SIZE).toBe(100);
     expect(SUN_CENTER).toBe(50);
     expect(SUN_RADIUS).toBe(10);
+  });
+});
+
+describe("square battlefield viewport", () => {
+  it("centers a square board inside wide and tall containers", () => {
+    expect(battlefieldViewport(1200, 700)).toEqual({
+      size: 700,
+      scale: 7,
+      offsetX: 250,
+      offsetY: 0,
+    });
+    expect(battlefieldViewport(500, 800)).toEqual({
+      size: 500,
+      scale: 5,
+      offsetX: 0,
+      offsetY: 150,
+    });
   });
 });
