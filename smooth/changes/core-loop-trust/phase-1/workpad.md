@@ -5,8 +5,8 @@
 - [x] 收敛 Phase 1 目标、核心闭环与明确非范围。
 - [x] 定义权威 mode、simulation 恢复、发布资格、比赛追踪与 replay context 状态规则。
 - [x] 定义 start 页、双语与退出登录规则。
-- [ ] 进入技术设计前核对现有 mode、simulation、比赛与 replay 状态枚举和数据可用性。
-- [ ] 将产品规则拆为可实施任务，并为每项验收建立证据清单。
+- [x] 进入技术设计前核对现有 mode、simulation、比赛与 replay 状态枚举和数据可用性。
+- [x] 将产品规则拆为可实施任务，并为每项验收建立证据清单。
 
 ## 验收标准
 
@@ -33,10 +33,23 @@
 ## 备注
 
 - 本阶段是克制的可信度修复，不包含代码或技术方案。
+- 技术核对确认 `Match.mode` 仅有 `training/ranked`；策略模拟继续使用 `training` 底层 mode，并通过 participant candidate attribution 推导产品展示分类和私人可见性，不新增不兼容枚举。
 - “验证通过”沿用现有单场验证规则；不在 Phase 1 定义多场胜率门槛。
 - 私人 simulation 可在发起者自己的策略记录中恢复，但默认不公开，也不提供分享开关。
 - replay 高光复用已有摘要或事件；若不存在，以终局战果摘要作为最小高光，不新增识别算法。
 - 多舰队、付费、移动导航重构和 Command Center 接入流程重构均不在本期。
+
+## 本轮实现与验证（2026-07-19）
+
+- 已实现：0009 草稿-simulation 关联、服务端发布门禁、candidate 公共过滤、比赛状态页、replay 来源卡片、start/退出登录语义、双语 mode/outcome 文案。
+- Worker 增加实时 Redis 通道降级与队列超时恢复：实时投影短暂不可用时，权威比赛、回放持久化与 worker 进程继续运行。
+- API 聚焦回归覆盖 candidate 双用户公共隐私、legacy 公共标记防御、发布门禁、match replay readiness 和 workspace 状态恢复。
+- 全量 `pnpm check` 通过：Web Vitest 13 个文件、64 项；Python 180 项通过、5 项跳过；格式、ESLint、Ruff、TypeScript 与 mypy 全部通过。
+- 迁移：空 SQLite 0001→0009、0009→0008、0008→0009 均通过。
+- PostgreSQL 已升级至 `0009 (head)`；Next.js 16 生产构建通过。
+- 浏览器实测：训练赛 `match_zNkjDMlVeeBj-AMwScQET1tR` 在约 6 秒内完成并生成 `replay_z0CLwnl0XvLCHeOpm4MJkED0`；候选模拟 `match_yNnZz16bFidEpMxeCuKZzfyx` 完成后才解锁发布，刷新及切换中英文后仍可恢复，且未出现在公开历史。
+- 有效回放进入 Strategy Lab 能显示 mode、双方、结果、高光与返回入口；无效来源只显示不可用提示且编辑器继续可用。
+- 390×844 移动视口检查并收紧比赛状态页的长 ID、标题、状态卡和按钮布局；生产态新标签页无 console error。
 
 ## 疑问
 
