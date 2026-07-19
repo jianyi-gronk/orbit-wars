@@ -18,10 +18,9 @@ const sceneCount = 4;
 
 type HomeExperienceProps = {
   locale: Locale;
-  manualPlayEnabled: boolean;
 };
 
-export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProps) {
+export function HomeExperience({ locale }: HomeExperienceProps) {
   const zh = locale === "zh";
   const containerRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef<OrbitalPointer>({ x: 0, y: 0 });
@@ -162,17 +161,17 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
       <section className="home-scene home-scene--briefing" {...sceneProps(0)}>
         <div className="scene-corners" aria-hidden="true" />
         <div className="scene-copy">
-          <p className="scene-kicker">LIVE SECTOR / AGENT-ONLY / 01</p>
+          <p className="scene-kicker">LIVE SECTOR / STRATEGY-FIRST / 01</p>
           <h1>
             {zh ? (
               <>
-                让你的 <em>Agent</em>
+                让你的 <em>策略</em>
                 <br />
                 接管轨道战争
               </>
             ) : (
               <>
-                LET YOUR <em>AGENT</em>
+                LET YOUR <em>STRATEGY</em>
                 <br />
                 COMMAND THE ORBIT
               </>
@@ -180,8 +179,8 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
           </h1>
           <p className="scene-lede">
             {zh
-              ? "建立原创舰队，锁定策略版本，挑战真实对手。每一次航迹、胜负与段位变化都有据可查。"
-              : "Build an original fleet, lock a strategy version, and challenge real rivals. Every trajectory, result, and rank movement leaves evidence."}
+              ? "建立原创舰队，直接使用平台模板、调参或写代码，再挑战真实对手——不需要先准备 Agent Key。"
+              : "Build an original fleet, use a platform template, tune or code it, then challenge real rivals—no Agent Key required."}
           </p>
           <div className="scene-actions">
             <Link
@@ -216,7 +215,7 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
           <p>
             {zh
               ? "和参考产品一样保持主循环清晰，但这里的核心不是坦克，而是策略版本、轨道物理与可验证回放。"
-              : "A clear Agent-first loop, expressed through strategy versions, orbital physics, and verifiable replays."}
+              : "A clear strategy-first loop, expressed through immutable versions, orbital physics, and verifiable replays."}
           </p>
         </header>
         <div className="operation-loop">
@@ -231,11 +230,11 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
             },
             {
               index: "02",
-              title: zh ? "部署 Agent" : "DEPLOY THE AGENT",
+              title: zh ? "迭代策略" : "ITERATE STRATEGY",
               body: zh
-                ? "锁定 ready 版本，由 Agent 自主作战。"
-                : "Lock a ready version and let the Agent execute.",
-              code: "VERSION / SANDBOX",
+                ? "站内调参或写代码，用训练模拟证明候选。"
+                : "Tune or code in-platform, then prove the candidate in training.",
+              code: "DRAFT / SIMULATION",
             },
             {
               index: "03",
@@ -315,15 +314,15 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
       <section className="home-scene home-scene--protocol" {...sceneProps(3)}>
         <div className="scene-corners" aria-hidden="true" />
         <div className="protocol-console">
-          <p className="scene-kicker">AGENT UPLINK / 04</p>
+          <p className="scene-kicker">STRATEGY LAB / 04</p>
           <div className="protocol-console__line">
             <span>01</span>
-            <code>READ /fleet/context</code>
+            <code>EDIT private/draft</code>
             <i>READY</i>
           </div>
           <div className="protocol-console__line">
             <span>02</span>
-            <code>SIMULATE candidate.zip</code>
+            <code>SIMULATE candidate</code>
             <i>VALID</i>
           </div>
           <div className="protocol-console__line">
@@ -343,31 +342,27 @@ export function HomeExperience({ locale, manualPlayEnabled }: HomeExperienceProp
           <h2>
             {zh ? (
               <>
-                <span>给 Agent 一把钥匙。</span>
-                <span>让它自己变强。</span>
+                <span>不需要先有 Agent。</span>
+                <span>在平台内进化。</span>
               </>
             ) : (
               <>
-                <span>GIVE THE AGENT A KEY.</span>
-                <span>LET IT EVOLVE.</span>
+                <span>NO AGENT REQUIRED.</span>
+                <span>EVOLVE IN-PLATFORM.</span>
               </>
             )}
           </h2>
           <p>
             {zh
-              ? manualPlayEnabled
-                ? "共享协议仍支持 Human 控制，但当前主循环围绕 Agent 的读取、模拟、发布和挑战展开。"
-                : "Agent 可以读取上下文、模拟候选策略、发布不可变版本、寻找对手并发起可回放挑战。"
-              : manualPlayEnabled
-                ? "The shared protocol still supports Human control, while the primary loop centers on Agent reading, simulation, publishing, and challenges."
-                : "The Agent can read context, simulate candidates, publish immutable versions, find rivals, and launch replayable challenges."}
+              ? "从可编辑模板开始，使用站内实验室保存私有草稿、训练模拟和发布不可变版本；AI 副驾是可选项。"
+              : "Start from an editable template, save private drafts, run training simulations, and publish immutable versions in Strategy Lab. AI assistance is optional."}
           </p>
           <div className="scene-actions">
             <Link
               className="button button--primary button--command"
-              href={localPath(locale, "/start")}
+              href={localPath(locale, "/strategy-lab")}
             >
-              {zh ? "开始部署" : "Begin deployment"} <span>↗</span>
+              {zh ? "打开策略实验室" : "Open Strategy Lab"} <span>↗</span>
             </Link>
             <Link className="text-command" href={localPath(locale, "/agent-guide")}>
               AGENT GUIDE <span>→</span>

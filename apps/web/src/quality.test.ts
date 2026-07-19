@@ -213,7 +213,7 @@ describe("release performance and accessibility budgets", () => {
     expect(replayCss).toMatch(
       /\.replay-error-panel h1\s*\{[\s\S]*?\/1\.08 var\(--ow-font-display\)/,
     );
-    expect(home).toContain("<span>给 Agent 一把钥匙。</span>");
-    expect(home).toContain("<span>GIVE THE AGENT A KEY.</span>");
+    expect(home).toContain("<span>不需要先有 Agent。</span>");
+    expect(home).toContain("<span>NO AGENT REQUIRED.</span>");
   });
 });

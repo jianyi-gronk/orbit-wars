@@ -54,7 +54,7 @@ function Home({ locale }: { locale: Locale }) {
   return (
     <main className="product-home">
       <SiteHeader locale={locale} />
-      <HomeExperience locale={locale} manualPlayEnabled={humanPlayEnabled} />
+      <HomeExperience locale={locale} />
     </main>
   );
 }
