@@ -12,7 +12,7 @@ export type WheelGestureResult = {
 };
 
 export const HOME_WHEEL_INTENT_THRESHOLD = 48;
-export const HOME_WHEEL_QUIET_MS = 420;
+export const HOME_WHEEL_COOLDOWN_MS = 420;
 
 export function createWheelGestureState(): WheelGestureState {
   return {
@@ -27,7 +27,7 @@ export function reduceWheelGesture(
   deltaY: number,
   now: number,
   threshold = HOME_WHEEL_INTENT_THRESHOLD,
-  quietMs = HOME_WHEEL_QUIET_MS,
+  cooldownMs = HOME_WHEEL_COOLDOWN_MS,
 ): WheelGestureResult {
   if (!Number.isFinite(deltaY) || deltaY === 0 || !Number.isFinite(now)) {
     return { direction: 0, state };
@@ -39,13 +39,13 @@ export function reduceWheelGesture(
       state: {
         accumulatedDelta: 0,
         lastEventAt: now,
-        lockedUntil: now + quietMs,
+        lockedUntil: state.lockedUntil,
       },
     };
   }
 
   const accumulatedDelta =
-    now - state.lastEventAt > quietMs ? deltaY : state.accumulatedDelta + deltaY;
+    now - state.lastEventAt > cooldownMs ? deltaY : state.accumulatedDelta + deltaY;
 
   if (Math.abs(accumulatedDelta) < threshold) {
     return {
@@ -63,7 +63,7 @@ export function reduceWheelGesture(
     state: {
       accumulatedDelta: 0,
       lastEventAt: now,
-      lockedUntil: now + quietMs,
+      lockedUntil: now + cooldownMs,
     },
   };
 }

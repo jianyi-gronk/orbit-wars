@@ -43,20 +43,26 @@ describe("home scene navigation", () => {
     expect(second.state.accumulatedDelta).toBe(0);
   });
 
-  it("suppresses inertial events and extends the quiet window", () => {
+  it("suppresses inertial events without extending the cooldown", () => {
     const triggered = reduceWheelGesture(createWheelGestureState(), 60, 100);
     const inertia = reduceWheelGesture(triggered.state, 80, 300);
-    const trailingInertia = reduceWheelGesture(inertia.state, 80, 600);
 
     expect(triggered.direction).toBe(1);
     expect(inertia.direction).toBe(0);
-    expect(trailingInertia.direction).toBe(0);
-    expect(trailingInertia.state.lockedUntil).toBe(1020);
+    expect(inertia.state.lockedUntil).toBe(520);
   });
 
-  it("accepts a new gesture after a quiet window, including reverse motion", () => {
+  it("keeps sustained scrolling responsive after the fixed cooldown", () => {
     const triggered = reduceWheelGesture(createWheelGestureState(), 60, 100);
-    const nextGesture = reduceWheelGesture(triggered.state, -60, 600);
+    const inertia = reduceWheelGesture(triggered.state, 80, 300);
+    const sustained = reduceWheelGesture(inertia.state, 80, 530);
+
+    expect(sustained.direction).toBe(1);
+  });
+
+  it("accepts reverse motion after the fixed cooldown", () => {
+    const triggered = reduceWheelGesture(createWheelGestureState(), 60, 100);
+    const nextGesture = reduceWheelGesture(triggered.state, -60, 530);
 
     expect(nextGesture.direction).toBe(-1);
   });
