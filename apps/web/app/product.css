@@ -1004,11 +1004,11 @@
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--ow-color-accent) 12%, transparent),
+      color-mix(in srgb, var(--ow-color-warning) 12%, transparent),
       transparent
     ),
     var(--ow-color-surface);
-  border: 1px solid var(--ow-color-accent);
+  border: 1px solid var(--ow-color-warning);
   display: grid;
   gap: 0.8rem;
   margin: 1.25rem 0;
@@ -1053,7 +1053,7 @@
 }
 
 .strategy-lab__current {
-  border-left: 2px solid var(--ow-color-accent);
+  border-left: 2px solid var(--ow-color-warning);
   display: grid;
   gap: 0.35rem;
   padding: 1rem 1.25rem;
@@ -1102,7 +1102,7 @@
 .strategy-editor__toolbar button {
   background: transparent;
   border: 1px solid var(--ow-color-line);
-  color: var(--ow-color-text);
+  color: var(--ow-color-ink);
   cursor: pointer;
   font: inherit;
   min-height: 2.8rem;
@@ -1110,7 +1110,7 @@
 }
 
 .strategy-editor__toolbar button[aria-pressed="true"] {
-  background: var(--ow-color-accent);
+  background: var(--ow-color-warning);
   color: #090b0d;
 }
 
@@ -1142,7 +1142,7 @@
 }
 
 .strategy-guided output {
-  color: var(--ow-color-accent);
+  color: var(--ow-color-warning);
   font: 3rem/1 var(--ow-font-display);
 }
 
@@ -1185,7 +1185,7 @@
 }
 
 .strategy-ai__meter strong {
-  color: var(--ow-color-accent);
+  color: var(--ow-color-warning);
   font: 4.5rem/0.8 var(--ow-font-display);
   grid-row: 1 / 3;
 }
@@ -1200,7 +1200,7 @@
 .strategy-ai select {
   background: #070c10;
   border: 1px solid var(--ow-color-line);
-  color: var(--ow-color-text);
+  color: var(--ow-color-ink);
   font: inherit;
   padding: 0.8rem;
 }
@@ -1214,7 +1214,7 @@
 }
 
 .strategy-ai__result {
-  border-top: 1px solid var(--ow-color-accent);
+  border-top: 1px solid var(--ow-color-warning);
   display: grid;
   gap: 0.7rem;
   padding-top: 1rem;
