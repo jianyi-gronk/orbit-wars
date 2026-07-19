@@ -29,5 +29,5 @@
 
 ## 阶段 6：验证与交付
 
-- [ ] **运行自动化与安全回归** — 完成 API/Web 单测、lint、typecheck、迁移和生产 build。
-- [ ] **浏览器验收并交付** — 验证中英文、窄屏、无 Key、无 DeepSeek 配置、草稿、模拟和发布，commit 后统一 push。
+- [x] **运行自动化与安全回归** — 完成 API/Web 单测、lint、typecheck、迁移和生产 build。
+- [x] **浏览器验收并交付** — 验证中英文、窄屏、无 Key、无 DeepSeek 配置、草稿、模拟和发布，commit 后统一 push。
