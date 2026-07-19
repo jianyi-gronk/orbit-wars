@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { ApiError, apiFetch, type Fleet, type FleetProfile } from "../../src/api";
-import { type Locale } from "../../src/i18n";
+import { ApiError, apiFetch, type Fleet } from "../../src/api";
+import { localPath, messages, type Locale } from "../../src/i18n";
 import { resolveMissionAction, type MissionAction } from "../../src/mission";
 
 export function SessionAction({ locale }: { locale: Locale }) {
@@ -24,18 +24,11 @@ export function SessionAction({ locale }: { locale: Locale }) {
           const fleet = await apiFetch<Fleet>("/api/v1/me/fleet", {
             signal: controller.signal,
           });
-          const profile = await apiFetch<FleetProfile>(
-            `/api/public/v1/fleet-profiles/${fleet.publicId}`,
-            { signal: controller.signal },
-          );
-          const currentVersion = profile.versions.find(
-            (version) => version.publicId === fleet.currentStrategyVersionId,
-          );
           setAction(
             resolveMissionAction(locale, {
               authenticated: true,
               hasFleet: true,
-              currentStrategyStatus: currentVersion?.status ?? null,
+              currentStrategyStatus: fleet.currentStrategyStatus ?? null,
             }),
           );
         } catch (reason) {
@@ -66,6 +59,26 @@ export function SessionAction({ locale }: { locale: Locale }) {
       href={action.href}
     >
       {action.label}
+    </Link>
+  );
+}
+
+export function SessionMenuAction({ locale }: { locale: Locale }) {
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void apiFetch<{ authenticated: boolean }>("/api/v1/session", { signal: controller.signal })
+      .then((session) => setAuthenticated(session.authenticated))
+      .catch(() => setAuthenticated(false));
+    return () => controller.abort();
+  }, []);
+
+  if (!authenticated) return null;
+  return (
+    <Link href={`/auth/logout?returnTo=${encodeURIComponent(localPath(locale))}`}>
+      <span>07</span>
+      {messages[locale].nav.logout}
     </Link>
   );
 }

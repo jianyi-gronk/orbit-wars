@@ -26,6 +26,7 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
   );
   const [styleDescription, setStyleDescription] = useState("");
   const [fleet, setFleet] = useState<Fleet | null>(null);
+  const [fleetReady, setFleetReady] = useState(false);
   const [checking, setChecking] = useState(true);
   const [authenticated, setAuthenticated] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -40,6 +41,7 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
         try {
           const owned = await apiFetch<Fleet>("/api/v1/me/fleet", { signal: controller.signal });
           setFleet(owned);
+          setFleetReady(owned.currentStrategyStatus === "ready");
           setStep(2);
         } catch (reason) {
           if (reason instanceof Error && reason.name === "AbortError") return;
@@ -70,6 +72,7 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
         method: "POST",
       });
       setFleet(created);
+      setFleetReady(true);
       setStep(1);
     } catch (reason) {
       const code = reason instanceof ApiError ? reason.code : undefined;
@@ -77,6 +80,7 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
         try {
           const owned = await apiFetch<Fleet>("/api/v1/me/fleet");
           setFleet(owned);
+          setFleetReady(owned.currentStrategyStatus === "ready");
           setStep(2);
           return;
         } catch {
@@ -340,20 +344,41 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
           )}
           {step === 2 && fleet && (
             <section>
-              <p className="eyebrow">03 / READY</p>
-              <h2>{zh ? `${fleet.name} 已就位` : `${fleet.name} is ready`}</h2>
+              <p className="eyebrow">03 / {fleetReady ? "READY" : "SETUP"}</p>
+              <h2>
+                {fleetReady
+                  ? zh
+                    ? `${fleet.name} 已就位`
+                    : `${fleet.name} is ready`
+                  : zh
+                    ? `${fleet.name} 需要继续配置`
+                    : `${fleet.name} needs setup`}
+              </h2>
               <p className="page-lede">
-                {zh
-                  ? `公开编号 ${fleet.publicId}。初始策略已经 ready，不需要 Agent Key；你可以直接训练，或先在平台内优化。`
-                  : `Public ID ${fleet.publicId}. The starter is already ready—no Agent Key required. Train now or improve it in-platform.`}
+                {fleetReady
+                  ? zh
+                    ? `公开编号 ${fleet.publicId}。当前策略已经就绪，不需要 Agent Key；可以直接进入竞技场。`
+                    : `Public ID ${fleet.publicId}. The current strategy is ready—no Agent Key required. Enter Arena when ready.`
+                  : zh
+                    ? "先在策略实验室完成当前策略配置，再进入竞技场。"
+                    : "Finish the current strategy setup in Strategy Lab before entering Arena."}
               </p>
               <div className="toolbar">
-                <Link
-                  className="button button--primary"
-                  href={`${localPath(locale, "/arena")}?control=${control}`}
-                >
-                  {zh ? "立即匹配并开战 →" : "Match and battle now →"}
-                </Link>
+                {fleetReady ? (
+                  <Link
+                    className="button button--primary"
+                    href={`${localPath(locale, "/arena")}?control=${control}`}
+                  >
+                    {zh ? "进入竞技场 →" : "Enter Arena →"}
+                  </Link>
+                ) : (
+                  <Link
+                    className="button button--primary"
+                    href={localPath(locale, "/strategy-lab")}
+                  >
+                    {zh ? "继续配置舰队 →" : "Continue fleet setup →"}
+                  </Link>
+                )}
                 <Link className="button" href={localPath(locale, "/strategy-lab")}>
                   {zh ? "在平台内优化策略" : "Improve strategy in-platform"}
                 </Link>

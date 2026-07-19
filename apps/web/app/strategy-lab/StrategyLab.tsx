@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
@@ -13,6 +14,12 @@ import {
   type StrategyLabWorkspace,
 } from "../../src/api";
 import { formatDate, localPath, type Locale } from "../../src/i18n";
+import {
+  matchModeName,
+  replayEventName,
+  replayReasonName,
+  type CompactReplay,
+} from "../../src/public-replay";
 
 type AssistKind = "explain" | "suggest" | "patch";
 
@@ -27,6 +34,26 @@ function labError(locale: Locale, reason: unknown): string {
     "strategy_lab.not_validated": [
       "当前草稿还没有通过模拟验证。",
       "The current draft has not passed simulation validation.",
+    ],
+    "strategy_lab.simulation_required": [
+      "请先运行当前草稿的策略模拟。",
+      "Run a strategy simulation for the current draft first.",
+    ],
+    "strategy_lab.simulation_pending": [
+      "策略模拟尚未完成，请等待权威结果。",
+      "The strategy simulation has not completed yet.",
+    ],
+    "strategy_lab.simulation_failed": [
+      "策略模拟未成功完成，请重新运行。",
+      "The strategy simulation did not complete successfully. Run it again.",
+    ],
+    "strategy_lab.simulation_stale": [
+      "草稿已经变化，请为当前版本重新运行模拟。",
+      "The draft changed. Run a new simulation for this revision.",
+    ],
+    "strategy_lab.simulation_not_passed": [
+      "模拟完成，但当前候选没有通过验证。",
+      "The simulation completed, but this candidate did not pass validation.",
     ],
     "strategy_lab.validation_unavailable": [
       "验证环境暂时不可用，草稿仍已保存。",
@@ -57,6 +84,8 @@ function labError(locale: Locale, reason: unknown): string {
 
 export function StrategyLab({ locale }: { locale: Locale }) {
   const zh = locale === "zh";
+  const searchParams = useSearchParams();
+  const fromReplay = searchParams.get("fromReplay");
   const [workspace, setWorkspace] = useState<StrategyLabWorkspace | null>(null);
   const [source, setSource] = useState("");
   const [mode, setMode] = useState<"guided" | "code">("guided");
@@ -67,6 +96,10 @@ export function StrategyLab({ locale }: { locale: Locale }) {
   const [notice, setNotice] = useState("");
   const [dirty, setDirty] = useState(false);
   const [simulation, setSimulation] = useState<LabSimulation | null>(null);
+  const [sourceReplay, setSourceReplay] = useState<CompactReplay | null>(null);
+  const [sourceUnavailable, setSourceUnavailable] = useState(false);
+  const [simulationRefreshError, setSimulationRefreshError] = useState("");
+  const [simulationRefreshKey, setSimulationRefreshKey] = useState(0);
   const [assist, setAssist] = useState<AiAssist | null>(null);
   const [assistKind, setAssistKind] = useState<AssistKind>("suggest");
   const [assistGoal, setAssistGoal] = useState("");
@@ -78,6 +111,7 @@ export function StrategyLab({ locale }: { locale: Locale }) {
     setSource(value.draft.sourceCode);
     setMode(value.draft.mode);
     setParameters(value.draft.parameters);
+    setSimulation(value.simulation);
     setDirty(false);
   }, []);
 
@@ -98,6 +132,54 @@ export function StrategyLab({ locale }: { locale: Locale }) {
   }, [load]);
 
   useEffect(() => {
+    const active = new Set(["queued", "preparing", "ready", "running", "finalizing"]);
+    if (!workspace?.simulation || !active.has(workspace.simulation.status)) return;
+    const controller = new AbortController();
+    let timer = window.setTimeout(async () => {
+      try {
+        const latest = await apiFetch<StrategyLabWorkspace>(
+          `/api/v1/fleets/${workspace.fleet.publicId}/strategy-lab`,
+          { signal: controller.signal },
+        );
+        setWorkspace(latest);
+        setSimulation(latest.simulation);
+        setSimulationRefreshError("");
+      } catch (reason) {
+        if (reason instanceof Error && reason.name === "AbortError") return;
+        setSimulationRefreshError(
+          zh
+            ? "暂时无法更新模拟状态，页面会自动重试。"
+            : "Simulation status is temporarily unavailable. This page will retry.",
+        );
+        timer = window.setTimeout(() => setSimulationRefreshKey((value) => value + 1), 4000);
+      }
+    }, 2000);
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [simulationRefreshKey, workspace?.fleet.publicId, workspace?.simulation, zh]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    if (!fromReplay) return () => controller.abort();
+    void apiFetch<CompactReplay>(
+      `/api/public/v1/replays/${encodeURIComponent(fromReplay)}/compact`,
+      { signal: controller.signal },
+    )
+      .then((value) => {
+        setSourceReplay(value);
+        setSourceUnavailable(false);
+      })
+      .catch((reason) => {
+        if (reason instanceof Error && reason.name === "AbortError") return;
+        setSourceReplay(null);
+        setSourceUnavailable(true);
+      });
+    return () => controller.abort();
+  }, [fromReplay]);
+
+  useEffect(() => {
     const beforeUnload = (event: BeforeUnloadEvent) => {
       if (!dirty) return;
       event.preventDefault();
@@ -113,6 +195,41 @@ export function StrategyLab({ locale }: { locale: Locale }) {
       ),
     [workspace],
   );
+
+  const sourceHighlight = useMemo(() => {
+    if (!sourceReplay) return null;
+    const event = sourceReplay.events[0];
+    if (event)
+      return `${replayEventName(locale, event.type)} · ${zh ? "第" : "Step "}${event.step}${zh ? "步" : ""}`;
+    const facts = Array.isArray(sourceReplay.facts)
+      ? sourceReplay.facts
+      : sourceReplay.facts
+        ? [sourceReplay.facts]
+        : [];
+    return facts[0] ?? replayReasonName(locale, sourceReplay.result?.reason);
+  }, [locale, sourceReplay, zh]);
+
+  function publishBlockReason(): string {
+    if (dirty) return zh ? "请先保存当前草稿。" : "Save the current draft first.";
+    const reason = workspace?.publishEligibility.blockingReason;
+    const labels: Record<string, [string, string]> = {
+      simulation_required: ["请先运行策略模拟。", "Run a strategy simulation first."],
+      simulation_pending: ["等待策略模拟完成。", "Waiting for the strategy simulation."],
+      simulation_failed: ["模拟失败，请重新运行。", "Simulation failed. Run it again."],
+      simulation_stale: ["草稿已变化，请重新模拟。", "Draft changed. Run a new simulation."],
+      simulation_not_passed: [
+        "验证未通过，请调整后重试。",
+        "Validation did not pass. Revise and retry.",
+      ],
+      simulation_unknown: [
+        "无法确认模拟状态，请刷新重试。",
+        "Simulation status is unknown. Refresh and retry.",
+      ],
+    };
+    return reason
+      ? (labels[reason]?.[zh ? 0 : 1] ?? (zh ? "当前不可发布。" : "Publishing is locked."))
+      : "";
+  }
 
   function chooseMode(next: "guided" | "code") {
     if (
@@ -347,6 +464,39 @@ export function StrategyLab({ locale }: { locale: Locale }) {
         </div>
       </header>
 
+      {sourceReplay && fromReplay && (
+        <section className="panel strategy-source-card">
+          <div>
+            <p className="eyebrow">FROM REPLAY / {matchModeName(locale, sourceReplay.mode)}</p>
+            <h2>
+              {sourceReplay.participants
+                .map((participant) => participant.fleetName ?? "—")
+                .join(" vs ")}
+            </h2>
+            <p>
+              {sourceReplay.result?.winnerSlot == null
+                ? zh
+                  ? "战果：平局"
+                  : "Result: draw"
+                : zh
+                  ? `战果：${sourceReplay.participants.find((participant) => participant.slot === sourceReplay.result?.winnerSlot)?.fleetName ?? "未知舰队"} 获胜`
+                  : `Result: ${sourceReplay.participants.find((participant) => participant.slot === sourceReplay.result?.winnerSlot)?.fleetName ?? "Unknown fleet"} won`}
+              {sourceHighlight ? ` · ${sourceHighlight}` : ""}
+            </p>
+          </div>
+          <Link className="button" href={localPath(locale, `/replay/${fromReplay}`)}>
+            {zh ? "返回回放" : "Back to replay"}
+          </Link>
+        </section>
+      )}
+      {sourceUnavailable && (
+        <p className="notice" role="status">
+          {zh
+            ? "来源回放不可用；你仍可继续编辑当前策略。"
+            : "The source replay is unavailable. You can still edit this strategy."}
+        </p>
+      )}
+
       {(error || notice) && (
         <p className={`notice ${error ? "notice--error" : ""}`} role={error ? "alert" : "status"}>
           {error || notice}
@@ -576,12 +726,28 @@ export function StrategyLab({ locale }: { locale: Locale }) {
           </p>
           {simulation && (
             <p className="notice">
-              {zh ? "模拟" : "SIMULATION"} {simulation.publicId} · {simulation.status.toUpperCase()}
+              {zh ? "私人策略模拟" : "PRIVATE STRATEGY SIMULATION"} {simulation.publicId} ·{" "}
+              {simulation.status.toUpperCase()}
             </p>
+          )}
+          {simulationRefreshError && (
+            <div className="history-error" role="alert">
+              <span>{simulationRefreshError}</span>
+              <button
+                className="button button--small"
+                onClick={() => setSimulationRefreshKey((value) => value + 1)}
+                type="button"
+              >
+                ↻ {zh ? "立即重试" : "Retry now"}
+              </button>
+            </div>
+          )}
+          {!workspace.publishEligibility.eligible && (
+            <p className="strategy-validation__reason">{publishBlockReason()}</p>
           )}
           <button
             className="button button--primary"
-            disabled={busy !== null || dirty || !workspace.draft.validatedContentHash}
+            disabled={busy !== null || dirty || !workspace.publishEligibility.eligible}
             onClick={() => void publish()}
             type="button"
           >

@@ -21,6 +21,7 @@ import {
 } from "../../src/i18n";
 import { competitiveRankLabel, competitiveRankPoints } from "../../src/rating";
 import {
+  matchModeName,
   replayEventName,
   replayReasonName,
   type PublicMatchSummary,
@@ -439,7 +440,8 @@ export function HistoryView({ locale }: { locale: Locale }) {
               <header className="history-card__header">
                 <div>
                   <p className="eyebrow">
-                    RANKED ENCOUNTER / {formatDate(locale, match.createdAt)}
+                    {matchModeName(locale, match.mode).toUpperCase()} /{" "}
+                    {formatDate(locale, match.createdAt)}
                   </p>
                   <h2>
                     {winner ? replayReasonName(locale, match.result?.reason) : zh ? "平局" : "Draw"}

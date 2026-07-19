@@ -110,6 +110,7 @@ export type Fleet = {
   strategyTendency: string;
   styleDescription: string;
   currentStrategyVersionId?: string | null;
+  currentStrategyStatus?: string | null;
   createdAt: string;
 };
 
@@ -188,13 +189,42 @@ export type StrategyLabWorkspace = {
     standardCost: number;
     deepCost: number;
   };
+  simulation: LabSimulation | null;
+  publishEligibility: {
+    eligible: boolean;
+    blockingReason: string | null;
+  };
 };
 
 export type LabSimulation = {
   publicId: string;
+  kind: "strategy_simulation";
+  visibility: "private";
   status: string;
   result: Record<string, unknown> | null;
   replayPublicId: string | null;
+  validationPassed: boolean;
+  publishEligible: boolean;
+  blockingReason: string | null;
+};
+
+export type MatchStatusRecord = {
+  publicId: string;
+  mode: "training" | "ranked";
+  status: string;
+  mapId: string;
+  matchmakingReason: string | null;
+  result: { winnerSlot?: number | null; reason?: string } | null;
+  createdAt: string;
+  finishedAt: string | null;
+  replayPublicId: string | null;
+  participants: Array<{
+    slot: number;
+    fleetPublicId: string;
+    fleetName: string;
+    controllerType: "human" | "agent";
+    strategyVersionId: string | null;
+  }>;
 };
 
 export type AiAssist = {

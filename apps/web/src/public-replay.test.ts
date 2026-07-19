@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { buildAgentAnalysisBrief, publicReplayDataUrl, type CompactReplay } from "./public-replay";
+import {
+  buildAgentAnalysisBrief,
+  matchModeName,
+  publicReplayDataUrl,
+  replayReasonName,
+  type CompactReplay,
+} from "./public-replay";
 
 const compact: CompactReplay = {
   publicId: "replay_public",
@@ -38,5 +44,17 @@ describe("public replay handoff", () => {
     expect(brief).toContain("3 个可验证");
     expect(brief).not.toContain("owk_");
     expect(brief).not.toContain("Agent Key");
+  });
+
+  it("localizes authoritative match modes without defaulting unknown values to ranked", () => {
+    expect(matchModeName("zh", "ranked")).toBe("排位赛");
+    expect(matchModeName("en", "training")).toBe("Training");
+    expect(matchModeName("zh", "strategy_simulation")).toBe("策略模拟");
+    expect(matchModeName("en", "legacy_mode")).toBe("Unknown mode");
+  });
+
+  it("localizes the engine step-limit outcome", () => {
+    expect(replayReasonName("zh", "step_limit")).toBe("回合上限");
+    expect(replayReasonName("en", "step_limit")).toBe("Turn limit");
   });
 });

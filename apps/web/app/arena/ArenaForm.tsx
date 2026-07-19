@@ -340,8 +340,11 @@ export function ArenaForm({
                 {zh ? "进入实时战术台" : "Enter live battle"}
               </Link>
             ) : (
-              <Link className="button button--primary" href={localPath(locale, "/command")}>
-                {zh ? "查看执行状态" : "View execution"}
+              <Link
+                className="button button--primary"
+                href={localPath(locale, `/match/${created.publicId}`)}
+              >
+                {zh ? "查看比赛状态" : "View match status"}
               </Link>
             )}
           </>

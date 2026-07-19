@@ -30,7 +30,7 @@ export const messages = {
       history: "对局历史",
       leaderboard: "统一榜单",
       login: "登录",
-      logout: "退出",
+      logout: "退出登录",
     },
     common: {
       agent: "Agent",

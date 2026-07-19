@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { LocaleSwitcher } from "./LocaleSwitcher";
-import { SessionAction } from "./SessionAction";
+import { SessionAction, SessionMenuAction } from "./SessionAction";
 import { localPath, messages, type Locale } from "../../src/i18n";
 
 export function SiteHeader({ locale = "zh" }: { locale?: Locale }) {
@@ -72,10 +72,7 @@ export function SiteHeader({ locale = "zh" }: { locale?: Locale }) {
               <span>06</span>
               {zh ? "更新日志" : "Updates"}
             </Link>
-            <Link href={`/auth/logout?returnTo=${encodeURIComponent(localPath(locale))}`}>
-              <span>07</span>
-              {messages[locale].nav.logout}
-            </Link>
+            <SessionMenuAction locale={locale} />
           </div>
         </details>
         <SessionAction locale={locale} />

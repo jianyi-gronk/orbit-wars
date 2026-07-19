@@ -77,12 +77,24 @@ export function replayEventName(locale: Locale, type: string): string {
 export function replayReasonName(locale: Locale, reason?: string): string {
   const labels: Record<string, [string, string]> = {
     elimination: ["歼灭对手", "Elimination"],
+    step_limit: ["回合上限", "Turn limit"],
     timeout: ["时间结束", "Time limit"],
     forfeit: ["对手弃权", "Forfeit"],
     draw: ["平局", "Draw"],
   };
   if (!reason) return locale === "zh" ? "结果已确认" : "Result verified";
   return labels[reason]?.[locale === "zh" ? 0 : 1] ?? reason.replaceAll("_", " ");
+}
+
+export function matchModeName(locale: Locale, mode: string | null | undefined): string {
+  const labels: Record<string, [string, string]> = {
+    ranked: ["排位赛", "Ranked"],
+    training: ["训练赛", "Training"],
+    strategy_simulation: ["策略模拟", "Strategy Simulation"],
+  };
+  return (
+    labels[mode ?? ""]?.[locale === "zh" ? 0 : 1] ?? (locale === "zh" ? "未知模式" : "Unknown mode")
+  );
 }
 
 export function publicReplayDataUrl(publicId: string, origin: string): string {

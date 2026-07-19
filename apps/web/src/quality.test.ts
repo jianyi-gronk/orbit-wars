@@ -146,6 +146,26 @@ describe("release performance and accessibility budgets", () => {
     expect(lab).not.toContain("sessionStorage");
   });
 
+  it("keeps the trusted match-to-replay loop recoverable and server-gated", () => {
+    const arena = readFileSync("app/arena/ArenaForm.tsx", "utf8");
+    const status = readFileSync("app/match/MatchStatusView.tsx", "utf8");
+    const lab = readFileSync("app/strategy-lab/StrategyLab.tsx", "utf8");
+    const header = readFileSync("components/product/SiteHeader.tsx", "utf8");
+    const session = readFileSync("components/product/SessionAction.tsx", "utf8");
+
+    expect(arena).toContain("`/match/${created.publicId}`");
+    expect(status).toContain("activeStatuses");
+    expect(status).toContain("apiFetchWithRetry");
+    expect(status).toContain("match.replayPublicId");
+    expect(status).toContain("Retry now");
+    expect(lab).toContain("workspace.publishEligibility.eligible");
+    expect(lab).toContain('searchParams.get("fromReplay")');
+    expect(lab).toContain("Back to replay");
+    expect(header).toContain("<SessionMenuAction");
+    expect(session).toContain("if (!authenticated) return null");
+    expect(session).toContain("messages[locale].nav.logout");
+  });
+
   it("keeps the central sun visually aligned with the simple Kaggle reference", () => {
     const stage = readFileSync("components/battle/BattleStage.tsx", "utf8");
     const css = readFileSync("app/replay.css", "utf8");

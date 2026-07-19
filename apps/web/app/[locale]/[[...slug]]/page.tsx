@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { StartFlow } from "../../start/StartFlow";
 import { CommandCenter } from "../../command/CommandCenter";
 import { ArenaForm } from "../../arena/ArenaForm";
+import { MatchStatusView } from "../../match/MatchStatusView";
 import { StrategyLab } from "../../strategy-lab/StrategyLab";
 import { LiveBattle } from "../../../components/battle/LiveBattle";
 import { ReplayPlayer } from "../../../components/battle/ReplayPlayer";
@@ -78,7 +79,9 @@ export default async function LocalizedPage({
         <div className="page-shell page-grid">
           <section>
             <p className="eyebrow">ENLISTMENT / OPEN CHANNEL</p>
-            <h1 className="display-title">Make a fleet. Leave a trace.</h1>
+            <h1 className="display-title">
+              {locale === "zh" ? "建立舰队，留下航迹。" : "Make a fleet. Leave a trace."}
+            </h1>
             <p className="page-lede">
               {locale === "zh"
                 ? humanPlayEnabled
@@ -137,6 +140,15 @@ export default async function LocalizedPage({
     );
   }
   if (slug[0] === "battle" && slug[1]) return <LiveBattle locale={locale} matchId={slug[1]} />;
+  if (slug[0] === "match" && slug[1])
+    return (
+      <main className="product-page">
+        <SiteHeader locale={locale} />
+        <div className="page-shell">
+          <MatchStatusView locale={locale} matchId={slug[1]} />
+        </div>
+      </main>
+    );
   if (route === "leaderboard") {
     const query = await searchParams;
     const period = ["today", "week", "all"].includes(query.period ?? "") ? query.period! : "all";
