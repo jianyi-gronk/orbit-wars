@@ -31,8 +31,10 @@ from orbit_api.domain.strategy_lab import (
     StrategyDraftNotValidatedError,
     StrategyLabError,
     StrategyWorkspace,
+    attach_validation_simulation,
     get_workspace,
     mark_validated,
+    require_publishable_simulation,
     require_validated_package,
     reset_draft,
     update_draft,
@@ -145,7 +147,7 @@ def _draft_response(
     }
 
 
-def _workspace_response(workspace: StrategyWorkspace) -> dict[str, Any]:
+def _workspace_response(session: Session, workspace: StrategyWorkspace) -> dict[str, Any]:
     current = next(
         (
             version
@@ -154,6 +156,20 @@ def _workspace_response(workspace: StrategyWorkspace) -> dict[str, Any]:
         ),
         None,
     )
+    simulation = None
+    if workspace.simulation is not None:
+        status_value = workspace.simulation.status.value
+        simulation = {
+            "publicId": workspace.simulation.public_id,
+            "kind": "strategy_simulation",
+            "visibility": "private",
+            "status": "completed" if status_value == "finished" else status_value,
+            "result": workspace.simulation.result,
+            "replayPublicId": None,
+            "validationPassed": workspace.eligibility.publishable,
+            "publishEligible": workspace.eligibility.publishable,
+            "blockingReason": workspace.eligibility.blocking_reason,
+        }
     return {
         "fleet": {
             "publicId": workspace.fleet.public_id,
@@ -182,6 +198,11 @@ def _workspace_response(workspace: StrategyWorkspace) -> dict[str, Any]:
             "standardCost": 1,
             "deepCost": 2,
         },
+        "simulation": simulation,
+        "publishEligibility": {
+            "eligible": workspace.eligibility.publishable,
+            "blockingReason": workspace.eligibility.blocking_reason,
+        },
     }
 
 
@@ -207,7 +228,7 @@ def read_workspace(
     principal: PrincipalDependency,
 ) -> dict[str, Any]:
     try:
-        return _workspace_response(get_workspace(session, principal, fleet_id))
+        return _workspace_response(session, get_workspace(session, principal, fleet_id))
     except (FleetError, StrategyLabError) as error:
         raise _lab_error(error) from error
 
@@ -229,7 +250,7 @@ def save_draft(
             source_code=payload.source_code,
             parameters=payload.parameters,
         )
-        return _workspace_response(workspace)
+        return _workspace_response(session, workspace)
     except (FleetError, StrategyLabError, StrategyVersionError) as error:
         raise _lab_error(error) from error
 
@@ -243,12 +264,13 @@ def reset_workspace_draft(
 ) -> dict[str, Any]:
     try:
         return _workspace_response(
+            session,
             reset_draft(
                 session,
                 principal,
                 fleet_id,
                 expected_revision=payload.expected_revision,
-            )
+            ),
         )
     except (FleetError, StrategyLabError) as error:
         raise _lab_error(error) from error
@@ -309,6 +331,12 @@ def simulate_draft(
                 validation=report_json,
             ),
         )
+        attach_validation_simulation(
+            session,
+            workspace.draft,
+            revision=payload.revision,
+            match=match,
+        )
     except (FleetError, StrategyLabError, StrategyValidationError, SimulationError) as error:
         raise _lab_error(error) from error
     except (StrategyValidationUnavailable, StrategyPackageStoreError) as error:
@@ -319,7 +347,14 @@ def simulate_draft(
         request.app.state.match_queue = queue
     if not replayed:
         queue.enqueue(match.public_id)
-    return {**simulation_response(session, match), "idempotentReplay": replayed}
+    refreshed = get_workspace(session, principal, fleet_id)
+    response = _workspace_response(session, refreshed)["simulation"]
+    assert isinstance(response, dict)
+    return {
+        **response,
+        "participants": simulation_response(session, match)["participants"],
+        "idempotentReplay": replayed,
+    }
 
 
 @router.post("/api/v1/fleets/{fleet_id}/strategy-lab/publish", status_code=201)
@@ -335,6 +370,7 @@ def publish_draft(
         workspace = get_workspace(session, principal, fleet_id)
         if workspace.draft.revision != payload.revision:
             raise StrategyDraftConflictError("the strategy draft changed")
+        require_publishable_simulation(session, workspace.draft)
         package = require_validated_package(workspace.draft)
         publication = publish_strategy_version(
             session,

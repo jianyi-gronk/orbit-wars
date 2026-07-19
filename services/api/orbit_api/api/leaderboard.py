@@ -27,6 +27,7 @@ from orbit_api.domain.competition import (
     competition_record,
     select_highlights,
 )
+from orbit_api.domain.match_visibility import candidate_simulation_clause
 from orbit_api.domain.ratings import (
     DEFAULT_MU,
     DEFAULT_SIGMA,
@@ -85,7 +86,11 @@ def _record(rows: list[tuple[MatchParticipant, Match]]) -> dict[str, int | float
 def _control_tags(session: Session, fleet: Fleet) -> list[str]:
     values = session.scalars(
         select(MatchParticipant.controller_type)
-        .where(MatchParticipant.fleet_id == fleet.id)
+        .join(Match, Match.id == MatchParticipant.match_id)
+        .where(
+            MatchParticipant.fleet_id == fleet.id,
+            ~candidate_simulation_clause(Match.id),
+        )
         .distinct()
     )
     return sorted(value.value for value in values)
@@ -235,7 +240,12 @@ def public_matches(
     statement = (
         select(Match, ReplayArtifact)
         .join(ReplayArtifact, ReplayArtifact.id == Match.replay_id)
-        .where(Match.status == MatchStatus.FINISHED, ReplayArtifact.is_public.is_(True))
+        .where(
+            Match.status == MatchStatus.FINISHED,
+            ReplayArtifact.is_public.is_(True),
+            Match.mode.in_([MatchMode.TRAINING, MatchMode.RANKED]),
+            ~candidate_simulation_clause(Match.id),
+        )
         .order_by(Match.created_at.desc())
         .limit(100)
     )
@@ -282,7 +292,11 @@ def fleet_profile(public_id: str, session: SessionDependency) -> dict[str, Any]:
             .join(Match, Match.id == MatchParticipant.match_id)
             .outerjoin(StrategyVersion, StrategyVersion.id == MatchParticipant.strategy_version_id)
             .outerjoin(ReplayArtifact, ReplayArtifact.id == Match.replay_id)
-            .where(MatchParticipant.fleet_id == fleet.id)
+            .where(
+                MatchParticipant.fleet_id == fleet.id,
+                Match.mode.in_([MatchMode.TRAINING, MatchMode.RANKED]),
+                ~candidate_simulation_clause(Match.id),
+            )
             .order_by(Match.created_at.desc())
             .limit(25)
         ).all()

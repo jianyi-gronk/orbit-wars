@@ -8,10 +8,19 @@ from pathlib import Path
 import httpx
 import pytest
 from orbit_api.db.base import Base
-from orbit_api.db.models import ReplayArtifact
+from orbit_api.db.models import (
+    ControllerType,
+    Fleet,
+    Match,
+    MatchMode,
+    MatchParticipant,
+    MatchStatus,
+    ReplayArtifact,
+    User,
+)
 from orbit_api.db.session import database_session
 from orbit_api.main import app
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session, sessionmaker
 
 
@@ -117,3 +126,59 @@ def test_private_replay_and_invalid_checkpoint_are_not_exposed(replay_client) ->
     invalid = get(client, f"/api/public/v1/replays/{public_id}/segments/7")
     assert invalid.status_code == 422
     assert invalid.json()["detail"]["code"] == "replay.invalid_checkpoint"
+
+
+def test_legacy_public_candidate_replay_is_still_hidden(replay_client) -> None:
+    client, factory, store = replay_client
+    public_id = create_artifact(factory, store, public=True)
+    with factory() as session:
+        artifact = session.scalar(
+            select(ReplayArtifact).where(ReplayArtifact.public_id == public_id)
+        )
+        assert artifact is not None
+        users = [User(oidc_subject=f"candidate-{index}") for index in range(2)]
+        session.add_all(users)
+        session.flush()
+        fleets = [
+            Fleet(
+                owner_user_id=user.id,
+                name=f"Candidate Fleet {index}",
+                commander_code=f"CAN-{index}",
+                style_description="Private candidate replay test fleet.",
+            )
+            for index, user in enumerate(users)
+        ]
+        session.add_all(fleets)
+        session.flush()
+        match = Match(
+            ruleset_id="orbit-wars-2p-v1",
+            seed=77,
+            mode=MatchMode.TRAINING,
+            status=MatchStatus.FINISHED,
+            replay_id=artifact.id,
+        )
+        session.add(match)
+        session.flush()
+        session.add_all(
+            [
+                MatchParticipant(
+                    match_id=match.id,
+                    fleet_id=fleets[0].id,
+                    slot=0,
+                    controller_type=ControllerType.AGENT,
+                    candidate_content_hash="d" * 64,
+                ),
+                MatchParticipant(
+                    match_id=match.id,
+                    fleet_id=fleets[1].id,
+                    slot=1,
+                    controller_type=ControllerType.AGENT,
+                ),
+            ]
+        )
+        session.commit()
+
+    for suffix in ["", "/compact", "/artifact", "/segments/0"]:
+        response = get(client, f"/api/public/v1/replays/{public_id}{suffix}")
+        assert response.status_code == 404
+        assert response.json()["detail"]["code"] == "replay.not_found"

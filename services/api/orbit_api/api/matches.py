@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from orbit_api.db.models import Fleet, MatchParticipant, StrategyVersion, User
+from orbit_api.db.models import Fleet, MatchParticipant, ReplayArtifact, StrategyVersion, User
 from orbit_api.db.session import database_session
 from orbit_api.domain.match_tickets import MatchTicketService
 from orbit_api.domain.matches import (
@@ -82,16 +82,22 @@ def _response(session: Session, match: object) -> dict[str, object]:
         .where(MatchParticipant.match_id == match.id)
         .order_by(MatchParticipant.slot)
     ).all()
+    replay = session.get(ReplayArtifact, match.replay_id) if match.replay_id else None
     return {
         "publicId": match.public_id,
         "mode": match.mode,
         "status": match.status,
         "mapId": match.map_id,
         "matchmakingReason": match.matchmaking_reason,
+        "result": match.result,
+        "createdAt": match.created_at,
+        "finishedAt": match.finished_at,
+        "replayPublicId": replay.public_id if replay and replay.is_public else None,
         "participants": [
             {
                 "slot": participant.slot,
                 "fleetPublicId": fleet.public_id,
+                "fleetName": fleet.name,
                 "controllerType": participant.controller_type,
                 "strategyVersionId": version.public_id if version else None,
             }

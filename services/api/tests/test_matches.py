@@ -6,7 +6,7 @@ import httpx
 import pytest
 from fastapi import HTTPException, Request
 from orbit_api.db.base import Base
-from orbit_api.db.models import Match, MatchParticipant
+from orbit_api.db.models import Match, MatchParticipant, MatchStatus, ReplayArtifact
 from orbit_api.db.session import database_session
 from orbit_api.domain.match_tickets import MatchTicketError, MatchTicketService
 from orbit_api.infrastructure.match_queue import MemoryMatchQueue
@@ -196,4 +196,33 @@ def test_match_conflicting_retry_is_rejected_and_match_is_visible_only_to_partic
     assert conflict.status_code == 409
     assert conflict.json()["detail"]["code"] == "match.idempotency_conflict"
     assert own_read.status_code == 200
+    assert own_read.json()["createdAt"]
+    assert own_read.json()["replayPublicId"] is None
+    assert {item["fleetName"] for item in own_read.json()["participants"]} == {
+        "Fleet gamma",
+        "Fleet delta",
+    }
     assert outsider_read.status_code == 404
+
+    with _factory() as session:
+        match = session.scalar(select(Match).where(Match.public_id == created.json()["publicId"]))
+        assert match is not None
+        replay = ReplayArtifact(
+            object_key="replays/match-status.gz",
+            schema_version=1,
+            checksum="e" * 64,
+            frame_count=20,
+            size_bytes=60,
+            is_public=True,
+        )
+        session.add(replay)
+        session.flush()
+        match.status = MatchStatus.FINISHED
+        match.result = {"winnerSlot": 0, "reason": "elimination"}
+        match.replay_id = replay.id
+        session.commit()
+
+    finished = send(client, "GET", f"/api/v1/matches/{created.json()['publicId']}", "gamma")
+    assert finished.json()["status"] == "finished"
+    assert finished.json()["result"]["reason"] == "elimination"
+    assert finished.json()["replayPublicId"].startswith("replay_")

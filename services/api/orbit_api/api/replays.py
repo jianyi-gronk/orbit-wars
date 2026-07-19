@@ -19,6 +19,7 @@ from orbit_api.db.models import (
     StrategyVersion,
 )
 from orbit_api.db.session import database_session
+from orbit_api.domain.match_visibility import is_candidate_simulation
 from orbit_api.storage.replays import ReplayStore, S3ReplayStore
 
 router = APIRouter(tags=["public replays"])
@@ -43,6 +44,8 @@ def _public_replay(session: Session, public_id: str) -> tuple[ReplayArtifact, Ma
     if artifact is None:
         raise HTTPException(404, detail={"code": "replay.not_found"})
     match = session.scalar(select(Match).where(Match.replay_id == artifact.id))
+    if match is not None and is_candidate_simulation(session, match.id):
+        raise HTTPException(404, detail={"code": "replay.not_found"})
     return artifact, match
 
 

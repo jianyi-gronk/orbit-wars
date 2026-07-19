@@ -29,6 +29,7 @@ from orbit_match_worker.worker import (
     QueuedMatch,
     _builtin_action,
 )
+from redis.exceptions import TimeoutError as RedisTimeoutError
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -41,6 +42,29 @@ class SnapshotRedis:
         self.values[key] = value
 
     def xadd(self, *_args: Any, **_options: Any) -> None:
+        return None
+
+
+class UnavailableLiveBus(SnapshotRedis):
+    def set(self, *_args: Any, **_options: Any) -> None:
+        raise RedisTimeoutError("live bus unavailable")
+
+    def xadd(self, *_args: Any, **_options: Any) -> None:
+        raise RedisTimeoutError("live bus unavailable")
+
+
+class RecoveringQueue(SnapshotRedis):
+    def __init__(self) -> None:
+        super().__init__()
+        self.calls = 0
+        self.worker: MatchWorker | None = None
+
+    def blpop(self, *_args: Any, **_options: Any) -> None:
+        self.calls += 1
+        if self.calls == 1:
+            raise RedisTimeoutError("queue temporarily unavailable")
+        assert self.worker is not None
+        self.worker.running = False
         return None
 
 
@@ -85,6 +109,65 @@ def test_agent_only_turns_do_not_wait_for_the_human_deadline() -> None:
     assert worker.turn_seconds == 2.5
     assert commands == {}
     assert cursor == "0-0"
+
+
+def test_worker_recovers_when_the_match_queue_times_out(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    client = RecoveringQueue()
+    worker = MatchWorker(cast(Any, client))
+    client.worker = worker
+    monkeypatch.setattr("orbit_match_worker.worker.time.sleep", lambda _seconds: None)
+
+    worker.serve()
+
+    assert client.calls == 2
+
+
+def test_authoritative_execution_survives_transient_live_bus_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    engine = create_engine(f"sqlite+pysqlite:///{tmp_path}/worker-live-bus.db")
+    Base.metadata.create_all(engine)
+    session_factory = sessionmaker(bind=engine, expire_on_commit=False)
+    monkeypatch.setattr("orbit_match_worker.worker.SessionLocal", session_factory)
+    with session_factory() as session:
+        session.add(
+            Match(
+                public_id="match-live-bus-timeout",
+                ruleset_id=PINNED_RULESET_ID,
+                seed=19,
+                mode=MatchMode.TRAINING,
+                status=MatchStatus.PREPARING,
+            )
+        )
+        session.commit()
+
+    worker = MatchWorker(
+        cast(Any, UnavailableLiveBus()),
+        turn_seconds=0,
+        replay_store=MemoryReplayStore(),
+        replay_directory=tmp_path,
+    )
+    worker._run(
+        QueuedMatch(
+            public_id="match-live-bus-timeout",
+            ruleset_id=PINNED_RULESET_ID,
+            seed=19,
+            map_id="orbit-standard-v1",
+            mode=MatchMode.TRAINING,
+            participants=(
+                ParticipantSpec(0, ControllerType.AGENT, "basic-v1", "fleet-a", "A", None),
+                ParticipantSpec(1, ControllerType.AGENT, "basic-v1", "fleet-b", "B", None),
+            ),
+        )
+    )
+
+    with session_factory() as session:
+        match = session.scalar(select(Match).where(Match.public_id == "match-live-bus-timeout"))
+        assert match is not None
+        assert match.status == MatchStatus.FINISHED
+        assert match.replay_id is not None
 
 
 def test_worker_runs_selected_kaggle_builtin() -> None:

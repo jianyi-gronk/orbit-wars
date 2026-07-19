@@ -9,6 +9,7 @@ from datetime import UTC
 from typing import Any, Protocol
 
 from orbit_api.db.models import Match, ReplayArtifact
+from orbit_api.domain.match_visibility import is_candidate_simulation
 from sqlalchemy import select
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -78,7 +79,7 @@ def persist_replay(
             },
             size_bytes=len(content),
             frame_count=frame_count,
-            is_public=True,
+            is_public=not is_candidate_simulation(session, match.id),
         )
         session.add(artifact)
         session.flush()

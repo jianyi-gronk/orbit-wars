@@ -133,6 +133,8 @@ class StrategyDraft(Base):
     revision: Mapped[int] = mapped_column(Integer, default=1)
     last_validation: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     validated_content_hash: Mapped[str | None] = mapped_column(String(64))
+    validation_simulation_match_id: Mapped[UUID | None] = mapped_column(ForeignKey("matches.id"))
+    validation_simulation_revision: Mapped[int | None] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 

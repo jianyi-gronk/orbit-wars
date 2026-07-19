@@ -8,6 +8,7 @@ import logging
 import os
 import signal
 import tempfile
+import time
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -32,6 +33,7 @@ from orbit_contracts.models import CommandBatchV1, ObservationV1
 from orbit_engine import decode_raw_action
 from orbit_runtime.infrastructure import InfrastructureSettings
 from redis import Redis
+from redis.exceptions import RedisError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -107,7 +109,12 @@ class MatchWorker:
     def serve(self) -> None:
         logger.info("match worker ready")
         while self.running:
-            queued = self.client.blpop(RedisMatchQueue.queue_name, timeout=1)
+            try:
+                queued = self.client.blpop(RedisMatchQueue.queue_name, timeout=1)
+            except RedisError:
+                logger.warning("match queue unavailable; retrying", exc_info=True)
+                time.sleep(1)
+                continue
             if queued is None:
                 continue
             _queue, match_id = cast(tuple[str, str], queued)
@@ -347,19 +354,33 @@ class MatchWorker:
                 "type": "match.snapshot",
                 "payload": observation.model_dump(mode="json", by_alias=True),
             }
-            self.client.set(
-                f"orbit:match:{match_id}:snapshot:{slot}:v1",
-                json.dumps(event, separators=(",", ":")),
-                ex=3600,
-            )
+            try:
+                self.client.set(
+                    f"orbit:match:{match_id}:snapshot:{slot}:v1",
+                    json.dumps(event, separators=(",", ":")),
+                    ex=3600,
+                )
+            except RedisError:
+                logger.warning(
+                    "live snapshot publish failed; authoritative match continues",
+                    exc_info=True,
+                    extra={"matchId": match_id, "slot": slot, "step": step},
+                )
         logger.debug("published snapshot", extra={"matchId": match_id, "step": step})
 
     def _publish_event(self, match_id: str, event: dict[str, Any]) -> None:
-        self.client.xadd(
-            f"orbit:match:{match_id}:events:v1",
-            {"payload": json.dumps(event, separators=(",", ":"))},
-            maxlen=4096,
-        )
+        try:
+            self.client.xadd(
+                f"orbit:match:{match_id}:events:v1",
+                {"payload": json.dumps(event, separators=(",", ":"))},
+                maxlen=4096,
+            )
+        except RedisError:
+            logger.warning(
+                "live event publish failed; authoritative match continues",
+                exc_info=True,
+                extra={"matchId": match_id, "eventType": event.get("type")},
+            )
 
     def _set_status(self, match_id: str, status: MatchStatus) -> None:
         with SessionLocal() as session:

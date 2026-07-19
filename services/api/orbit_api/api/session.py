@@ -52,5 +52,6 @@ def read_my_fleet(
         "strategyTendency": fleet.strategy_tendency,
         "styleDescription": fleet.style_description,
         "currentStrategyVersionId": current.public_id if current else None,
+        "currentStrategyStatus": current.status if current else None,
         "createdAt": fleet.created_at,
     }

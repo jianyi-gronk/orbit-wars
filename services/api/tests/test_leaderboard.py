@@ -235,6 +235,61 @@ def test_public_match_history_contains_real_participants_and_replay(public_clien
     assert match["highlights"] == []
 
 
+def test_candidate_simulation_is_absent_from_public_history_and_profile(public_client) -> None:
+    client, factory = public_client
+    with factory() as session:
+        own, _old_version, _current = _seed(session)
+        opponent = session.scalar(select(Fleet).where(Fleet.id != own.id))
+        assert opponent is not None
+        replay = ReplayArtifact(
+            object_key="replays/legacy-public-candidate.gz",
+            schema_version=1,
+            checksum="b" * 64,
+            frame_count=12,
+            size_bytes=80,
+            is_public=True,
+        )
+        session.add(replay)
+        session.flush()
+        simulation = Match(
+            ruleset_id="orbit-wars-2p-v1",
+            seed=100,
+            mode=MatchMode.TRAINING,
+            status=MatchStatus.FINISHED,
+            result={"winnerSlot": 0, "reason": "elimination"},
+            replay_id=replay.id,
+        )
+        session.add(simulation)
+        session.flush()
+        session.add_all(
+            [
+                MatchParticipant(
+                    match_id=simulation.id,
+                    fleet_id=own.id,
+                    slot=0,
+                    controller_type=ControllerType.AGENT,
+                    candidate_content_hash="c" * 64,
+                    candidate_validation={"result": "ready"},
+                ),
+                MatchParticipant(
+                    match_id=simulation.id,
+                    fleet_id=opponent.id,
+                    slot=1,
+                    controller_type=ControllerType.AGENT,
+                    strategy_version_id=opponent.current_strategy_version_id,
+                ),
+            ]
+        )
+        session.commit()
+
+    history = get(client, "/api/public/v1/matches?period=all")
+    profile = get(client, f"/api/public/v1/fleet-profiles/{own.public_id}")
+
+    assert [item["publicId"] for item in history.json()["matches"]] != [simulation.public_id]
+    assert all(item["publicId"] != simulation.public_id for item in history.json()["matches"])
+    assert all(item["publicId"] != simulation.public_id for item in profile.json()["matches"])
+
+
 def test_featured_match_requires_intensity_threshold(public_client) -> None:
     client, factory = public_client
     with factory() as session:

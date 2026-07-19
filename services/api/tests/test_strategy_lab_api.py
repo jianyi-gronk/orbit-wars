@@ -5,7 +5,7 @@ from pathlib import Path
 import httpx
 from fastapi import HTTPException, Request
 from orbit_api.db.base import Base
-from orbit_api.db.models import Match, MatchParticipant, RatingEvent, StrategyDraft
+from orbit_api.db.models import Match, MatchParticipant, MatchStatus, RatingEvent, StrategyDraft
 from orbit_api.db.session import database_session
 from orbit_api.domain.strategy_validation import LocalSandboxSession
 from orbit_api.infrastructure.match_queue import MemoryMatchQueue
@@ -144,7 +144,92 @@ def test_workspace_draft_simulation_and_publish_flow(tmp_path: Path) -> None:
             json={"revision": 2, "idempotencyKey": "lab-simulation-1"},
         )
         assert simulated.status_code == 201
+        assert simulated.json()["status"] == "queued"
         assert simulated.json()["participants"][0]["candidate"]["validation"]["result"] == "ready"
+
+        restored = request(
+            client,
+            "GET",
+            f"/api/v1/fleets/{fleet_id}/strategy-lab",
+            "owner",
+        )
+        assert restored.json()["simulation"]["publicId"] == simulated.json()["publicId"]
+        assert restored.json()["publishEligibility"] == {
+            "eligible": False,
+            "blockingReason": "simulation_pending",
+        }
+
+        premature = request(
+            client,
+            "POST",
+            f"/api/v1/fleets/{fleet_id}/strategy-lab/publish",
+            "owner",
+            json={"revision": 2, "notes": "Too early", "makeCurrent": True},
+        )
+        assert premature.status_code == 422
+        assert premature.json()["detail"]["code"] == "strategy_lab.simulation_pending"
+
+        with factory() as session:
+            match = session.scalar(
+                select(Match).where(Match.public_id == simulated.json()["publicId"])
+            )
+            assert match is not None
+            match.status = MatchStatus.FAILED
+            session.commit()
+
+        failed = request(
+            client,
+            "POST",
+            f"/api/v1/fleets/{fleet_id}/strategy-lab/publish",
+            "owner",
+            json={"revision": 2, "notes": "Failed run", "makeCurrent": True},
+        )
+        assert failed.status_code == 422
+        assert failed.json()["detail"]["code"] == "strategy_lab.simulation_failed"
+
+        with factory() as session:
+            match = session.scalar(
+                select(Match).where(Match.public_id == simulated.json()["publicId"])
+            )
+            assert match is not None
+            match.status = MatchStatus.FINISHED
+            match.result = {"winnerSlot": 0, "reason": "elimination"}
+            participant = session.scalar(
+                select(MatchParticipant).where(
+                    MatchParticipant.match_id == match.id,
+                    MatchParticipant.candidate_content_hash.is_not(None),
+                )
+            )
+            assert participant is not None
+            participant.candidate_validation = {"result": "rejected"}
+            session.commit()
+
+        rejected = request(
+            client,
+            "POST",
+            f"/api/v1/fleets/{fleet_id}/strategy-lab/publish",
+            "owner",
+            json={"revision": 2, "notes": "Rejected run", "makeCurrent": True},
+        )
+        assert rejected.status_code == 422
+        assert rejected.json()["detail"]["code"] == "strategy_lab.simulation_not_passed"
+
+        with factory() as session:
+            participant = session.scalar(
+                select(MatchParticipant).where(MatchParticipant.candidate_content_hash.is_not(None))
+            )
+            assert participant is not None
+            participant.candidate_validation = {"result": "ready"}
+            session.commit()
+
+        completed = request(
+            client,
+            "GET",
+            f"/api/v1/fleets/{fleet_id}/strategy-lab",
+            "owner",
+        )
+        assert completed.json()["simulation"]["status"] == "completed"
+        assert completed.json()["simulation"]["publishEligible"] is True
 
         published = request(
             client,
@@ -167,6 +252,25 @@ def test_workspace_draft_simulation_and_publish_flow(tmp_path: Path) -> None:
             assert draft is not None and draft.validated_content_hash
             assert participant is not None and participant.candidate_content_hash
             assert session.scalar(select(RatingEvent)) is None
+
+        changed = request(
+            client,
+            "PUT",
+            f"/api/v1/fleets/{fleet_id}/strategy-lab/draft",
+            "owner",
+            json={
+                "expectedRevision": 2,
+                "mode": "guided",
+                "parameters": {
+                    "launchRatio": 0.55,
+                    "minimumShips": 6,
+                    "targetPreference": "weakest",
+                },
+            },
+        )
+        assert changed.status_code == 200
+        assert changed.json()["simulation"] is None
+        assert changed.json()["publishEligibility"]["blockingReason"] == "simulation_required"
 
         private = request(
             client,

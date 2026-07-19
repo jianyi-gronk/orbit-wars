@@ -14,6 +14,9 @@ from orbit_api.db.base import utc_now
 from orbit_api.db.models import (
     AiCreditAccount,
     Fleet,
+    Match,
+    MatchParticipant,
+    MatchStatus,
     StrategyDraft,
     StrategyVersion,
 )
@@ -44,12 +47,40 @@ class StrategyDraftNotValidatedError(StrategyLabError):
     code = "strategy_lab.not_validated"
 
 
+class StrategySimulationRequiredError(StrategyLabError):
+    code = "strategy_lab.simulation_required"
+
+
+class StrategySimulationPendingError(StrategyLabError):
+    code = "strategy_lab.simulation_pending"
+
+
+class StrategySimulationFailedError(StrategyLabError):
+    code = "strategy_lab.simulation_failed"
+
+
+class StrategySimulationStaleError(StrategyLabError):
+    code = "strategy_lab.simulation_stale"
+
+
+class StrategySimulationNotPassedError(StrategyLabError):
+    code = "strategy_lab.simulation_not_passed"
+
+
+@dataclass(frozen=True)
+class PublicationEligibility:
+    publishable: bool
+    blocking_reason: str | None
+
+
 @dataclass(frozen=True)
 class StrategyWorkspace:
     fleet: Fleet
     draft: StrategyDraft
     versions: tuple[StrategyVersion, ...]
     credits: AiCreditAccount
+    simulation: Match | None
+    eligibility: PublicationEligibility
 
 
 def _free_credits() -> int:
@@ -115,7 +146,19 @@ def get_workspace(
             .order_by(StrategyVersion.created_at.desc())
         )
     )
-    return StrategyWorkspace(fleet, draft, versions, credits)
+    simulation = (
+        session.get(Match, draft.validation_simulation_match_id)
+        if draft.validation_simulation_match_id
+        else None
+    )
+    return StrategyWorkspace(
+        fleet,
+        draft,
+        versions,
+        credits,
+        simulation,
+        publication_eligibility(session, draft, simulation),
+    )
 
 
 def _guided_parameters(values: dict[str, Any]) -> tuple[dict[str, Any], str]:
@@ -162,10 +205,12 @@ def update_draft(
     draft.revision += 1
     draft.last_validation = None
     draft.validated_content_hash = None
+    draft.validation_simulation_match_id = None
+    draft.validation_simulation_revision = None
     draft.updated_at = utc_now()
     session.commit()
     session.refresh(draft)
-    return StrategyWorkspace(workspace.fleet, draft, workspace.versions, workspace.credits)
+    return get_workspace(session, principal, fleet_public_id)
 
 
 def reset_draft(
@@ -185,10 +230,12 @@ def reset_draft(
     workspace.draft.revision += 1
     workspace.draft.last_validation = None
     workspace.draft.validated_content_hash = None
+    workspace.draft.validation_simulation_match_id = None
+    workspace.draft.validation_simulation_revision = None
     workspace.draft.updated_at = utc_now()
     session.commit()
     session.refresh(workspace.draft)
-    return workspace
+    return get_workspace(session, principal, fleet_public_id)
 
 
 def mark_validated(
@@ -214,3 +261,83 @@ def require_validated_package(draft: StrategyDraft) -> bytes:
     if draft.validated_content_hash != package.content_hash:
         raise StrategyDraftNotValidatedError("the current draft must pass simulation validation")
     return package.content
+
+
+def attach_validation_simulation(
+    session: Session,
+    draft: StrategyDraft,
+    *,
+    revision: int,
+    match: Match,
+) -> None:
+    if draft.revision != revision:
+        raise StrategyDraftConflictError("the strategy draft changed before simulation creation")
+    draft.validation_simulation_match_id = match.id
+    draft.validation_simulation_revision = revision
+    draft.updated_at = utc_now()
+    session.commit()
+    session.refresh(draft)
+
+
+def publication_eligibility(
+    session: Session,
+    draft: StrategyDraft,
+    match: Match | None = None,
+) -> PublicationEligibility:
+    if draft.validation_simulation_match_id is None:
+        return PublicationEligibility(False, "simulation_required")
+    if draft.validation_simulation_revision != draft.revision:
+        return PublicationEligibility(False, "simulation_stale")
+    simulation = match or session.get(Match, draft.validation_simulation_match_id)
+    if simulation is None:
+        return PublicationEligibility(False, "simulation_unknown")
+    if simulation.status in {
+        MatchStatus.QUEUED,
+        MatchStatus.PREPARING,
+        MatchStatus.READY,
+        MatchStatus.RUNNING,
+        MatchStatus.FINALIZING,
+    }:
+        return PublicationEligibility(False, "simulation_pending")
+    if simulation.status in {
+        MatchStatus.FAILED,
+        MatchStatus.FORFEITED,
+        MatchStatus.CANCELLED,
+    }:
+        return PublicationEligibility(False, "simulation_failed")
+    if simulation.status != MatchStatus.FINISHED:
+        return PublicationEligibility(False, "simulation_unknown")
+    candidate = session.scalar(
+        select(MatchParticipant).where(
+            MatchParticipant.match_id == simulation.id,
+            MatchParticipant.fleet_id == draft.fleet_id,
+            MatchParticipant.candidate_content_hash == draft.validated_content_hash,
+        )
+    )
+    validation = candidate.candidate_validation if candidate else None
+    if not isinstance(validation, dict) or validation.get("result") != "ready":
+        return PublicationEligibility(False, "simulation_not_passed")
+    if not draft.validated_content_hash:
+        return PublicationEligibility(False, "simulation_stale")
+    return PublicationEligibility(True, None)
+
+
+def require_publishable_simulation(session: Session, draft: StrategyDraft) -> Match:
+    match = (
+        session.get(Match, draft.validation_simulation_match_id)
+        if draft.validation_simulation_match_id
+        else None
+    )
+    eligibility = publication_eligibility(session, draft, match)
+    if eligibility.publishable and match is not None:
+        return match
+    errors: dict[str | None, type[StrategyLabError]] = {
+        "simulation_required": StrategySimulationRequiredError,
+        "simulation_pending": StrategySimulationPendingError,
+        "simulation_failed": StrategySimulationFailedError,
+        "simulation_stale": StrategySimulationStaleError,
+        "simulation_not_passed": StrategySimulationNotPassedError,
+        "simulation_unknown": StrategySimulationRequiredError,
+    }
+    error_type = errors.get(eligibility.blocking_reason, StrategySimulationRequiredError)
+    raise error_type(eligibility.blocking_reason or "simulation is not publishable")
