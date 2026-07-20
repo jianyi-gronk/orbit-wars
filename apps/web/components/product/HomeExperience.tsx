@@ -25,12 +25,14 @@ export function HomeExperience({ locale }: HomeExperienceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef<OrbitalPointer>({ x: 0, y: 0 });
   const activeSceneRef = useRef(0);
+  const navigationTargetRef = useRef<number | null>(null);
   const wheelGestureRef = useRef(createWheelGestureState());
   const [activeScene, setActiveScene] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const goToScene = useCallback((requested: number, behavior: ScrollBehavior = "smooth") => {
     const index = clampSceneIndex(requested, sceneCount);
+    navigationTargetRef.current = index;
     activeSceneRef.current = index;
     setActiveScene(index);
     containerRef.current
@@ -56,6 +58,9 @@ export function HomeExperience({ locale }: HomeExperienceProps) {
           .sort((left, right) => right.intersectionRatio - left.intersectionRatio)[0];
         const index = Number((visible?.target as HTMLElement | undefined)?.dataset.sceneIndex);
         if (Number.isInteger(index)) {
+          const navigationTarget = navigationTargetRef.current;
+          if (navigationTarget !== null && index !== navigationTarget) return;
+          navigationTargetRef.current = null;
           activeSceneRef.current = index;
           setActiveScene(index);
         }

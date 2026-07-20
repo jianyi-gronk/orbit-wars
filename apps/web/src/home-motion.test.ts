@@ -7,6 +7,8 @@ import {
   HOME_WHEEL_GESTURE_RELEASE_MS,
   HOME_WHEEL_INTENT_THRESHOLD,
   HOME_WHEEL_INTENT_WINDOW_MS,
+  HOME_WHEEL_MOMENTUM_TAIL_MAX_DELTA,
+  HOME_WHEEL_REENTRY_GUARD_MS,
   reduceWheelGesture,
   sceneState,
 } from "./home-motion";
@@ -39,6 +41,8 @@ describe("home scene navigation", () => {
     expect(HOME_WHEEL_INTENT_THRESHOLD).toBe(100);
     expect(HOME_WHEEL_INTENT_WINDOW_MS).toBe(420);
     expect(HOME_WHEEL_GESTURE_RELEASE_MS).toBe(180);
+    expect(HOME_WHEEL_REENTRY_GUARD_MS).toBe(120);
+    expect(HOME_WHEEL_MOMENTUM_TAIL_MAX_DELTA).toBe(40);
   });
 
   it("accumulates wheel intent before moving one scene", () => {
@@ -75,6 +79,37 @@ describe("home scene navigation", () => {
 
     expect(sustained.direction).toBe(0);
     expect(sustained.state.lockedUntil).toBe(480);
+  });
+
+  it("accepts a reversed physical gesture without waiting for the momentum lock", () => {
+    const triggered = reduceWheelGesture(createWheelGestureState(), 100, 100);
+    const reversed = reduceWheelGesture(triggered.state, -60, 140);
+    const completed = reduceWheelGesture(reversed.state, -40, 160);
+
+    expect(triggered.direction).toBe(1);
+    expect(reversed.direction).toBe(0);
+    expect(reversed.state.accumulatedDelta).toBe(-60);
+    expect(completed.direction).toBe(-1);
+  });
+
+  it("recognizes renewed acceleration as a new same-direction gesture", () => {
+    const triggered = reduceWheelGesture(createWheelGestureState(), 100, 100);
+    const momentum = reduceWheelGesture(triggered.state, 30, 180);
+    const restarted = reduceWheelGesture(momentum.state, 50, 240);
+    const completed = reduceWheelGesture(restarted.state, 50, 260);
+
+    expect(momentum.direction).toBe(0);
+    expect(restarted.direction).toBe(0);
+    expect(restarted.state.accumulatedDelta).toBe(50);
+    expect(completed.direction).toBe(1);
+  });
+
+  it("keeps early acceleration inside the active physical gesture", () => {
+    const triggered = reduceWheelGesture(createWheelGestureState(), 100, 100);
+    const earlyAcceleration = reduceWheelGesture(triggered.state, 160, 160);
+
+    expect(earlyAcceleration.direction).toBe(0);
+    expect(earlyAcceleration.state.lockedUntil).toBe(340);
   });
 
   it("accepts a new gesture after a clear pause", () => {
