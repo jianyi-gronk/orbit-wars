@@ -36,17 +36,27 @@ describe("home scene navigation", () => {
 
     expect(result.direction).toBe(0);
     expect(result.state.accumulatedDelta).toBe(60);
-    expect(HOME_WHEEL_INTENT_THRESHOLD).toBe(150);
+    expect(HOME_WHEEL_INTENT_THRESHOLD).toBe(100);
     expect(HOME_WHEEL_INTENT_WINDOW_MS).toBe(420);
     expect(HOME_WHEEL_GESTURE_RELEASE_MS).toBe(180);
   });
 
   it("accumulates wheel intent before moving one scene", () => {
     const first = reduceWheelGesture(createWheelGestureState(), 70, 100);
-    const second = reduceWheelGesture(first.state, 80, 300);
+    const second = reduceWheelGesture(first.state, 30, 300);
 
     expect(second.direction).toBe(1);
     expect(second.state.accumulatedDelta).toBe(0);
+  });
+
+  it("resets accumulated intent when the wheel direction reverses", () => {
+    const downward = reduceWheelGesture(createWheelGestureState(), 70, 100);
+    const reversed = reduceWheelGesture(downward.state, -60, 200);
+    const upward = reduceWheelGesture(reversed.state, -40, 300);
+
+    expect(reversed.direction).toBe(0);
+    expect(reversed.state.accumulatedDelta).toBe(-60);
+    expect(upward.direction).toBe(-1);
   });
 
   it("extends the scene lock across inertial events from one gesture", () => {

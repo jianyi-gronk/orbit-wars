@@ -11,7 +11,7 @@ export type WheelGestureResult = {
   state: WheelGestureState;
 };
 
-export const HOME_WHEEL_INTENT_THRESHOLD = 150;
+export const HOME_WHEEL_INTENT_THRESHOLD = 100;
 export const HOME_WHEEL_INTENT_WINDOW_MS = 420;
 export const HOME_WHEEL_GESTURE_RELEASE_MS = 180;
 
@@ -46,8 +46,12 @@ export function reduceWheelGesture(
     };
   }
 
+  const directionChanged =
+    state.accumulatedDelta !== 0 && Math.sign(state.accumulatedDelta) !== Math.sign(deltaY);
   const accumulatedDelta =
-    now - state.lastEventAt > intentWindowMs ? deltaY : state.accumulatedDelta + deltaY;
+    now - state.lastEventAt > intentWindowMs || directionChanged
+      ? deltaY
+      : state.accumulatedDelta + deltaY;
 
   if (Math.abs(accumulatedDelta) < threshold) {
     return {
