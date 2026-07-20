@@ -45,26 +45,28 @@ describe("home scene navigation", () => {
     expect(second.state.accumulatedDelta).toBe(0);
   });
 
-  it("suppresses inertial events without extending the cooldown", () => {
+  it("extends the scene lock across inertial events from one gesture", () => {
     const triggered = reduceWheelGesture(createWheelGestureState(), 180, 100);
     const inertia = reduceWheelGesture(triggered.state, 80, 300);
 
     expect(triggered.direction).toBe(1);
     expect(inertia.direction).toBe(0);
-    expect(inertia.state.lockedUntil).toBe(520);
+    expect(inertia.state.lockedUntil).toBe(720);
   });
 
-  it("keeps sustained scrolling responsive after the fixed cooldown", () => {
+  it("allows at most one scene change during sustained scrolling", () => {
     const triggered = reduceWheelGesture(createWheelGestureState(), 180, 100);
     const inertia = reduceWheelGesture(triggered.state, 80, 300);
     const sustained = reduceWheelGesture(inertia.state, 180, 530);
 
-    expect(sustained.direction).toBe(1);
+    expect(sustained.direction).toBe(0);
+    expect(sustained.state.lockedUntil).toBe(950);
   });
 
-  it("accepts reverse motion after the fixed cooldown", () => {
+  it("accepts a new gesture after a clear pause", () => {
     const triggered = reduceWheelGesture(createWheelGestureState(), 180, 100);
-    const nextGesture = reduceWheelGesture(triggered.state, -180, 530);
+    const inertia = reduceWheelGesture(triggered.state, 80, 300);
+    const nextGesture = reduceWheelGesture(inertia.state, -180, 730);
 
     expect(nextGesture.direction).toBe(-1);
   });

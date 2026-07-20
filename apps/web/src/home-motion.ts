@@ -39,7 +39,7 @@ export function reduceWheelGesture(
       state: {
         accumulatedDelta: 0,
         lastEventAt: now,
-        lockedUntil: state.lockedUntil,
+        lockedUntil: now + cooldownMs,
       },
     };
   }
