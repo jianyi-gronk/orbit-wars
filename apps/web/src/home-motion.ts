@@ -11,7 +11,7 @@ export type WheelGestureResult = {
   state: WheelGestureState;
 };
 
-export const HOME_WHEEL_INTENT_THRESHOLD = 96;
+export const HOME_WHEEL_INTENT_THRESHOLD = 150;
 export const HOME_WHEEL_COOLDOWN_MS = 420;
 
 export function createWheelGestureState(): WheelGestureState {
