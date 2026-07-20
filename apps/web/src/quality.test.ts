@@ -52,6 +52,8 @@ describe("release performance and accessibility budgets", () => {
 
     expect(home).toContain('["ArrowDown", "PageDown", "ArrowUp", "PageUp", "Home", "End"]');
     expect(home).toContain('matchMedia("(prefers-reduced-motion: reduce)")');
+    expect(home).toContain('window.addEventListener("wheel", onWheel');
+    expect(home).not.toContain('container.addEventListener("wheel", onWheel');
     expect(home).toContain('aria-label={zh ? "首页场景" : "Home scenes"}');
     expect(layout).toContain("<GlobalInteractionFX />");
     expect(css).toContain("@media (prefers-reduced-motion: reduce)");

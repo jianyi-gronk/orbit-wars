@@ -70,7 +70,7 @@ export function HomeExperience({ locale }: HomeExperienceProps) {
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || reducedMotion) return;
+    if (!container) return;
     const onWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
       event.preventDefault();
@@ -84,10 +84,10 @@ export function HomeExperience({ locale }: HomeExperienceProps) {
       const current = activeSceneRef.current;
       const next = adjacentSceneIndex(current, result.direction, sceneCount);
       if (next === current) return;
-      goToScene(next);
+      goToScene(next, reducedMotion ? "auto" : "smooth");
     };
-    container.addEventListener("wheel", onWheel, { passive: false });
-    return () => container.removeEventListener("wheel", onWheel);
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
   }, [goToScene, reducedMotion]);
 
   useEffect(() => {

@@ -50,6 +50,7 @@
 - 浏览器实测：训练赛 `match_zNkjDMlVeeBj-AMwScQET1tR` 在约 6 秒内完成并生成 `replay_z0CLwnl0XvLCHeOpm4MJkED0`；候选模拟 `match_yNnZz16bFidEpMxeCuKZzfyx` 完成后才解锁发布，刷新及切换中英文后仍可恢复，且未出现在公开历史。
 - 有效回放进入 Strategy Lab 能显示 mode、双方、结果、高光与返回入口；无效来源只显示不可用提示且编辑器继续可用。
 - 390×844 移动视口检查并收紧比赛状态页的长 ID、标题、状态卡和按钮布局；生产态新标签页无 console error。
+- 2026-07-20 首页滚轮回归：确认固定页头是 `.home-experience` 的兄弟节点，原容器级监听无法收到页头区域的滚轮事件；监听提升到当前首页窗口，页头、Logo、导航和内容区均可触发相邻场景切换，减少动态偏好下改为无动画跳转。
 
 ## 疑问
 
