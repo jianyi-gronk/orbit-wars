@@ -4,7 +4,9 @@ import {
   adjacentSceneIndex,
   clampSceneIndex,
   createWheelGestureState,
+  HOME_WHEEL_GESTURE_RELEASE_MS,
   HOME_WHEEL_INTENT_THRESHOLD,
+  HOME_WHEEL_INTENT_WINDOW_MS,
   reduceWheelGesture,
   sceneState,
 } from "./home-motion";
@@ -35,11 +37,13 @@ describe("home scene navigation", () => {
     expect(result.direction).toBe(0);
     expect(result.state.accumulatedDelta).toBe(60);
     expect(HOME_WHEEL_INTENT_THRESHOLD).toBe(150);
+    expect(HOME_WHEEL_INTENT_WINDOW_MS).toBe(420);
+    expect(HOME_WHEEL_GESTURE_RELEASE_MS).toBe(180);
   });
 
   it("accumulates wheel intent before moving one scene", () => {
     const first = reduceWheelGesture(createWheelGestureState(), 70, 100);
-    const second = reduceWheelGesture(first.state, 80, 130);
+    const second = reduceWheelGesture(first.state, 80, 300);
 
     expect(second.direction).toBe(1);
     expect(second.state.accumulatedDelta).toBe(0);
@@ -47,26 +51,26 @@ describe("home scene navigation", () => {
 
   it("extends the scene lock across inertial events from one gesture", () => {
     const triggered = reduceWheelGesture(createWheelGestureState(), 180, 100);
-    const inertia = reduceWheelGesture(triggered.state, 80, 300);
+    const inertia = reduceWheelGesture(triggered.state, 80, 200);
 
     expect(triggered.direction).toBe(1);
     expect(inertia.direction).toBe(0);
-    expect(inertia.state.lockedUntil).toBe(720);
+    expect(inertia.state.lockedUntil).toBe(380);
   });
 
   it("allows at most one scene change during sustained scrolling", () => {
     const triggered = reduceWheelGesture(createWheelGestureState(), 180, 100);
-    const inertia = reduceWheelGesture(triggered.state, 80, 300);
-    const sustained = reduceWheelGesture(inertia.state, 180, 530);
+    const inertia = reduceWheelGesture(triggered.state, 80, 200);
+    const sustained = reduceWheelGesture(inertia.state, 180, 300);
 
     expect(sustained.direction).toBe(0);
-    expect(sustained.state.lockedUntil).toBe(950);
+    expect(sustained.state.lockedUntil).toBe(480);
   });
 
   it("accepts a new gesture after a clear pause", () => {
     const triggered = reduceWheelGesture(createWheelGestureState(), 180, 100);
-    const inertia = reduceWheelGesture(triggered.state, 80, 300);
-    const nextGesture = reduceWheelGesture(inertia.state, -180, 730);
+    const inertia = reduceWheelGesture(triggered.state, 80, 200);
+    const nextGesture = reduceWheelGesture(inertia.state, -180, 390);
 
     expect(nextGesture.direction).toBe(-1);
   });
