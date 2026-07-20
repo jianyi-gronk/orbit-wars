@@ -4,6 +4,7 @@ import {
   adjacentSceneIndex,
   clampSceneIndex,
   createWheelGestureState,
+  HOME_WHEEL_INTENT_THRESHOLD,
   reduceWheelGesture,
   sceneState,
 } from "./home-motion";
@@ -29,22 +30,23 @@ describe("home scene navigation", () => {
   });
 
   it("does not navigate for a slight wheel movement", () => {
-    const result = reduceWheelGesture(createWheelGestureState(), 20, 100);
+    const result = reduceWheelGesture(createWheelGestureState(), 60, 100);
 
     expect(result.direction).toBe(0);
-    expect(result.state.accumulatedDelta).toBe(20);
+    expect(result.state.accumulatedDelta).toBe(60);
+    expect(HOME_WHEEL_INTENT_THRESHOLD).toBe(96);
   });
 
   it("accumulates wheel intent before moving one scene", () => {
-    const first = reduceWheelGesture(createWheelGestureState(), 20, 100);
-    const second = reduceWheelGesture(first.state, 30, 130);
+    const first = reduceWheelGesture(createWheelGestureState(), 45, 100);
+    const second = reduceWheelGesture(first.state, 55, 130);
 
     expect(second.direction).toBe(1);
     expect(second.state.accumulatedDelta).toBe(0);
   });
 
   it("suppresses inertial events without extending the cooldown", () => {
-    const triggered = reduceWheelGesture(createWheelGestureState(), 60, 100);
+    const triggered = reduceWheelGesture(createWheelGestureState(), 120, 100);
     const inertia = reduceWheelGesture(triggered.state, 80, 300);
 
     expect(triggered.direction).toBe(1);
@@ -53,16 +55,16 @@ describe("home scene navigation", () => {
   });
 
   it("keeps sustained scrolling responsive after the fixed cooldown", () => {
-    const triggered = reduceWheelGesture(createWheelGestureState(), 60, 100);
+    const triggered = reduceWheelGesture(createWheelGestureState(), 120, 100);
     const inertia = reduceWheelGesture(triggered.state, 80, 300);
-    const sustained = reduceWheelGesture(inertia.state, 80, 530);
+    const sustained = reduceWheelGesture(inertia.state, 120, 530);
 
     expect(sustained.direction).toBe(1);
   });
 
   it("accepts reverse motion after the fixed cooldown", () => {
-    const triggered = reduceWheelGesture(createWheelGestureState(), 60, 100);
-    const nextGesture = reduceWheelGesture(triggered.state, -60, 530);
+    const triggered = reduceWheelGesture(createWheelGestureState(), 120, 100);
+    const nextGesture = reduceWheelGesture(triggered.state, -120, 530);
 
     expect(nextGesture.direction).toBe(-1);
   });
