@@ -8,7 +8,7 @@
   z-index: 20;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  gap: 2rem;
+  gap: clamp(0.75rem, 2vw, 2rem);
   width: min(100%, 108rem);
   margin: 0 auto;
   padding: 1.2rem clamp(1rem, 4vw, 4rem);
@@ -25,6 +25,7 @@
 .product-header nav {
   display: flex;
   gap: clamp(1rem, 3vw, 3rem);
+  min-width: 0;
   color: var(--ow-color-ink-dim);
   font: 0.68rem/1 var(--ow-font-mono);
   letter-spacing: 0.1em;
@@ -873,12 +874,11 @@
 }
 @media (width <= 48rem) {
   .product-header {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
   }
   .product-header nav {
-    grid-row: 2;
-    grid-column: 1 / -1;
-    justify-content: space-between;
+    grid-row: 1;
+    grid-column: 2;
   }
   .header-actions {
     justify-content: flex-end;

@@ -4,12 +4,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { LocaleSwitcher } from "./LocaleSwitcher";
-import { SessionAction, SessionMenuAction } from "./SessionAction";
 import { localPath, messages, type Locale } from "../../src/i18n";
 
 export function SiteHeader({ locale = "zh" }: { locale?: Locale }) {
   const t = messages[locale].nav;
-  const zh = locale === "zh";
   const pathname = usePathname();
   const active = (path: string) => pathname === localPath(locale, path);
   return (
@@ -43,39 +41,6 @@ export function SiteHeader({ locale = "zh" }: { locale?: Locale }) {
         </Link>
       </nav>
       <div className="header-actions">
-        <details className="mission-menu">
-          <summary>
-            {zh ? "任务菜单" : "MISSION MENU"}
-            <span aria-hidden="true">+</span>
-          </summary>
-          <div className="mission-menu__panel">
-            <p>{zh ? "战术档案" : "TACTICAL ARCHIVE"}</p>
-            <Link href={localPath(locale, "/strategy-lab")}>
-              <span>01</span>
-              {zh ? "策略实验室" : "Strategy Lab"}
-            </Link>
-            <Link href={localPath(locale, "/history")}>
-              <span>02</span>
-              {t.history}
-            </Link>
-            <Link href={localPath(locale, "/agent-guide")}>
-              <span>03</span>Agent Guide
-            </Link>
-            <Link href={localPath(locale, "/about")}>
-              <span>04</span>
-              {zh ? "规则与世界" : "Rulebook"}
-            </Link>
-            <Link href={localPath(locale, "/qa")}>
-              <span>05</span>Q&amp;A
-            </Link>
-            <Link href={localPath(locale, "/updates")}>
-              <span>06</span>
-              {zh ? "更新日志" : "Updates"}
-            </Link>
-            <SessionMenuAction locale={locale} />
-          </div>
-        </details>
-        <SessionAction locale={locale} />
         <LocaleSwitcher locale={locale} />
       </div>
     </header>

@@ -153,7 +153,6 @@ describe("release performance and accessibility budgets", () => {
     const status = readFileSync("app/match/MatchStatusView.tsx", "utf8");
     const lab = readFileSync("app/strategy-lab/StrategyLab.tsx", "utf8");
     const header = readFileSync("components/product/SiteHeader.tsx", "utf8");
-    const session = readFileSync("components/product/SessionAction.tsx", "utf8");
 
     expect(arena).toContain("`/match/${created.publicId}`");
     expect(status).toContain("activeStatuses");
@@ -163,9 +162,11 @@ describe("release performance and accessibility budgets", () => {
     expect(lab).toContain("workspace.publishEligibility.eligible");
     expect(lab).toContain('searchParams.get("fromReplay")');
     expect(lab).toContain("Back to replay");
-    expect(header).toContain("<SessionMenuAction");
-    expect(session).toContain("if (!authenticated) return null");
-    expect(session).toContain("messages[locale].nav.logout");
+    expect(header).toContain('href={localPath(locale, "/arena")}');
+    expect(header).toContain('href={localPath(locale, "/leaderboard")}');
+    expect(header).toContain('href={localPath(locale, "/command")}');
+    expect(header).not.toContain("mission-menu");
+    expect(header).not.toContain("<SessionAction");
   });
 
   it("keeps the central sun visually aligned with the simple Kaggle reference", () => {
