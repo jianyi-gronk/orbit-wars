@@ -2,15 +2,42 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { apiFetch, type AuthSession } from "../../src/api";
 import { localPath, messages, type Locale } from "../../src/i18n";
+import {
+  OPEN_LOGIN_EVENT,
+  safeLoginReturnTo,
+  type OpenLoginDetail,
+} from "../../src/login-modal";
+import { LoginModal } from "./LoginModal";
 
 export function AccountEntry({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const router = useRouter();
   const [session, setSession] = useState<AuthSession | null>(null);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [loginReturnTo, setLoginReturnTo] = useState(pathname);
+
+  const currentReturnTo = useCallback(() => {
+    const current = new URL(window.location.href);
+    current.searchParams.delete("auth");
+    return `${current.pathname}${current.search}${current.hash}`;
+  }, []);
+
+  const closeLogin = useCallback(() => {
+    setLoginOpen(false);
+    const current = new URL(window.location.href);
+    if (current.searchParams.get("auth") === "login") {
+      current.searchParams.delete("auth");
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `${current.pathname}${current.search}${current.hash}`,
+      );
+    }
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -20,13 +47,42 @@ export function AccountEntry({ locale }: { locale: Locale }) {
     return () => controller.abort();
   }, [pathname]);
 
+  useEffect(() => {
+    function openLogin(returnTo?: string) {
+      setLoginReturnTo(safeLoginReturnTo(returnTo ?? currentReturnTo(), locale));
+      setLoginOpen(true);
+    }
+
+    function onLoginRequest(event: Event) {
+      openLogin((event as CustomEvent<OpenLoginDetail>).detail?.returnTo);
+    }
+
+    window.addEventListener(OPEN_LOGIN_EVENT, onLoginRequest);
+    if (new URLSearchParams(window.location.search).get("auth") === "login") openLogin();
+    return () => window.removeEventListener(OPEN_LOGIN_EVENT, onLoginRequest);
+  }, [currentReturnTo, locale, pathname]);
+
   if (session === null) return <span className="account-entry account-entry--loading">•••</span>;
   if (!session.authenticated) {
-    const href = `${localPath(locale, "/auth")}?returnTo=${encodeURIComponent(pathname)}`;
     return (
-      <Link className="account-entry account-entry--signin" href={href}>
-        {messages[locale].nav.login}
-      </Link>
+      <>
+        <button
+          className="account-entry account-entry--signin"
+          onClick={() => {
+            setLoginReturnTo(currentReturnTo());
+            setLoginOpen(true);
+          }}
+          type="button"
+        >
+          {messages[locale].nav.login}
+        </button>
+        <LoginModal
+          locale={locale}
+          onClose={closeLogin}
+          open={loginOpen}
+          returnTo={loginReturnTo}
+        />
+      </>
     );
   }
 

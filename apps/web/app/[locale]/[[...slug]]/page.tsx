@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { StartFlow } from "../../start/StartFlow";
 import { CommandCenter } from "../../command/CommandCenter";
@@ -18,7 +18,7 @@ import {
 import { AgentGuide, InformationPage } from "../../../components/product/InformationPages";
 import { humanPlayEnabled } from "../../../src/features";
 import { isLocale, type Locale } from "../../../src/i18n";
-import { AuthPanel } from "../../../components/auth/AuthPanel";
+import { withLoginPrompt } from "../../../src/login-modal";
 
 export async function generateMetadata({
   params,
@@ -69,7 +69,6 @@ export default async function LocalizedPage({
   params: Promise<{ locale: string; slug?: string[] }>;
   searchParams: Promise<{
     control?: string;
-    mode?: string;
     period?: string;
     returnTo?: string;
     sort?: string;
@@ -82,17 +81,7 @@ export default async function LocalizedPage({
   if (!route) return <Home locale={locale} />;
   if (route === "auth") {
     const query = await searchParams;
-    const initialMode = ["login", "register", "reset"].includes(query.mode ?? "")
-      ? (query.mode as "login" | "register" | "reset")
-      : "login";
-    return (
-      <main className="product-page auth-page">
-        <SiteHeader locale={locale} />
-        <div className="page-shell auth-shell">
-          <AuthPanel initialMode={initialMode} locale={locale} returnTo={query.returnTo} />
-        </div>
-      </main>
-    );
+    redirect(withLoginPrompt(query.returnTo, locale));
   }
   if (route === "start")
     return (

@@ -6,6 +6,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { ApiError, apiFetch, type AuthSession, type Fleet } from "../../src/api";
 import { humanPlayEnabled } from "../../src/features";
 import { errorMessage, localPath, type Locale } from "../../src/i18n";
+import { requestLogin } from "../../src/login-modal";
 
 type Control = "human" | "agent";
 type Tendency = "balanced" | "assault" | "expansion" | "defense";
@@ -105,12 +106,13 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
               ? "登录后会自动回到这里；你的舰队与战绩会永久保存。"
               : "You will return here automatically. Your fleet and match record will persist."}
           </p>
-          <Link
+          <button
             className="button button--primary"
-            href={`${localPath(locale, "/auth")}?returnTo=${encodeURIComponent(localPath(locale, "/start"))}`}
+            onClick={() => requestLogin(localPath(locale, "/start"))}
+            type="button"
           >
             {zh ? "登录并开始 →" : "Sign in and start →"}
-          </Link>
+          </button>
         </section>
       )}
       {!checking && authenticated && (

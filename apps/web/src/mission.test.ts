@@ -30,7 +30,7 @@ describe("mission action", () => {
   it("localizes labels and routes signed-out users through login", () => {
     expect(resolveMissionAction("zh", { authenticated: false })).toEqual({
       state: "signed-out",
-      href: "/zh/auth?returnTo=%2Fzh%2Fstart",
+      href: "/zh/start?auth=login",
       label: "开始游戏",
     });
     expect(

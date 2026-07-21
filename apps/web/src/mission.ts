@@ -1,4 +1,5 @@
 import { localPath, type Locale } from "./i18n";
+import { withLoginPrompt } from "./login-modal";
 
 export type MissionState =
   "signed-out" | "needs-fleet" | "needs-strategy" | "battle-ready" | "continue";
@@ -40,7 +41,7 @@ export function resolveMissionAction(locale: Locale, snapshot: MissionSnapshot):
     state,
     href:
       state === "signed-out"
-        ? `${localPath(locale, "/auth")}?returnTo=${encodeURIComponent(destination)}`
+        ? withLoginPrompt(destination, locale)
         : destination,
     label: definition.labels[zh ? 0 : 1],
   };

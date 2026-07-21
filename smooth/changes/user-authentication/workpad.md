@@ -7,6 +7,7 @@
 - [x] 创建技术设计，确定认证职责、会话格式、数据模型和迁移方式
 - [x] 拆解实现任务
 - [x] 实现并验证中英双语 GitHub 认证界面与本地回调闭环
+- [x] 将独立认证页替换为全局 GitHub 登录弹窗，并让旧链接兼容唤起
 - [ ] 在 IP + HTTP 预览环境临时完成真实 GitHub OAuth 集成验收
 - [ ] 在域名与 HTTPS 就绪后切换生产部署
 
@@ -27,6 +28,7 @@
 - 2026-07-21：提交 `90d3148` 已部署至 `http://47.98.155.60:4000`；公开 auth config 为 GitHub `true`、password `false`、Google `false`，匿名 session 为未登录，API/Web 均未注入固定 dev subject。
 - 2026-07-21：GitHub start 返回 307 到官方授权页，state 存在，回调精确为 `/orbit-api/api/auth/github/callback`；中英文页面与 390px 移动端无邮箱输入、无横向溢出、无控制台错误。
 - 待用户本人完成一次 GitHub 授权后，继续验证首次建档、回到原任务、账户菜单、退出和二次登录复用；主 agent 不代替用户确认第三方账号授权。
+- 2026-07-21：全局 GitHub 登录弹窗通过 TypeScript、ESLint、71 个 Web 测试与 Next 生产构建；本地浏览器验证页头与任务内唤起不换页、旧 `/zh/auth` 兼容重定向、返回路径、关闭参数清理、Esc、焦点循环、中英文和窄屏无溢出。
 
 ## 备注
 
