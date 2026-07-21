@@ -101,36 +101,22 @@ export function LoginModal({
         ref={dialogRef}
         role="dialog"
       >
-        <div className="login-modal__topline" aria-hidden="true">
-          <span>IDENTITY UPLINK</span>
-          <span>01 / GITHUB</span>
-        </div>
-        <button
-          aria-label={zh ? "关闭登录弹窗" : "Close sign-in dialog"}
-          className="login-modal__close"
-          onClick={onClose}
-          ref={closeRef}
-          type="button"
-        >
-          <span aria-hidden="true">×</span>
-        </button>
-
-        <div className="login-modal__signal" aria-hidden="true">
-          <span>◎</span>
-          <i />
-        </div>
-        <p className="eyebrow">ORBIT ID / PERSISTENT</p>
-        <h2 id="orbit-login-title">{zh ? "登录 Orbit Wars" : "Sign in to Orbit Wars"}</h2>
-        <p className="login-modal__description" id="orbit-login-description">
-          {zh
-            ? "首次使用 GitHub 会自动创建指挥官身份，舰队、策略与战绩会持续保存。"
-            : "Your first GitHub sign-in creates a commander. Your fleet, strategy, and match record persist."}
-        </p>
-
-        <div className="login-modal__facts" aria-label={zh ? "登录说明" : "Sign-in details"}>
-          <span>{zh ? "无需密码" : "NO PASSWORD"}</span>
-          <span>{zh ? "30 天会话" : "30-DAY SESSION"}</span>
-          <span>{zh ? "自动注册" : "AUTO ENLIST"}</span>
+        <div className="login-modal__header">
+          <div>
+            <h2 id="orbit-login-title">{zh ? "登录" : "Sign in"}</h2>
+            <p className="login-modal__description" id="orbit-login-description">
+              {zh ? "使用 GitHub 登录 Orbit Wars" : "Continue to Orbit Wars with GitHub"}
+            </p>
+          </div>
+          <button
+            aria-label={zh ? "关闭登录弹窗" : "Close sign-in dialog"}
+            className="login-modal__close"
+            onClick={onClose}
+            ref={closeRef}
+            type="button"
+          >
+            <span aria-hidden="true">×</span>
+          </button>
         </div>
 
         {config === null ? (
@@ -152,9 +138,7 @@ export function LoginModal({
         )}
 
         <p className="login-modal__policy">
-          {zh
-            ? "授权仅用于识别账号和读取公开资料/已验证邮箱，平台不会获得你的 GitHub 密码。"
-            : "Authorization only identifies your account and reads public profile data and a verified email. Orbit Wars never receives your GitHub password."}
+          {zh ? "首次登录将自动创建账号" : "Your account is created on first sign-in"}
         </p>
       </div>
     </div>,
