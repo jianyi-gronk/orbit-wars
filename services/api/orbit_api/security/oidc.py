@@ -9,7 +9,7 @@ import jwt
 from fastapi import Depends, HTTPException, Request, Response, status
 from jwt import PyJWKClient
 from orbit_api.db.base import utc_now
-from orbit_api.db.models import AuthCredential, AuthSession, User
+from orbit_api.db.models import AuthCredential, AuthSession, OAuthIdentity, User
 from orbit_api.db.session import database_session
 from orbit_api.security.credentials import session_digest
 from sqlalchemy import select
@@ -99,9 +99,10 @@ def principal_from_session(
     """Resolve an active opaque session without exposing its stored digest."""
     now = utc_now()
     row = session.execute(
-        select(User, AuthCredential.email_normalized)
+        select(User, AuthCredential.email_normalized, OAuthIdentity.email)
         .join(AuthSession, AuthSession.user_id == User.id)
         .outerjoin(AuthCredential, AuthCredential.user_id == User.id)
+        .outerjoin(OAuthIdentity, OAuthIdentity.user_id == User.id)
         .where(
             AuthSession.token_digest == session_digest(secret, token),
             AuthSession.revoked_at.is_(None),
@@ -110,7 +111,8 @@ def principal_from_session(
     ).first()
     if row is None:
         return None
-    user, email = row
+    user, credential_email, oauth_email = row
+    email = credential_email or oauth_email
     claims: dict[str, Any] = {"name": user.display_name}
     if email:
         claims["email"] = email

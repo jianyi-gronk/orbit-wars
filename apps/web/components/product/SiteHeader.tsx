@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { LocaleSwitcher } from "./LocaleSwitcher";
+import { AccountEntry } from "../auth/AccountEntry";
 import { localPath, messages, type Locale } from "../../src/i18n";
 
 export function SiteHeader({ locale = "zh" }: { locale?: Locale }) {
@@ -41,6 +42,7 @@ export function SiteHeader({ locale = "zh" }: { locale?: Locale }) {
         </Link>
       </nav>
       <div className="header-actions">
+        <AccountEntry locale={locale} />
         <LocaleSwitcher locale={locale} />
       </div>
     </header>

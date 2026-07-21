@@ -1,5 +1,18 @@
 export type ApiErrorPayload = { code?: string; message?: string; field?: string };
 
+export type AuthConfig = {
+  enabled: boolean;
+  passwordEnabled: boolean;
+  providers: { github: boolean; google: boolean };
+};
+
+export type AuthSession = {
+  authenticated: boolean;
+  subject?: string;
+  displayName?: string | null;
+  email?: string | null;
+};
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,

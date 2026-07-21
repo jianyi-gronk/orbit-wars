@@ -16,3 +16,6 @@ not unnecessarily restart persistent dependencies.
 
 Preview mode uses a fixed development subject so the core loop can be exercised before OIDC and a
 domain are configured. Do not treat this mode as a public multi-user production deployment.
+
+GitHub login is intentionally not enabled by this IP preview script. It requires a domain, HTTPS,
+and a GitHub OAuth App; see [`docs/authentication.md`](../../docs/authentication.md).

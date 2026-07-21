@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 
-import { ApiError, apiFetch, type Fleet } from "../../src/api";
+import { ApiError, apiFetch, type AuthSession, type Fleet } from "../../src/api";
 import { humanPlayEnabled } from "../../src/features";
 import { errorMessage, localPath, type Locale } from "../../src/i18n";
 
@@ -34,7 +34,7 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
 
   useEffect(() => {
     const controller = new AbortController();
-    void apiFetch<{ authenticated: boolean }>("/api/v1/session", { signal: controller.signal })
+    void apiFetch<AuthSession>("/api/auth/session", { signal: controller.signal })
       .then(async (session) => {
         setAuthenticated(session.authenticated);
         if (!session.authenticated) return;
@@ -107,7 +107,7 @@ export function StartFlow({ locale = "zh" }: { locale?: Locale }) {
           </p>
           <Link
             className="button button--primary"
-            href={`/auth/login?returnTo=${encodeURIComponent(localPath(locale, "/start"))}`}
+            href={`${localPath(locale, "/auth")}?returnTo=${encodeURIComponent(localPath(locale, "/start"))}`}
           >
             {zh ? "登录并开始 →" : "Sign in and start →"}
           </Link>

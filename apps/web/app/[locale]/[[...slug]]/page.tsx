@@ -18,6 +18,7 @@ import {
 import { AgentGuide, InformationPage } from "../../../components/product/InformationPages";
 import { humanPlayEnabled } from "../../../src/features";
 import { isLocale, type Locale } from "../../../src/i18n";
+import { AuthPanel } from "../../../components/auth/AuthPanel";
 
 export async function generateMetadata({
   params,
@@ -30,6 +31,7 @@ export async function generateMetadata({
   const zh = locale === "zh";
   const titles: Record<string, [string, string]> = {
     "agent-guide": ["Agent 接入指南", "Agent Guide"],
+    auth: ["指挥官登录", "Commander access"],
     arena: ["竞技场", "Arena"],
     command: ["舰队指挥中心", "Fleet Command"],
     history: ["公开对局历史", "Public Match History"],
@@ -65,13 +67,33 @@ export default async function LocalizedPage({
   searchParams,
 }: {
   params: Promise<{ locale: string; slug?: string[] }>;
-  searchParams: Promise<{ control?: string; period?: string; sort?: string }>;
+  searchParams: Promise<{
+    control?: string;
+    mode?: string;
+    period?: string;
+    returnTo?: string;
+    sort?: string;
+  }>;
 }) {
   const { locale: rawLocale, slug = [] } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const route = slug.join("/");
   if (!route) return <Home locale={locale} />;
+  if (route === "auth") {
+    const query = await searchParams;
+    const initialMode = ["login", "register", "reset"].includes(query.mode ?? "")
+      ? (query.mode as "login" | "register" | "reset")
+      : "login";
+    return (
+      <main className="product-page auth-page">
+        <SiteHeader locale={locale} />
+        <div className="page-shell auth-shell">
+          <AuthPanel initialMode={initialMode} locale={locale} returnTo={query.returnTo} />
+        </div>
+      </main>
+    );
+  }
   if (route === "start")
     return (
       <main className="product-page">

@@ -40,7 +40,7 @@ export function resolveMissionAction(locale: Locale, snapshot: MissionSnapshot):
     state,
     href:
       state === "signed-out"
-        ? `/auth/login?returnTo=${encodeURIComponent(destination)}`
+        ? `${localPath(locale, "/auth")}?returnTo=${encodeURIComponent(destination)}`
         : destination,
     label: definition.labels[zh ? 0 : 1],
   };

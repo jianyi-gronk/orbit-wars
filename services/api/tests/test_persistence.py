@@ -232,7 +232,12 @@ def test_opaque_session_resolves_only_while_active() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(
         engine,
-        tables=[User.__table__, AuthCredential.__table__, AuthSession.__table__],
+        tables=[
+            User.__table__,
+            AuthCredential.__table__,
+            AuthSession.__table__,
+            OAuthIdentity.__table__,
+        ],
     )
     secret = "test-secret-that-is-at-least-thirty-two-bytes-long"
     token = "opaque-browser-token"

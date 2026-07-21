@@ -8,6 +8,7 @@ from orbit_runtime.infrastructure import DependencyCheckFailed, check_dependenci
 from orbit_runtime.observability import MetricRegistry
 
 from orbit_api.api.agent import router as agent_router
+from orbit_api.api.auth import router as auth_router
 from orbit_api.api.fleets import router as fleets_router
 from orbit_api.api.leaderboard import router as leaderboard_router
 from orbit_api.api.matches import router as matches_router
@@ -28,6 +29,7 @@ metrics = MetricRegistry()
 app.add_middleware(IdempotencyMiddleware, session_factory=SessionLocal)
 app.add_middleware(ObservabilityMiddleware, registry=metrics)
 app.include_router(agent_router)
+app.include_router(auth_router)
 app.include_router(fleets_router)
 app.include_router(leaderboard_router)
 app.include_router(matches_router)
