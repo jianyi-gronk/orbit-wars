@@ -1,4 +1,5 @@
 import asyncio
+from datetime import timedelta
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -7,11 +8,24 @@ import jwt
 import pytest
 from fastapi import FastAPI, HTTPException, Response
 from orbit_api.db.base import Base
-from orbit_api.db.models import IdempotencyRecord
+from orbit_api.db.models import (
+    AuthCredential,
+    AuthSession,
+    IdempotencyRecord,
+    OAuthIdentity,
+    User,
+)
 from orbit_api.middleware.idempotency import IdempotencyMiddleware, request_digest, reserve
-from orbit_api.security.oidc import OIDCSettings, OIDCVerifier, set_session_cookie
+from orbit_api.security.credentials import session_digest
+from orbit_api.security.oidc import (
+    OIDCSettings,
+    OIDCVerifier,
+    principal_from_session,
+    set_session_cookie,
+)
 from orbit_api.security.public_ids import new_public_id
 from sqlalchemy import create_engine
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 
 
@@ -28,7 +42,60 @@ def test_core_metadata_contains_phase_one_tables() -> None:
         "rating_events",
         "replay_artifacts",
         "idempotency_records",
+        "auth_credentials",
+        "auth_challenges",
+        "auth_sessions",
+        "oauth_identities",
     } <= set(Base.metadata.tables)
+
+
+def test_auth_identity_constraints_are_enforced() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(
+        engine,
+        tables=[
+            User.__table__,
+            AuthCredential.__table__,
+            AuthSession.__table__,
+            OAuthIdentity.__table__,
+        ],
+    )
+
+    with Session(engine) as session:
+        first = User(oidc_subject="email:first", display_name="First")
+        second = User(oidc_subject="email:second", display_name="Second")
+        session.add_all([first, second])
+        session.flush()
+        session.add_all(
+            [
+                AuthCredential(
+                    user_id=first.id,
+                    email_normalized="pilot@example.com",
+                    password_hash="hash-one",
+                ),
+                AuthSession(
+                    user_id=first.id,
+                    token_digest="token-digest",
+                    expires_at=first.created_at,
+                ),
+                OAuthIdentity(
+                    user_id=first.id,
+                    provider="github",
+                    provider_subject="42",
+                ),
+            ]
+        )
+        session.commit()
+
+        session.add(
+            OAuthIdentity(
+                user_id=second.id,
+                provider="github",
+                provider_subject="42",
+            )
+        )
+        with pytest.raises(IntegrityError):
+            session.commit()
 
 
 def test_public_ids_are_prefixed_random_and_not_uuid_values() -> None:
@@ -158,3 +225,43 @@ def test_session_cookie_is_http_only_secure_and_same_site() -> None:
     assert "HttpOnly" in cookie
     assert "Secure" in cookie
     assert "SameSite=lax" in cookie
+    assert "Max-Age=2592000" in cookie
+
+
+def test_opaque_session_resolves_only_while_active() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(
+        engine,
+        tables=[User.__table__, AuthCredential.__table__, AuthSession.__table__],
+    )
+    secret = "test-secret-that-is-at-least-thirty-two-bytes-long"
+    token = "opaque-browser-token"
+
+    with Session(engine) as session:
+        user = User(oidc_subject="email:pilot", display_name="Pilot")
+        session.add(user)
+        session.flush()
+        session.add(
+            AuthCredential(
+                user_id=user.id,
+                email_normalized="pilot@example.com",
+                password_hash="hash",
+            )
+        )
+        auth_session = AuthSession(
+            user_id=user.id,
+            token_digest=session_digest(secret, token),
+            expires_at=user.created_at + timedelta(days=30),
+        )
+        session.add(auth_session)
+        session.commit()
+
+        principal = principal_from_session(session, token, secret)
+        assert principal is not None
+        assert principal.subject == "email:pilot"
+        assert principal.claims["email"] == "pilot@example.com"
+        assert principal_from_session(session, "wrong-token", secret) is None
+
+        auth_session.revoked_at = user.created_at
+        session.commit()
+        assert principal_from_session(session, token, secret) is None

@@ -1,5 +1,7 @@
 """FastAPI application entry point."""
 
+from os import environ
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse
 from orbit_runtime.infrastructure import DependencyCheckFailed, check_dependencies
@@ -17,8 +19,11 @@ from orbit_api.api.ws_matches import router as ws_matches_router
 from orbit_api.db.session import SessionLocal
 from orbit_api.middleware.idempotency import IdempotencyMiddleware
 from orbit_api.middleware.observability import ObservabilityMiddleware
+from orbit_api.security.oidc import OIDCSettings, OIDCVerifier
 
 app = FastAPI(title="Orbit Wars API", version="0.1.0")
+if environ.get("OIDC_ISSUER") and environ.get("OIDC_AUDIENCE"):
+    app.state.oidc_verifier = OIDCVerifier(OIDCSettings.from_environment())
 metrics = MetricRegistry()
 app.add_middleware(IdempotencyMiddleware, session_factory=SessionLocal)
 app.add_middleware(ObservabilityMiddleware, registry=metrics)

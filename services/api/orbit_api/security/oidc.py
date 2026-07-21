@@ -1,14 +1,22 @@
-"""Provider-neutral OIDC JWT verification and secure session cookies."""
+"""First-party sessions, provider-neutral OIDC verification, and cookies."""
 
 from dataclasses import dataclass
+from datetime import timedelta
 from os import environ
-from typing import Any, Protocol
+from typing import Annotated, Any, Protocol
 
 import jwt
-from fastapi import HTTPException, Request, Response, status
+from fastapi import Depends, HTTPException, Request, Response, status
 from jwt import PyJWKClient
+from orbit_api.db.base import utc_now
+from orbit_api.db.models import AuthCredential, AuthSession, User
+from orbit_api.db.session import database_session
+from orbit_api.security.credentials import session_digest
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 SESSION_COOKIE = "orbit_session"
+SESSION_TTL = timedelta(days=30)
 
 
 @dataclass(frozen=True)
@@ -83,20 +91,71 @@ def bearer_or_cookie_token(request: Request) -> str:
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="authentication required")
 
 
-def current_principal(request: Request) -> Principal:
-    """FastAPI dependency that uses the verifier configured on app state."""
+def principal_from_session(
+    session: Session,
+    token: str,
+    secret: str | bytes,
+) -> Principal | None:
+    """Resolve an active opaque session without exposing its stored digest."""
+    now = utc_now()
+    row = session.execute(
+        select(User, AuthCredential.email_normalized)
+        .join(AuthSession, AuthSession.user_id == User.id)
+        .outerjoin(AuthCredential, AuthCredential.user_id == User.id)
+        .where(
+            AuthSession.token_digest == session_digest(secret, token),
+            AuthSession.revoked_at.is_(None),
+            AuthSession.expires_at > now,
+        )
+    ).first()
+    if row is None:
+        return None
+    user, email = row
+    claims: dict[str, Any] = {"name": user.display_name}
+    if email:
+        claims["email"] = email
+    return Principal(subject=user.oidc_subject, claims=claims)
+
+
+def current_principal(
+    request: Request,
+    session: Annotated[Session, Depends(database_session)],
+) -> Principal:
+    """Resolve dev, first-party, or migration OIDC credentials in that order."""
     dev_subject = request.headers.get("X-Orbit-Dev-Subject")
     dev_auth = environ.get("ORBIT_DEV_AUTH", "").lower() in {"1", "true", "yes"}
     production = environ.get("APP_ENV", "development").lower() in {"production", "prod"}
     if dev_subject and dev_auth and not production:
         return Principal(subject=dev_subject[:255], claims={"name": "Local Commander"})
+
+    cookie = request.cookies.get(SESSION_COOKIE)
+    auth_secret = environ.get("ORBIT_AUTH_SECRET", "")
+    if cookie and auth_secret:
+        try:
+            principal = principal_from_session(session, cookie, auth_secret)
+        except ValueError as error:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="authentication secret is invalid",
+            ) from error
+        if principal is not None:
+            return principal
+
+    authorization = request.headers.get("Authorization", "")
+    scheme, _, bearer = authorization.partition(" ")
+    migration_token = bearer if scheme.lower() == "bearer" and bearer else cookie
+    if not migration_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="authentication required",
+        )
     verifier = getattr(request.app.state, "oidc_verifier", None)
     if not isinstance(verifier, OIDCVerifier):
         raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="OIDC verifier is not configured",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="invalid or expired session",
         )
-    return verifier.verify(bearer_or_cookie_token(request))
+    return verifier.verify(migration_token)
 
 
 def set_session_cookie(response: Response, token: str, *, secure: bool = True) -> None:
@@ -107,4 +166,5 @@ def set_session_cookie(response: Response, token: str, *, secure: bool = True) -
         secure=secure,
         samesite="lax",
         path="/",
+        max_age=int(SESSION_TTL.total_seconds()),
     )
