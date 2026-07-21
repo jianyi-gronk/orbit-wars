@@ -24,6 +24,9 @@
 - API 集成测试覆盖注册、登录、退出、重置密码和跨账户越权。
 - 浏览器分别走中文、英文、移动端和未登录继续创建舰队流程。
 - 正式部署验证检查 Secure Cookie、HTTPS 与真实 GitHub OAuth 回调。
+- 2026-07-21：提交 `90d3148` 已部署至 `http://47.98.155.60:4000`；公开 auth config 为 GitHub `true`、password `false`、Google `false`，匿名 session 为未登录，API/Web 均未注入固定 dev subject。
+- 2026-07-21：GitHub start 返回 307 到官方授权页，state 存在，回调精确为 `/orbit-api/api/auth/github/callback`；中英文页面与 390px 移动端无邮箱输入、无横向溢出、无控制台错误。
+- 待用户本人完成一次 GitHub 授权后，继续验证首次建档、回到原任务、账户菜单、退出和二次登录复用；主 agent 不代替用户确认第三方账号授权。
 
 ## 备注
 
