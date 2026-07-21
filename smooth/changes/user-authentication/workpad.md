@@ -30,6 +30,7 @@
 - 待用户本人完成一次 GitHub 授权后，继续验证首次建档、回到原任务、账户菜单、退出和二次登录复用；主 agent 不代替用户确认第三方账号授权。
 - 2026-07-21：全局 GitHub 登录弹窗通过 TypeScript、ESLint、71 个 Web 测试与 Next 生产构建；本地浏览器验证页头与任务内唤起不换页、旧 `/zh/auth` 兼容重定向、返回路径、关闭参数清理、Esc、焦点循环、中英文和窄屏无溢出。
 - 2026-07-21：根据用户本地验收将弹窗进一步压缩为 384×212px 的标准登录窗口，只保留标题、单句提示、GitHub 按钮和自动建档说明；TypeScript、ESLint 与实际页面控制台通过。
+- 2026-07-21：定位本地 GitHub 登录后的 401：OAuth state Cookie 写在 `localhost:3003`，GitHub callback 却固定返回 `47.98.155.60:4000`，跨主机导致 state/return Cookie 缺失；服务器库中 GitHub identity 与 auth session 均为 0，因此不是会话过期。
 
 ## 备注
 
@@ -41,3 +42,4 @@
 
 - 正式域名和 TLS 证书尚未配置，是公开真实认证上线的外部前提。
 - GitHub 凭据后配；未配置时入口显示等待态且不可点击。
+- 本地联调需要选择：临时把 GitHub callback 与服务端 redirect URI 都切到 localhost，或实现受控的多来源 callback；当前服务器 IP callback 只能在服务器页面上完成同源登录。

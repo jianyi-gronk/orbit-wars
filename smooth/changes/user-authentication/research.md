@@ -36,6 +36,7 @@
 - 预热 Agent 和 `preview-commander` 的历史数据不能自动归属给第一个真实注册用户。
 - 注册、登录、验证码和找回密码接口需要限流、枚举防护、审计与双语错误文案。
 - 站内自建密码认证会增加长期安全维护责任；若改用托管身份服务，可减少密码存储责任，但会增加供应商依赖和外部配置。
+- 本地 Web 不能直接复用“服务器 IP 回调”的 GitHub OAuth 配置。当前从 `localhost:3003` 发起登录时，`orbit_oauth_state` 和 `orbit_oauth_return` 写在 localhost；GitHub 却回调 `47.98.155.60:4000`，服务器收不到这两个 Cookie，state 校验必然失败，也不会创建用户或会话。
 
 ## 对产品讨论的启发
 
@@ -56,8 +57,9 @@
 - `services/api/orbit_api/main.py`
 - `services/api/orbit_api/db/models.py`
 - `infra/deploy/ip-preview.sh`
+- 2026-07-21 实际链路：本地 `/orbit-api/api/auth/github/start` 返回的 GitHub `redirect_uri` 为服务器 IP；服务器 API 日志随后出现 callback 307 和受保护舰队接口 401。
+- 2026-07-21 服务器 PostgreSQL 核对：`oauth_identities=0`、`auth_sessions=0`，证明失败发生在建档与签发会话之前，不是已登录会话过期。
 - `/Users/jianyi-gronk/Desktop/product/韭见/components/auth/LoginPanel.tsx`
 - `/Users/jianyi-gronk/Desktop/product/韭见/lib/auth/email-login.ts`
 - `/Users/jianyi-gronk/Desktop/product/韭见/lib/auth/session.ts`
 - `/Users/jianyi-gronk/Desktop/product/韭见/tests/email-login-cleanup.test.ts`
-
