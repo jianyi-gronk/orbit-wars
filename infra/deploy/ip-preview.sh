@@ -34,6 +34,13 @@ replace_container() {
   docker rm --force "${name}" >/dev/null 2>&1 || true
 }
 
+ensure_container_running() {
+  local name=$1
+  if [[ $(docker inspect --format '{{.State.Running}}' "${name}" 2>/dev/null || true) != true ]]; then
+    docker start "${name}" >/dev/null
+  fi
+}
+
 common_app_env() {
   printf '%s\n' \
     --env APP_ENV=preview \
@@ -87,27 +94,36 @@ docker build --tag "${SANDBOX_IMAGE}" \
 
 docker network inspect "${NETWORK}" >/dev/null 2>&1 || docker network create "${NETWORK}"
 
-replace_container orbit-postgres
-docker run --detach --name orbit-postgres --network "${NETWORK}" --restart=always \
-  --env POSTGRES_DB=orbit_wars \
-  --env POSTGRES_USER=orbit_wars \
-  --env POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
-  --volume "${DATA_ROOT}/postgres:/var/lib/postgresql/data:Z" \
-  public.ecr.aws/docker/library/postgres:16-alpine
+if ! docker inspect orbit-postgres >/dev/null 2>&1; then
+  docker run --detach --name orbit-postgres --network "${NETWORK}" --restart=always \
+    --env POSTGRES_DB=orbit_wars \
+    --env POSTGRES_USER=orbit_wars \
+    --env POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+    --volume "${DATA_ROOT}/postgres:/var/lib/postgresql/data:Z" \
+    public.ecr.aws/docker/library/postgres:16-alpine
+else
+  ensure_container_running orbit-postgres
+fi
 wait_for postgres docker exec orbit-postgres pg_isready --username orbit_wars --dbname orbit_wars
 
-replace_container orbit-redis
-docker run --detach --name orbit-redis --network "${NETWORK}" --restart=always \
-  --volume "${DATA_ROOT}/redis:/data:Z" \
-  public.ecr.aws/docker/library/redis:7.4-alpine redis-server --appendonly yes
+if ! docker inspect orbit-redis >/dev/null 2>&1; then
+  docker run --detach --name orbit-redis --network "${NETWORK}" --restart=always \
+    --volume "${DATA_ROOT}/redis:/data:Z" \
+    public.ecr.aws/docker/library/redis:7.4-alpine redis-server --appendonly yes
+else
+  ensure_container_running orbit-redis
+fi
 wait_for redis docker exec orbit-redis redis-cli ping
 
-replace_container orbit-minio
-docker run --detach --name orbit-minio --network "${NETWORK}" --restart=always \
-  --env MINIO_ROOT_USER="${S3_ACCESS_KEY}" \
-  --env MINIO_ROOT_PASSWORD="${S3_SECRET_KEY}" \
-  --volume "${DATA_ROOT}/minio:/data:Z" \
-  quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z server /data
+if ! docker inspect orbit-minio >/dev/null 2>&1; then
+  docker run --detach --name orbit-minio --network "${NETWORK}" --restart=always \
+    --env MINIO_ROOT_USER="${S3_ACCESS_KEY}" \
+    --env MINIO_ROOT_PASSWORD="${S3_SECRET_KEY}" \
+    --volume "${DATA_ROOT}/minio:/data:Z" \
+    quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z server /data
+else
+  ensure_container_running orbit-minio
+fi
 
 mapfile -t APP_ENV_ARGS < <(common_app_env)
 
@@ -139,9 +155,9 @@ docker run --detach --name orbit-worker --network "${NETWORK}" --restart=always 
   "${PLATFORM_IMAGE}" python -m orbit_match_worker.worker
 
 replace_container orbit-web
-docker run --detach --name orbit-web --network "${NETWORK}" --restart=always \
-  --publish "0.0.0.0:${PUBLIC_PORT}:3000" \
-  --env ORBIT_API_INTERNAL_BASE=http://orbit-api:8000 \
+docker run --detach --name orbit-web --network host --restart=always \
+  --env PORT="${PUBLIC_PORT}" \
+  --env ORBIT_API_INTERNAL_BASE=http://127.0.0.1:18000 \
   "${WEB_IMAGE}"
 
 wait_for api curl --fail --silent http://127.0.0.1:18000/health/dependencies
