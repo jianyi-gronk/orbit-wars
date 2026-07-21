@@ -32,8 +32,13 @@ ORBIT_DEV_AUTH=false
 ```
 
 Build the Web image without `NEXT_PUBLIC_ORBIT_DEV_SUBJECT`. Production startup rejects first-party
-authentication when the public URL is not HTTPS. The current IP + port deployment intentionally
-keeps fixed preview auth and must not be presented as real multi-user login.
+authentication when the public URL is not HTTPS.
+
+The IP + port deploy script also has an explicit `github` mode for temporary OAuth integration
+testing. It runs with `APP_ENV=preview`, disables the fixed development subject, and uses a
+non-`Secure` cookie because the public URL is HTTP. This is not a production configuration: session
+traffic can be intercepted on an untrusted network, so it must be replaced with HTTPS before the
+site is shared with real users.
 
 ## Verification
 

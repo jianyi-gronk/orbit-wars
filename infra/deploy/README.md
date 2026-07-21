@@ -14,8 +14,22 @@ port; the API remains bound to `127.0.0.1:18000`. Secrets are generated once in
 PostgreSQL, Redis, and MinIO containers are reused during later releases so application updates do
 not unnecessarily restart persistent dependencies.
 
-Preview mode uses a fixed development subject so the core loop can be exercised before OIDC and a
-domain are configured. Do not treat this mode as a public multi-user production deployment.
+Preview mode uses a fixed development subject by default so the core loop can be exercised before
+OIDC and a domain are configured. Do not treat this mode as a public multi-user production
+deployment.
 
-GitHub login is intentionally not enabled by this IP preview script. It requires a domain, HTTPS,
-and a GitHub OAuth App; see [`docs/authentication.md`](../../docs/authentication.md).
+For temporary OAuth integration testing only, put the GitHub OAuth credentials in `preview.env`,
+configure the OAuth App callback as
+`http://PUBLIC_IP:4000/orbit-api/api/auth/github/callback`, and run:
+
+```bash
+ORBIT_PREVIEW_AUTH_MODE=github \
+ORBIT_PUBLIC_HOST=PUBLIC_IP \
+ORBIT_PUBLIC_PORT=4000 \
+bash infra/deploy/ip-preview.sh
+```
+
+This mode removes the fixed preview subject and disables password authentication. Because plain
+HTTP cannot protect the session cookie in transit, use it only for short-lived testing and replace
+it with the HTTPS production configuration in [`docs/authentication.md`](../../docs/authentication.md)
+before inviting users.

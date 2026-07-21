@@ -6,6 +6,8 @@ DEPLOY_ROOT=${ORBIT_DEPLOY_ROOT:-/opt/orbit-wars}
 DATA_ROOT=${ORBIT_DATA_ROOT:-${DEPLOY_ROOT}/data}
 ENV_FILE=${ORBIT_ENV_FILE:-${DEPLOY_ROOT}/preview.env}
 PUBLIC_PORT=${ORBIT_PUBLIC_PORT:-4000}
+PUBLIC_HOST=${ORBIT_PUBLIC_HOST:-47.98.155.60}
+AUTH_MODE=${ORBIT_PREVIEW_AUTH_MODE:-dev}
 RELEASE=${ORBIT_RELEASE:-$(git -C "${ROOT_DIR}" rev-parse --short HEAD 2>/dev/null || date +%Y%m%d%H%M%S)}
 NETWORK=orbit-wars
 PLATFORM_IMAGE=localhost/orbit-wars-platform:${RELEASE}
@@ -42,9 +44,26 @@ ensure_container_running() {
 }
 
 common_app_env() {
+  local auth_args=(
+    --env ORBIT_AUTH_ENABLED=false
+    --env ORBIT_DEV_AUTH=true
+  )
+  if [[ ${AUTH_MODE} == github ]]; then
+    auth_args=(
+      --env ORBIT_AUTH_ENABLED=true
+      --env ORBIT_PASSWORD_AUTH_ENABLED=false
+      --env ORBIT_DEV_AUTH=false
+      --env ORBIT_AUTH_SECRET="${ORBIT_AUTH_SECRET}"
+      --env ORBIT_PUBLIC_BASE_URL="http://${PUBLIC_HOST}:${PUBLIC_PORT}"
+      --env GITHUB_OAUTH_CLIENT_ID="${GITHUB_OAUTH_CLIENT_ID}"
+      --env GITHUB_OAUTH_CLIENT_SECRET="${GITHUB_OAUTH_CLIENT_SECRET}"
+      --env GITHUB_OAUTH_REDIRECT_URI="http://${PUBLIC_HOST}:${PUBLIC_PORT}/orbit-api/api/auth/github/callback"
+    )
+  fi
+
   printf '%s\n' \
     --env APP_ENV=preview \
-    --env ORBIT_DEV_AUTH=true \
+    "${auth_args[@]}" \
     --env DATABASE_URL="postgresql://orbit_wars:${POSTGRES_PASSWORD}@orbit-postgres:5432/orbit_wars" \
     --env REDIS_URL=redis://orbit-redis:6379/0 \
     --env S3_ENDPOINT_URL=http://orbit-minio:9000 \
@@ -58,6 +77,16 @@ common_app_env() {
 
 if [[ ! ${PUBLIC_PORT} =~ ^[0-9]+$ ]] || ((PUBLIC_PORT < 1024 || PUBLIC_PORT > 65535)); then
   printf 'ORBIT_PUBLIC_PORT must be an integer between 1024 and 65535\n' >&2
+  exit 2
+fi
+
+if [[ ${AUTH_MODE} != dev && ${AUTH_MODE} != github ]]; then
+  printf 'ORBIT_PREVIEW_AUTH_MODE must be dev or github\n' >&2
+  exit 2
+fi
+
+if [[ ${AUTH_MODE} == github && -z ${PUBLIC_HOST} ]]; then
+  printf 'ORBIT_PUBLIC_HOST is required for GitHub preview authentication\n' >&2
   exit 2
 fi
 
@@ -77,17 +106,33 @@ if [[ ! -f ${ENV_FILE} ]]; then
   } >"${ENV_FILE}"
 fi
 
+if ! grep -q '^ORBIT_AUTH_SECRET=' "${ENV_FILE}"; then
+  umask 077
+  printf 'ORBIT_AUTH_SECRET=%s\n' "$(openssl rand -hex 32)" >>"${ENV_FILE}"
+fi
+
 set -a
 # shellcheck disable=SC1090
 source "${ENV_FILE}"
 set +a
+
+if [[ ${AUTH_MODE} == github ]]; then
+  : "${GITHUB_OAUTH_CLIENT_ID:?GITHUB_OAUTH_CLIENT_ID is required for GitHub preview authentication}"
+  : "${GITHUB_OAUTH_CLIENT_SECRET:?GITHUB_OAUTH_CLIENT_SECRET is required for GitHub preview authentication}"
+fi
+
+WEB_DEV_SUBJECT=preview-commander
+if [[ ${AUTH_MODE} == github ]]; then
+  WEB_DEV_SUBJECT=
+  log 'WARNING: GitHub OAuth is using an insecure HTTP preview; use only for temporary testing'
+fi
 
 log "building release ${RELEASE}"
 docker build --tag "${PLATFORM_IMAGE}" \
   --file "${ROOT_DIR}/infra/containers/Dockerfile.platform" "${ROOT_DIR}"
 docker build --tag "${WEB_IMAGE}" \
   --build-arg ORBIT_API_INTERNAL_BASE=http://127.0.0.1:18000 \
-  --build-arg NEXT_PUBLIC_ORBIT_DEV_SUBJECT=preview-commander \
+  --build-arg NEXT_PUBLIC_ORBIT_DEV_SUBJECT="${WEB_DEV_SUBJECT}" \
   --file "${ROOT_DIR}/infra/containers/Dockerfile.web" "${ROOT_DIR}"
 docker build --tag "${SANDBOX_IMAGE}" \
   "${ROOT_DIR}/services/agent-sandbox"
