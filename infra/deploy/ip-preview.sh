@@ -86,7 +86,7 @@ log "building release ${RELEASE}"
 docker build --tag "${PLATFORM_IMAGE}" \
   --file "${ROOT_DIR}/infra/containers/Dockerfile.platform" "${ROOT_DIR}"
 docker build --tag "${WEB_IMAGE}" \
-  --build-arg ORBIT_API_INTERNAL_BASE=http://orbit-api:8000 \
+  --build-arg ORBIT_API_INTERNAL_BASE=http://127.0.0.1:18000 \
   --build-arg NEXT_PUBLIC_ORBIT_DEV_SUBJECT=preview-commander \
   --file "${ROOT_DIR}/infra/containers/Dockerfile.web" "${ROOT_DIR}"
 docker build --tag "${SANDBOX_IMAGE}" \
