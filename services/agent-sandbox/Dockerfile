@@ -1,4 +1,5 @@
-FROM python:3.11.11-slim-bookworm@sha256:081075da77b2b55c23c088251026fb69a7b2bf92471e491ff5fd75c192fd38e5
+ARG PYTHON_IMAGE=public.ecr.aws/docker/library/python:3.11.11-slim-bookworm
+FROM ${PYTHON_IMAGE}
 
 LABEL org.opencontainers.image.title="Orbit Wars Agent Sandbox" \
       org.opencontainers.image.description="Fixed stdlib-only phase-one agent runtime" \

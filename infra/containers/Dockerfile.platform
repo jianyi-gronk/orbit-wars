@@ -7,7 +7,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /workspace
 
-RUN apt-get update \
+RUN sed -i 's|http://deb.debian.org|https://mirrors.aliyun.com|g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get update \
     && apt-get install --yes --no-install-recommends docker.io \
     && rm -rf /var/lib/apt/lists/*
 
@@ -19,7 +20,7 @@ COPY services/api services/api
 COPY services/match-worker services/match-worker
 COPY scripts scripts
 
-RUN python -m pip install --no-cache-dir \
+RUN python -m pip install --no-cache-dir --index-url https://mirrors.aliyun.com/pypi/simple/ \
     ./packages/platform-runtime-py \
     ./packages/contracts \
     ./packages/orbit-engine-py \
@@ -29,4 +30,3 @@ RUN python -m pip install --no-cache-dir \
 
 EXPOSE 8000
 CMD ["python", "-m", "uvicorn", "orbit_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
-

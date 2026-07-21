@@ -93,13 +93,13 @@ docker run --detach --name orbit-postgres --network "${NETWORK}" --restart=alway
   --env POSTGRES_USER=orbit_wars \
   --env POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
   --volume "${DATA_ROOT}/postgres:/var/lib/postgresql/data:Z" \
-  postgres:16-alpine
+  public.ecr.aws/docker/library/postgres:16-alpine
 wait_for postgres docker exec orbit-postgres pg_isready --username orbit_wars --dbname orbit_wars
 
 replace_container orbit-redis
 docker run --detach --name orbit-redis --network "${NETWORK}" --restart=always \
   --volume "${DATA_ROOT}/redis:/data:Z" \
-  redis:7.4-alpine redis-server --appendonly yes
+  public.ecr.aws/docker/library/redis:7.4-alpine redis-server --appendonly yes
 wait_for redis docker exec orbit-redis redis-cli ping
 
 replace_container orbit-minio
