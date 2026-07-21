@@ -10,6 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
   "alembic==1.18.5",
   "fastapi==0.139.2",
+  "httpx==0.28.1",
   "orbit-wars-runtime==0.1.0",
   "orbit-wars-agent-sandbox==0.1.0",
   "orbit-wars-engine==0.1.0",
