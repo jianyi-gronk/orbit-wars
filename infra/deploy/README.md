@@ -16,8 +16,3 @@ not unnecessarily restart persistent dependencies.
 
 Preview mode uses a fixed development subject so the core loop can be exercised before OIDC and a
 domain are configured. Do not treat this mode as a public multi-user production deployment.
-
-If the cloud security group does not expose the selected high port, install
-`orbit-wars-ip.nginx.conf` in `/etc/nginx/conf.d/` to make the preview available through the
-server's already-open HTTP port. The server block matches only the Orbit Wars server IP and does
-not replace domain-based virtual hosts.
