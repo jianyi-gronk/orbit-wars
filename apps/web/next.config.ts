@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   reactStrictMode: true,
   async rewrites() {
     const target = process.env.ORBIT_API_INTERNAL_BASE ?? "http://127.0.0.1:8000";

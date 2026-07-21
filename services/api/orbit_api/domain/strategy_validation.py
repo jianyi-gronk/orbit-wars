@@ -271,6 +271,7 @@ def validate_package(
     with tempfile.TemporaryDirectory(prefix="orbit-strategy-") as temporary:
         root = Path(temporary)
         safe_extract(package, root)
+        root.chmod(0o755)
         try:
             sandbox = sandbox_factory(root, runtime_image, entrypoint)
         except StrategyValidationError:
